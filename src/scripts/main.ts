@@ -202,7 +202,7 @@ function initMain() {
         heroTl.from(heroText, { y: 16, opacity: 0, duration: 0.6, stagger: 0.08, clearProps: 'transform,opacity' }, '-=0.45');
       }
 
-      const heroMedia = document.querySelector<HTMLElement>('.inner-page .service-hero > img, .inner-page .about-teaser > img, .inner-page .article-layout > img');
+      const heroMedia = document.querySelector<HTMLElement>('.inner-page .service-hero > img, .inner-page .about-teaser > img');
       if (heroMedia) {
         heroTl.from(heroMedia, { scale: 0.95, y: 22, opacity: 0, duration: 0.85, ease: 'power2.out', clearProps: 'transform,opacity' }, '-=0.5');
 
@@ -217,6 +217,11 @@ function initMain() {
             scrub: 0.8
           }
         });
+      }
+
+      const articleImg = document.querySelector<HTMLElement>('.inner-page .article-layout > img');
+      if (articleImg) {
+        gsap.from(articleImg, { opacity: 0, duration: 0.6, ease: 'power2.out', clearProps: 'opacity' });
       }
 
       // 2. Section Headings Scroll Reveals

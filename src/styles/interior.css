@@ -57,12 +57,35 @@
   }
 }
 
-/* Article layout section breathing space */
+/* Article layout section breathing space and solid mobile layout */
 .inner-page .article-layout section {
   margin-bottom: 44px;
 }
 .inner-page .article-layout .article-meta {
   margin-top: 24px;
+}
+@media(max-width: 700px) {
+  .inner-page .article-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 32px !important;
+    padding-top: 20px !important;
+  }
+  .inner-page .article-layout > img {
+    position: static !important;
+    order: -1 !important;
+    height: 280px !important;
+    max-height: none !important;
+    margin-bottom: 8px !important;
+    transform: none !important;
+    border-radius: 14px !important;
+  }
+  .inner-page .article-toc {
+    position: relative !important;
+    z-index: 2 !important;
+    margin-top: 0 !important;
+    margin-bottom: 35px !important;
+  }
 }
 
 /* Recruit panel breathing space and solid mobile layout */

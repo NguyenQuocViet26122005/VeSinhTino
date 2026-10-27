@@ -51,14 +51,14 @@ function initWow() {
   mm.add('(prefers-reduced-motion: no-preference)', () => {
     const opening = gsap.timeline({ defaults: { ease: 'power3.out' } });
     opening
-      .from('.hero-word', { y: 35, opacity: 0, duration: 0.8 })
-      .from('.hero-line', { y: 22, opacity: 0, duration: 0.65 }, 0.1)
+      .from('.hero-word', { y: 35, opacity: 0, duration: 0.8, clearProps: 'opacity' })
+      .from('.hero-line', { y: 22, opacity: 0, duration: 0.65, clearProps: 'opacity' }, 0.1)
       .from(
         '.wow-hero-description, .hero-actions',
-        { y: 16, opacity: 0, stagger: 0.08, duration: 0.5 },
+        { y: 16, opacity: 0, stagger: 0.08, duration: 0.5, clearProps: 'opacity' },
         0.25
       )
-      .from('.window-perspective', { y: 40, opacity: 0, duration: 0.9 }, 0.1);
+      .from('.window-perspective', { y: 40, opacity: 0, duration: 0.9, clearProps: 'opacity' }, 0.1);
 
     const motion = { progress: 35 };
     gsap.to(motion, {
@@ -160,16 +160,19 @@ function initWow() {
         gsap.to(pane, {
           rotationY: -12 + x * 8,
           rotationX: -y * 5,
+          rotationZ: -6,
           x: x * 8,
           y: y * 6,
+          opacity: 1,
           duration: 0.55,
           ease: 'power2.out',
-          overwrite: true
+          overwrite: 'auto'
         });
       };
 
       const enter = () => {
         cachedRect = world.getBoundingClientRect();
+        gsap.to(pane, { opacity: 1, duration: 0.25, ease: 'power2.out', overwrite: 'auto' });
       };
 
       const leave = () => {
@@ -177,10 +180,13 @@ function initWow() {
         gsap.to(pane, {
           rotationY: -12,
           rotationX: 0,
+          rotationZ: -6,
           x: 0,
           y: 0,
+          opacity: 1,
           duration: 0.65,
-          overwrite: true
+          ease: 'power2.out',
+          overwrite: 'auto'
         });
       };
 

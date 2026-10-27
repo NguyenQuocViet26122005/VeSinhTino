@@ -291,13 +291,15 @@ function initWow() {
   });
 }
 
-// Listen to initial load and Astro client routing
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initWow);
-} else {
+let hasWowLoaded = false;
+document.addEventListener('astro:page-load', () => {
+  hasWowLoaded = true;
+  initWow();
+});
+
+if (!hasWowLoaded && document.readyState === 'complete') {
   initWow();
 }
-document.addEventListener('astro:page-load', initWow);
 document.addEventListener('astro:before-swap', () => {
   if (currentMm) {
     currentMm.revert();

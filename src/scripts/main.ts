@@ -8,6 +8,59 @@ let mainMm: gsap.MatchMedia | null = null;
 const menuShape = 'M4 7h16M4 17h16';
 const closeShape = 'M6 6l12 12M6 18L18 6';
 
+let globalListenersAttached = false;
+function ensureGlobalListeners() {
+  if (globalListenersAttached) return;
+  globalListenersAttached = true;
+
+  document.addEventListener('click', (e) => {
+    const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+    const mobile = document.querySelector<HTMLElement>('#mobile-nav');
+    if (toggle?.getAttribute('aria-expanded') === 'true') {
+      const target = e.target as Node;
+      if (!toggle.contains(target) && !mobile?.contains(target)) {
+        if (mobile) mobile.hidden = true;
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Mở menu');
+        const menuPath = document.querySelector<SVGPathElement>('#menu-morph');
+        if (menuMorph) menuMorph.morphTo(menuShape);
+        else menuPath?.setAttribute('d', menuShape);
+      }
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+      const mobile = document.querySelector<HTMLElement>('#mobile-nav');
+      if (toggle?.getAttribute('aria-expanded') === 'true') {
+        if (mobile) mobile.hidden = true;
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Mở menu');
+        const menuPath = document.querySelector<SVGPathElement>('#menu-morph');
+        if (menuMorph) menuMorph.morphTo(menuShape);
+        else menuPath?.setAttribute('d', menuShape);
+        toggle.focus();
+      }
+    }
+  });
+
+  window.matchMedia('(min-width: 1001px)').addEventListener('change', (e) => {
+    if (e.matches) {
+      const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+      const mobile = document.querySelector<HTMLElement>('#mobile-nav');
+      if (mobile) mobile.hidden = true;
+      if (toggle) {
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Mở menu');
+      }
+      const menuPath = document.querySelector<SVGPathElement>('#menu-morph');
+      if (menuMorph) menuMorph.morphTo(menuShape);
+      else menuPath?.setAttribute('d', menuShape);
+    }
+  });
+}
+
 function initMain() {
   if (mainMm) {
     mainMm.revert();
@@ -48,30 +101,27 @@ function initMain() {
     }
   };
 
-  toggle?.addEventListener('click', () => {
-    if (!mobile) return;
-    const open = toggle.getAttribute('aria-expanded') === 'true';
-    mobile.hidden = open;
-    toggle.setAttribute('aria-expanded', String(!open));
-    toggle.setAttribute('aria-label', open ? 'Mở menu' : 'Đóng menu');
-    updateMenuIcon(!open);
-    loadMenuIcon();
+  if (toggle) {
+    toggle.onclick = (e) => {
+      e.stopPropagation();
+      if (!mobile) return;
+      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+      const nextOpen = !isOpen;
+      mobile.hidden = !nextOpen;
+      toggle.setAttribute('aria-expanded', String(nextOpen));
+      toggle.setAttribute('aria-label', nextOpen ? 'Đóng menu' : 'Mở menu');
+      updateMenuIcon(nextOpen);
+      loadMenuIcon();
+    };
+  }
+
+  mobile?.querySelectorAll('a').forEach((a) => {
+    a.onclick = closeMenu;
   });
-
-  mobile?.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeMenu));
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
-      closeMenu();
-      toggle.focus();
-    }
-  });
-
-  window.matchMedia('(min-width: 1001px)').addEventListener('change', closeMenu);
 
   // Filter gallery buttons
-  document.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach((btn) =>
-    btn.addEventListener('click', () => {
+  document.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach((btn) => {
+    btn.onclick = () => {
       const value = btn.dataset.filter;
       document.querySelectorAll('[data-filter]').forEach((b) =>
         b.setAttribute('aria-pressed', String(b === btn))
@@ -80,28 +130,33 @@ function initMain() {
         card.hidden = value !== 'all' && card.dataset.category !== value;
       });
       ScrollTrigger.refresh();
-    })
-  );
+    };
+  });
 
   // Photo modal dialog
   const dialog = document.querySelector<HTMLDialogElement>('#photo-dialog');
   const dialogImg = document.querySelector<HTMLImageElement>('#dialog-image');
   const dialogCaption = document.querySelector('#dialog-caption');
 
-  document.querySelectorAll<HTMLButtonElement>('[data-photo]').forEach((btn) =>
-    btn.addEventListener('click', () => {
+  document.querySelectorAll<HTMLButtonElement>('[data-photo]').forEach((btn) => {
+    btn.onclick = () => {
       if (!dialog || !dialogImg) return;
       dialogImg.src = btn.dataset.photo || '';
       dialogImg.alt = btn.dataset.caption || '';
       if (dialogCaption) dialogCaption.textContent = btn.dataset.caption || '';
       dialog.showModal();
-    })
-  );
-
-  dialog?.querySelector('.dialog-close')?.addEventListener('click', () => dialog.close());
-  dialog?.addEventListener('click', (e) => {
-    if (e.target === dialog) dialog.close();
+    };
   });
+
+  const dialogClose = dialog?.querySelector<HTMLButtonElement>('.dialog-close');
+  if (dialogClose) {
+    dialogClose.onclick = () => dialog?.close();
+  }
+  if (dialog) {
+    dialog.onclick = (e) => {
+      if (e.target === dialog) dialog.close();
+    };
+  }
 
   const mm = gsap.matchMedia();
   mainMm = mm;
@@ -331,13 +386,17 @@ function initMain() {
   window.addEventListener('pagehide', () => mm.revert(), { once: true });
 }
 
-// Support initial load and client-side page transitions
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initMain);
-} else {
+let hasPageLoaded = false;
+document.addEventListener('astro:page-load', () => {
+  hasPageLoaded = true;
+  ensureGlobalListeners();
+  initMain();
+});
+
+if (!hasPageLoaded && document.readyState === 'complete') {
+  ensureGlobalListeners();
   initMain();
 }
-document.addEventListener('astro:page-load', initMain);
 document.addEventListener('astro:before-swap', () => {
   if (mainMm) {
     mainMm.revert();

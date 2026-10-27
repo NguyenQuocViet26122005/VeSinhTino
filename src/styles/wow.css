@@ -169,7 +169,7 @@
 
 .window-perspective {
   position: absolute;
-  inset: 6% 15% 16% 9%;
+  inset: 6% 18% 16% 8%;
   transform: rotate(-6deg) rotateY(-12deg);
   transform-style: preserve-3d;
   will-change: transform;
@@ -185,7 +185,6 @@
   box-shadow: 16px 24px 0 #052238, 24px 40px 65px #031a2080;
   transform-style: preserve-3d;
   background: #adc6d5;
-  overflow: hidden;
 }
 
 .window-photo {
@@ -891,7 +890,7 @@
     margin: 8px auto 0;
     align-self: center;
   }
-  .window-perspective { inset: 0 4% 8% 4%; transform: rotate(-4deg) rotateY(-6deg); }
+  .window-perspective { inset: 0 14% 8% 4%; transform: rotate(-4deg) rotateY(-6deg); }
   .glass-caption { left: -4%; bottom: 6%; }
   .world-orbit { top: -8%; }
   .hero-bottom {
@@ -960,7 +959,7 @@
     width: min(100%, 320px);
     margin: 4px auto 0;
   }
-  .window-perspective { inset: 2% 8% 6% 4%; transform: rotate(-5deg); }
+  .window-perspective { inset: 2% 14% 6% 3%; transform: rotate(-5deg); }
   .window-scene {
     border-width: 7px;
     border-bottom-width: 12px;

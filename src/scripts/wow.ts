@@ -27,7 +27,7 @@ function initWow() {
   function wipe(value: number) {
     const v = Math.min(100, Math.max(0, value));
     if (haze) haze.style.clipPath = 'inset(0 0 0 ' + v + '%)';
-    if (squeegee) squeegee.style.transform = 'translateX(' + Math.min(96, v) + '%)';
+    if (squeegee) squeegee.style.transform = 'translateX(' + v + '%)';
     if (readout) readout.textContent = Math.round(v) + '%';
     if (slider) slider.value = String(Math.round(v));
     touch?.setAttribute('aria-valuenow', String(Math.round(v)));

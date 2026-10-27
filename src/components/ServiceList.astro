@@ -1,0 +1,5 @@
+---
+import { services, image } from '../data/site';
+const { compact = false } = Astro.props;
+---
+<div class:list={['service-list', {compact}]}>{services.map((s)=><a class="service-card" data-category={s.category} href={'/'+s.slug+'/'}><div class="service-photo"><img src={image(s.photo)} alt={s.name} loading="lazy" decoding="async" width="768" height="640"/><span class="round-arrow" aria-hidden="true">↗</span></div><div class="service-copy"><span class="service-tag">{s.tag}</span><h3>{s.name}</h3><p>{s.description}</p></div></a>)}</div>

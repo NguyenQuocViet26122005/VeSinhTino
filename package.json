@@ -1,0 +1,38 @@
+{
+  "name": "ve-sinh-tino",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --host 127.0.0.1",
+    "build": "astro build",
+    "preview": "astro preview --host 127.0.0.1",
+    "check": "astro check",
+    "verify": "node scripts/verify.mjs",
+    "design:lint": "designmd lint DESIGN.md"
+  },
+  "dependencies": {
+    "@astrojs/react": "^4.4.0",
+    "@gsap/react": "^2.1.2",
+    "@lucasmarkes/hairline": "^0.5.1",
+    "@react-three/fiber": "^9.4.0",
+    "astro": "^5.16.0",
+    "chartist": "^2.2.0",
+    "gsap": "^3.14.0",
+    "morphicons": "^2.0.2",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "three": "^0.181.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.5",
+    "@fontsource/be-vietnam-pro": "^5.2.0",
+    "@fontsource/manrope": "^5.2.0",
+    "@google/design.md": "^0.4.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@types/three": "^0.181.0",
+    "sharp": "^0.34.0",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,6 @@
+---
+import type { PriceRow } from '../data/site';
+interface Props { rows: PriceRow[]; caption?: string; }
+const { rows, caption = 'Đơn giá dịch vụ' } = Astro.props;
+---
+<div class="table-wrap" role="region" aria-label={caption} tabindex="0"><table><caption>{caption}</caption><thead><tr><th scope="col">Hạng mục</th><th scope="col">Đơn giá (đồng)</th><th scope="col">Đơn vị</th></tr></thead><tbody>{rows.map(row=><tr><th scope="row">{row.name}</th><td class="price">{row.price}</td><td>{row.unit}</td></tr>)}</tbody></table></div>

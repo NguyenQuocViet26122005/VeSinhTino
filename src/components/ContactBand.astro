@@ -1,0 +1,4 @@
+---
+import { contact } from '../data/site';
+---
+<section class="contact-band"><div class="container contact-inner"><div><h2>Việc làm sạch,<br/>để Tino lo.</h2><p>Kể cho chúng tôi về không gian của bạn.<br/>Cùng tìm phương án vệ sinh phù hợp.</p></div><div class="contact-action"><a class="big-phone" href={'tel:'+contact.phone} aria-label={'Gọi trực tiếp Hotline Tino: ' + contact.display}>{contact.display}<span aria-hidden="true">↗</span></a><a class="button light" href={contact.zalo} target="_blank" rel="noopener noreferrer" aria-label="Trao đổi trực tiếp qua Zalo với Vệ Sinh Tino">Trao đổi qua Zalo <span aria-hidden="true">↗</span></a><span>Tư vấn mỗi ngày · {contact.hours}</span></div></div></section>

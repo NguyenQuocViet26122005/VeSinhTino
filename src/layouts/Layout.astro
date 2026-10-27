@@ -1,0 +1,148 @@
+---
+import '../styles/global.css';
+import '../styles/interior.css';
+import '@fontsource/be-vietnam-pro/400.css';
+import '@fontsource/be-vietnam-pro/500.css';
+import '@fontsource/be-vietnam-pro/600.css';
+import '@fontsource/be-vietnam-pro/700.css';
+import '@fontsource/manrope/600.css';
+import '@fontsource/manrope/700.css';
+import { contact, services, image } from '../data/site';
+import { ClientRouter } from 'astro:transitions';
+import GlobalSpark from '../components/react-bits/GlobalSpark';
+import FloatingContact from '../components/FloatingContact';
+
+interface Props {
+  title: string;
+  description?: string;
+  home?: boolean;
+}
+
+const {
+  title,
+  home = false,
+  description = 'Dịch vụ vệ sinh Tino tại TP.HCM: vệ sinh nhà ở, công nghiệp, nhà xưởng, kính, giặt thảm và sofa. Xem bảng giá và liên hệ 0925 649 666.'
+} = Astro.props;
+
+const pathname = Astro.url.pathname;
+const nav = [
+  ['/', 'Trang chủ'],
+  ['/category/dichvuvesinh/', 'Dịch vụ'],
+  ['/bang-gia/', 'Bảng giá'],
+  ['/gioi-thieu/', 'Về Tino'],
+  ['/tuyen-dung/', 'Tuyển dụng'],
+  ['/tin-tuc/', 'Cẩm nang'],
+  ['/lien-he/', 'Liên hệ']
+];
+
+function isNavActive(url: string, path: string): boolean {
+  if (url === '/') return path === '/' || path === '';
+  if (path === url) return true;
+  if (url === '/category/dichvuvesinh/') {
+    return path.startsWith('/category/dichvuvesinh') || services.some(s => path === `/${s.slug}/`);
+  }
+  if (url === '/tin-tuc/') {
+    return path.startsWith('/tin-tuc') || path.startsWith('/category/dich-vu-phu') || path.startsWith('/author/');
+  }
+  return path.startsWith(url);
+}
+---
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <meta name="description" content={description}/>
+    <meta name="theme-color" content="#082c4a"/>
+    <meta property="og:title" content={title + ' | Vệ Sinh Tino'}/>
+    <meta property="og:description" content={description}/>
+    <meta property="og:type" content="website"/>
+    <link rel="icon" type="image/webp" href={image('e88c21372a262586')}/>
+    <title>{title} | Vệ Sinh Tino</title>
+    <!-- Astro ClientRouter for instant SPA navigation without page reloads -->
+    <ClientRouter />
+  </head>
+  <body class:list={{ 'home-page': home, 'inner-page': !home }}>
+    <a class="skip-link" href="#main">Đến nội dung chính</a>
+
+    <div class="topbar">
+      <div class="container">
+        <span>Chăm chút không gian. Nhẹ nhàng cuộc sống.</span>
+        <a href={'mailto:' + contact.email}>{contact.email}</a>
+        <span>TP. Hồ Chí Minh · {contact.hours}</span>
+      </div>
+    </div>
+
+    <header class="header">
+      <div class="container nav-inner">
+        <a class="brand" href="/" aria-label="Vệ Sinh Tino - Trang chủ">
+          <img src={image('09ac88fe21b3b5da')} alt="Vệ Sinh Tino" width="90" height="72" decoding="async"/>
+          <span>Tino<span class="brand-dot">.</span><small>Dịch vụ vệ sinh</small></span>
+        </a>
+        <nav class="desktop-nav" aria-label="Điều hướng chính">
+          {nav.map(([url, label]) => (
+            <a href={url} aria-current={isNavActive(url, pathname) ? 'page' : undefined}>{label}</a>
+          ))}
+        </nav>
+        <a href="/lien-he/" class="button nav-contact">Nhận báo giá <span aria-hidden="true">↗</span></a>
+        <button class="menu-toggle" aria-label="Mở menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path id="menu-morph" d="M4 7h16M4 17h16"/>
+          </svg>
+        </button>
+      </div>
+      <nav id="mobile-nav" class="mobile-nav" aria-label="Điều hướng điện thoại" hidden>
+        {nav.map(([url, label]) => (
+          <a href={url} aria-current={isNavActive(url, pathname) ? 'page' : undefined}>{label}</a>
+        ))}
+        <a href={'tel:' + contact.phone}>Hotline: {contact.display} ↗</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <slot/>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div class="footer-brand">
+          <a class="footer-wordmark" href="/">Tino.</a>
+          <p>Chăm chút từng góc nhỏ.<br/>Để bạn tận hưởng không gian của mình.</p>
+          <a href={'mailto:' + contact.email}>{contact.email}</a>
+        </div>
+        <div>
+          <h2>Dịch vụ</h2>
+          {services.map(s => <a href={'/' + s.slug + '/'}>{s.name}</a>)}
+        </div>
+        <div>
+          <h2>Khám phá</h2>
+          <a href="/gioi-thieu/">Về Tino</a>
+          <a href="/bang-gia/">Bảng giá</a>
+          <a href="/tin-tuc/">Cẩm nang vệ sinh</a>
+          <a href="/tuyen-dung/">Tuyển dụng</a>
+          <a href="/lien-he/">Liên hệ</a>
+        </div>
+        <div>
+          <h2>Ghé thăm Tino</h2>
+          {contact.addresses.map(address => <p class="address">{address}</p>)}
+        </div>
+      </div>
+      <div class="container footer-bottom">
+        <span>© {new Date().getFullYear()} Vệ Sinh Tino</span>
+        <span>Uy tín · Chất lượng · Chuyên nghiệp</span>
+        <a href="#main">Lên đầu trang ↑</a>
+      </div>
+    </footer>
+
+    <FloatingContact client:idle phone={contact.phone} display={contact.display} zalo={contact.zalo} />
+
+    <dialog id="photo-dialog" class="photo-dialog" aria-labelledby="dialog-caption">
+      <button class="dialog-close" aria-label="Đóng hộp thoại xem ảnh">×</button>
+      <img id="dialog-image" src="" alt=""/>
+      <p id="dialog-caption"></p>
+    </dialog>
+
+    <GlobalSpark client:idle />
+    <script src="../scripts/main.ts"></script>
+  </body>
+</html>

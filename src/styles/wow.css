@@ -185,6 +185,7 @@
   box-shadow: 16px 24px 0 #052238, 24px 40px 65px #031a2080;
   transform-style: preserve-3d;
   background: #adc6d5;
+  overflow: hidden;
 }
 
 .window-photo {
@@ -864,7 +865,8 @@
     max-height: none;
     padding: 32px 6% 40px;
     gap: 32px;
-    overflow: visible;
+    overflow-x: clip;
+    overflow-y: visible;
   }
   .wow-hero-copy {
     position: relative;

@@ -7,8 +7,7 @@ import TrustCards from '../components/TrustCards';
 import ServiceExplorer from '../components/ServiceExplorer';
 import CostEstimator from '../components/CostEstimator';
 import ContactForm from '../components/ContactForm';
-import ApartmentPackage from '../components/ApartmentPackage.astro';
-import { image, commonPrices, contact, steps, faqs } from '../data/site';
+import { image, commonPrices, apartmentPrices, contact, steps, faqs } from '../data/site';
 import '../styles/wow.css';
 ---
 
@@ -154,8 +153,14 @@ import '../styles/wow.css';
       <!-- Interactive Estimator -->
       <CostEstimator client:visible />
 
-      <!-- Dedicated Apartment Package Highlight -->
-      <ApartmentPackage />
+      <!-- Dedicated Apartment Package Table -->
+      <div style="margin-top: 40px;">
+        <p class="mobile-table-note">Vuốt ngang để xem đủ bảng giá chung cư →</p>
+        <PriceTable rows={apartmentPrices} caption="Bảng giá tổng vệ sinh chung cư trọn gói"/>
+        <p class="price-note">
+          Áp dụng đơn giá chuẩn 30.000 đ/m² (gói tối thiểu 50m² từ 1.600.000 đ). Đơn giá trọn gói đã bao gồm nhân công, máy móc chuyên dụng và hóa chất sinh học an toàn.
+        </p>
+      </div>
 
       <!-- Full Reference Table -->
       <div style="margin-top: 45px;">

@@ -11,6 +11,12 @@ export const commonPrices: PriceRow[] = [
  {name:'Vệ sinh ghế sofa',price:'250.000–500.000',unit:'Cái',source:commonSource},
  {name:'Vệ sinh thảm',price:'15.000–20.000',unit:'m²',source:commonSource}
 ];
+export const apartmentPrices: PriceRow[] = [
+ {name:'Căn hộ 1 phòng ngủ / Studio (≈ 50m²)',price:'Từ 1.600.000',unit:'Căn',source:commonSource},
+ {name:'Căn hộ 2 phòng ngủ (65–85m²)',price:'1.950.000–2.550.000',unit:'Căn',source:commonSource},
+ {name:'Căn hộ 3 phòng ngủ & Duplex (85–120m²)',price:'2.550.000–3.600.000',unit:'Căn',source:commonSource},
+ {name:'Đơn giá diện tích sàn tiêu chuẩn',price:'30.000',unit:'m²',source:commonSource}
+];
 export const factoryPrices: PriceRow[] = [
  {name:'Nhà xưởng dưới 500m²',price:'10.000–15.000',unit:'m²',source:'https://vesinhtino.com/ve-sinh-nha-xuong/'},
  {name:'Nhà xưởng 500–1000m²',price:'8.000–12.000',unit:'m²',source:'https://vesinhtino.com/ve-sinh-nha-xuong/'},

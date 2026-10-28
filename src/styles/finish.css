@@ -6,8 +6,10 @@ body.home-page .header,body.inner-page .header{background:#082c4af0;border-botto
 .header .desktop-nav a{transition:color var(--motion-ui) ease}
 .header .desktop-nav a[aria-current]:after{width:18px;height:2px;border-radius:2px;left:calc(50% - 9px)}
 body .mobile-nav{background:#f5f9fc;color:#10354e;box-shadow:var(--shadow-float);transform-origin:calc(100% - 35px) top}
-.mobile-nav a{border-bottom:1px solid #d5e4ee;min-height:48px}
-.mobile-nav a[aria-current]{color:#0867a0;font-weight:600}
+body .mobile-nav a{color:#10354e;border-bottom:1px solid #d5e4ee;min-height:48px;display:flex;align-items:center;font-size:15px;font-weight:500;transition:color var(--motion-ui) ease}
+body .mobile-nav a:hover{color:#0872af}
+body .mobile-nav a[aria-current]{color:#0867a0;font-weight:600}
+body .mobile-nav a[href^="tel:"]{color:#0872af !important;font-weight:700}
 .button,.wow-button,.floating-btn,.menu-toggle{touch-action:manipulation;transition:transform var(--motion-ui) var(--ease-ui),background-color var(--motion-ui) ease,box-shadow var(--motion-ui) ease}
 body .button:active,body .wow-button:active,.floating-btn:active,.menu-toggle:active{transform:scale(.97);transition-duration:var(--motion-press)}
 .service-index-row>button:active{background:#d4ecf7}

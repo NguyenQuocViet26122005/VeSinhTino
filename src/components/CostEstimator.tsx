@@ -21,7 +21,7 @@ const SERVICES: EstimatorService[] = [
     defaultQty: 50,
     minQty: 40,
     maxQty: 250,
-    presets: [50, 65, 75, 90, 120],
+    presets: [50, 65, 85, 100, 120],
     calculate: (qty) => {
       if (qty <= 50) {
         return {

@@ -1,3 +1,5 @@
+> LƯU TRỮ: luồng webhook trình duyệt trong tài liệu này đã được thay bằng API máy chủ Telegram. Không áp dụng hướng dẫn cũ để xác nhận đã nhận yêu cầu. Xem TELEGRAM_BOT_GUIDE.md.
+
 # Hướng dẫn kết nối Google Sheets & Zalo Bot cho Form tư vấn Vệ Sinh Tino (Phương án 1)
 
 Website Vệ Sinh Tino hiện đã chuyển sang **Phương án 1: Tiếp nhận và lưu trữ tự động trực tiếp trên website**.

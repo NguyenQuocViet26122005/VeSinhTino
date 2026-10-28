@@ -5,11 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev --host 127.0.0.1",
-    "build": "astro build",
+    "build": "astro build && node scripts/check-public-secrets.mjs",
     "preview": "astro preview --host 127.0.0.1",
     "check": "astro check",
     "verify": "node scripts/verify.mjs",
-    "design:lint": "designmd lint DESIGN.md"
+    "design:lint": "designmd lint DESIGN.md",
+    "test:contact": "node --test scripts/contact.test.mjs",
+    "verify:secrets": "node scripts/check-public-secrets.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.0",

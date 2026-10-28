@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { contact } from '../data/site';
 
 const SERVICE_ID_TO_NAME: Record<string, string> = {
@@ -21,13 +21,6 @@ const SERVICE_ID_TO_NAME: Record<string, string> = {
   floor: 'Tổng vệ sinh nhà sau xây dựng'
 };
 
-const escapeHtml = (str: string) =>
-  str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-
 export const ContactForm: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -37,6 +30,7 @@ export const ContactForm: React.FC = () => {
     area: ''
   });
 
+  const requestInFlight = useRef(false);
   const [honeypot, setHoneypot] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -118,125 +112,44 @@ export const ContactForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (requestInFlight.current) return;
     setErrorMessage('');
-
-    // 1. Honeypot check: silent return for bots
-    if (honeypot) {
-      setSubmitted(true);
-      return;
-    }
-
-    if (!formData.phone.trim()) {
-      setErrorMessage('Vui lòng nhập số điện thoại hoặc Zalo để Tino tiện liên hệ hỗ trợ bạn!');
-      return;
-    }
-
     const cleanPhone = formData.phone.replace(/[\s.-]/g, '');
-    if (!/^(0|\+84)[0-9]{9,10}$/.test(cleanPhone)) {
-      setErrorMessage('Số điện thoại chưa đúng định dạng (cần 10 chữ số). Vui lòng kiểm tra lại!');
+    if (!/^(?:0|\+84)[0-9]{9}$/.test(cleanPhone)) {
+      setErrorMessage('Vui lòng kiểm tra số điện thoại (10 chữ số hoặc dạng +84).');
       return;
     }
-
-    // Rate-limit check: 15s cooldown to prevent double clicks
-    const now = Date.now();
-    const lastSubmit = Number(localStorage.getItem('tino_last_submit') || '0');
-    if (now - lastSubmit < 15000) {
-      setErrorMessage('Yêu cầu của bạn vừa được gửi đi. Vui lòng đợi trong giây lát hoặc gọi trực tiếp Hotline 0925 649 666!');
-      return;
-    }
-
+    requestInFlight.current = true;
     setSubmitting(true);
-
-    const nowFormatted = new Date().toLocaleString('vi-VN', {
-      hour: '2-digit',
-      minute: '2-digit',
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-
-    const leadData = {
-      name: formData.name.trim() || 'Khách hàng',
-      phone: cleanPhone,
-      service: formData.service,
-      area: formData.area.trim() || 'Chưa cung cấp',
-      notes: formData.notes.trim() || 'Không có ghi chú',
-      createdAt: new Date().toISOString(),
-      displayTime: nowFormatted,
-      source: 'Website Vệ Sinh Tino'
-    };
-
-    // 1. Local backup in localStorage
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
     try {
-      localStorage.setItem('tino_last_submit', String(now));
-      const existing = JSON.parse(localStorage.getItem('tino_leads') || '[]');
-      existing.unshift(leadData);
-      localStorage.setItem('tino_leads', JSON.stringify(existing.slice(0, 50)));
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, phone: cleanPhone, honeypot }),
+        signal: controller.signal
+      });
+      const result = await response.json().catch(() => null) as { ok?: boolean } | null;
+      if (!response.ok || result?.ok !== true) {
+        setErrorMessage(response.status === 503
+          ? 'Form tạm thời chưa sẵn sàng. Vui lòng gọi Hotline hoặc nhắn Zalo bên dưới.'
+          : response.status === 429
+            ? 'Bạn đang gửi quá nhanh. Vui lòng đợi một lát hoặc liên hệ Hotline / Zalo.'
+            : 'Chưa xác nhận được việc gửi yêu cầu đến Tino. Bạn có thể thử lại hoặc liên hệ Hotline / Zalo bên dưới.');
+        return;
+      }
+      setSubmittedTime(new Date().toLocaleString('vi-VN', {
+        hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric'
+      }));
+      setSubmitted(true);
     } catch {
-      // Ignore local storage error
+      setErrorMessage('Kết nối bị gián đoạn hoặc phản hồi quá lâu, chưa xác nhận được việc gửi. Thông tin của bạn vẫn còn trong form; vui lòng liên hệ Hotline / Zalo để kiểm tra.');
+    } finally {
+      clearTimeout(timeout);
+      requestInFlight.current = false;
+      setSubmitting(false);
     }
-
-    // 2. Dispatch to Telegram Bot (Instant notification to phone / group)
-    if (contact.telegram?.botToken && contact.telegram?.chatId) {
-      const telegramText = [
-        `🔔 <b>CÓ YÊU CẦU BÁO GIÁ MỚI - VỆ SINH TINO</b>`,
-        ``,
-        `👤 <b>Khách hàng:</b> ${escapeHtml(leadData.name)}`,
-        `📞 <b>Số điện thoại:</b> <code>${leadData.phone}</code>`,
-        `🧹 <b>Dịch vụ:</b> ${escapeHtml(leadData.service)}`,
-        leadData.area && leadData.area !== 'Chưa cung cấp' ? `📐 <b>Diện tích / Khối lượng:</b> ${escapeHtml(leadData.area)}` : null,
-        leadData.notes && leadData.notes !== 'Không có ghi chú' ? `📝 <b>Ghi chú / Địa chỉ:</b> ${escapeHtml(leadData.notes)}` : null,
-        `⏰ <b>Thời gian tiếp nhận:</b> ${leadData.displayTime}`,
-        ``,
-        `🌐 <i>Tiếp nhận từ website Vệ Sinh Tino</i>`
-      ]
-        .filter(Boolean)
-        .join('\n');
-
-      try {
-        await fetch(
-          `https://api.telegram.org/bot${contact.telegram.botToken}/sendMessage`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              chat_id: contact.telegram.chatId,
-              text: telegramText,
-              parse_mode: 'HTML'
-            })
-          }
-        );
-      } catch (err) {
-        console.warn('Telegram notification notice:', err);
-      }
-    }
-
-    // 3. Dispatch to Webhook (Google Apps Script / Webhook) if configured
-    const webhookUrl =
-      (typeof window !== 'undefined' &&
-        (window as unknown as { __TINO_WEBHOOK_URL__?: string }).__TINO_WEBHOOK_URL__) ||
-      contact.webhookUrl ||
-      '';
-
-    if (webhookUrl) {
-      try {
-        await fetch(webhookUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(leadData)
-        });
-      } catch (err) {
-        console.warn('Webhook notice:', err);
-      }
-    }
-
-    // Copy message to clipboard for seamless Zalo forwarding if user chooses to chat
-    await copyToClipboard(getFormattedMessage());
-
-    setSubmittedTime(nowFormatted);
-    setSubmitting(false);
-    setSubmitted(true);
   };
 
   return (

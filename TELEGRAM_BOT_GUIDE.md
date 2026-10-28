@@ -1,77 +1,30 @@
-# Hướng dẫn quản trị & cài đặt Bot Telegram nhận khách cho Vệ Sinh Tino
+# Telegram: cấu hình sau khi sửa lỗi lộ token
 
-Hệ thống đã được tích hợp và **kích hoạt sẵn sàng 100%**. 
+## Trạng thái
 
-Mỗi khi khách hàng điền form tư vấn và bấm **"Gửi yêu cầu khảo sát & báo giá"** trên website, thông tin khách hàng sẽ ngay lập tức được gửi đến **Telegram** của bạn với âm thanh và thông báo tức thì (chưa tới 1 giây)!
+Form gửi POST /api/contact cùng tên miền. Máy chủ gọi Telegram và chỉ trả ok: true khi Telegram trả HTTP thành công cùng ok: true. Khi thiếu cấu hình, mất mạng hoặc Telegram báo lỗi, form giữ thông tin và hiển thị hướng liên hệ trực tiếp. Không có token trong src/ hoặc bản build tĩnh.
 
----
+## Việc chủ bot cần làm ngay
 
-## 1. Trạng thái kết nối hiện tại
+1. Mở đúng @BotFather trên Telegram, dùng /revoke và chọn bot cũ để thu hồi token đã lộ. Làm theo hướng dẫn BotFather để lấy token mới.
+2. Trong dashboard hosting, thêm hai biến môi trường **phía máy chủ**: TELEGRAM_BOT_TOKEN (token mới) và TELEGRAM_CHAT_ID (ID người/nhóm nhận hiện có). Không dùng tiền tố PUBLIC_, không đưa token vào Git hoặc tin nhắn chat.
+3. Với Vercel: entry point api/contact.ts. Đặt biến cho đúng môi trường Production/Preview và redeploy. Với Cloudflare Pages: entry point functions/api/contact.ts; đặt secrets trong Pages Settings và redeploy.
+4. Bot phải được người nhận Start hoặc được thêm vào nhóm có quyền gửi tin.
+5. Sau triển khai, chủ bot gửi một yêu cầu thử và đối chiếu tin nhận trong Telegram. Chưa có bước này thì chưa xác nhận kết nối production.
 
-* **Tên Bot**: `@tino_thong_bao_bot` (Tino thong bao)
-* **Chat ID nhận tin hiện tại**: `6668216030` (@hainam_68 - Nam Nguyễn Hải)
-* **Cấu hình lưu tại**: [`src/data/site.ts`](file:///c:/Users/Modern%2014/Videos/VeSinhTino/src/data/site.ts#L1)
-* **Định dạng tin nhắn nhận được**:
-  ```text
-  🔔 CÓ YÊU CẦU BÁO GIÁ MỚI - VỆ SINH TINO
+## Lưu ý triển khai
 
-  👤 Khách hàng: Anh Tuấn
-  📞 Số điện thoại: 0925649666
-  🧹 Dịch vụ: Tổng vệ sinh nhà sau xây dựng
-  📐 Diện tích / Khối lượng: 120m²
-  📝 Ghi chú / Địa chỉ: Nhà mới hoàn thiện cần dọn dẹp cuối tuần
-  ⏰ Thời gian: 22:15 - 28/10/2026
+- astro dev / astro preview chỉ chạy website tĩnh, không chạy hai entry point hosting này. Dùng môi trường dev của Vercel hoặc Cloudflare để kiểm tra đầu cuối.
+- Thiếu endpoint/biến môi trường sẽ hiện lỗi thay vì báo thành công giả.
+- Có thể sao chép .env.example thành file môi trường cục bộ. File chứa secrets đã được Git ignore; tuyệt đối không commit token mới.
+- Token cũ vẫn có thể nằm trong lịch sử Git và các deployment cũ. Xóa khỏi code không thay thế việc thu hồi. Sau khi cập nhật hosting cần bỏ các deployment cũ có bundle chứa token nếu nền tảng cho phép.
+- Thay đổi này xử lý việc giữ bí mật token và xác nhận giao nhận. Giới hạn tần suất/WAF chống spam là công việc tiếp theo.
+- Không tự gửi lại khi timeout: trạng thái có thể chưa xác nhận, hãy kiểm tra Telegram để tránh tin trùng.
 
-  🌐 Tiếp nhận từ website Vệ Sinh Tino
-  ```
-  *(Số điện thoại được định dạng sẵn `<code>`, bạn chỉ cần chạm nhẹ vào số là tự động copy để gọi điện ngay).*
+Tài liệu: https://core.telegram.org/bots/tutorial#obtain-your-bot-token và https://vercel.com/docs/functions/runtimes/node-js
 
----
+## Kiểm tra cục bộ
 
-## 2. Hướng dẫn tạo Bot Telegram MỚI (Nếu bạn muốn đổi tên bot)
-
-Nếu sau này bạn muốn tự tạo một con Bot riêng với tên khác:
-
-### Bước 1: Tạo Bot qua BotFather
-1. Mở ứng dụng Telegram trên điện thoại hoặc máy tính.
-2. Tìm kiếm người dùng: `@BotFather` (có tích xanh chính thức).
-3. Bấm **Start** và gửi lệnh: `/newbot`
-4. BotFather sẽ hỏi:
-   - **Tên hiển thị của bot**: Ví dụ nhập `Vệ Sinh Tino Bot`
-   - **Username của bot** (phải kết thúc bằng chữ `bot`): Ví dụ nhập `vesinhtino_lead_bot`
-5. Sau khi tạo xong, BotFather sẽ gửi cho bạn một đoạn mã **Token** dạng:
-   `1234567890:ABCdefGHIjklMNOpqrsTUVwxyz`
-   *(Hãy sao chép lại chuỗi Token này)*.
-
-### Bước 2: Kích hoạt Bot
-* Nhấp vào đường link bot mà BotFather vừa tạo (hoặc tìm kiếm username của bot trên Telegram).
-* Bấm nút **START** để bắt đầu kích hoạt bot.
-
-### Bước 3: Lấy Chat ID của bạn
-1. Tìm kiếm bot `@userinfobot` trên Telegram.
-2. Bấm **START**, bot sẽ phản hồi ngay lập tức dãy số `Id:` của bạn (Ví dụ: `5193894351`).
-
-### Bước 4: Cập nhật vào Website
-Mở file `src/data/site.ts`, tìm đến dòng `telegram:` và thay thế Token cùng Chat ID mới:
-```typescript
-telegram: {
-  botToken: 'DÁN_TOKEN_MỚI_VÀO_ĐÂY',
-  chatId: 'DÁN_CHAT_ID_CỦA_BẠN_VÀO_ĐÂY'
-}
-```
-
----
-
-## 3. Cách thêm Bot vào NHÓM Telegram (Để cả đội ngũ cùng nhận khách)
-
-Nếu bạn có nhóm nhân viên / kỹ thuật viên và muốn khi có khách mới thì cả nhóm cùng nhận được:
-
-1. **Tạo Nhóm (Group)** trên Telegram hoặc mở nhóm hiện có.
-2. Thêm con bot `@tino_thong_bao_bot` vào làm thành viên nhóm.
-3. Cấp quyền quản trị viên (Admin) cho Bot trong nhóm để bot có quyền gửi tin.
-4. Gửi một tin nhắn bất kỳ vào nhóm (ví dụ: `test bot`).
-5. Mở trình duyệt và truy cập đường link sau (thay `<TOKEN>` bằng token của bot):
-   `https://api.telegram.org/bot<TOKEN>/getUpdates`
-6. Tìm dòng `"chat":{"id": -100xxxxxxxxxx` (ID của nhóm Telegram luôn có dấu trừ `-` ở đầu, ví dụ `-1002345678901`).
-7. Thay thế `chatId: '-100xxxxxxxxxx'` vào file `src/data/site.ts`.
-8. Từ nay, mọi đơn yêu cầu khảo sát sẽ nhảy thẳng vào nhóm chat chung của công ty!
+- npm run test:contact: các trường hợp gửi Telegram được giả lập, không gửi tin thật. Cần Node.js 24 (hoặc phiên bản hỗ trợ chạy TypeScript trực tiếp).
+- npm run build: tạo web và tự kiểm tra mẫu token trong src/ + dist/.
+- scripts/contact-browser.cjs: đặt TINO_PLAYWRIGHT trỏ tới module Playwright và tùy chọn TINO_CHROME trỏ tới trình duyệt Chrome. Kiểm thử endpoint giả lập, bao gồm timeout và lỗi mạng.

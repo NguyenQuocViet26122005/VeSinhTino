@@ -32,7 +32,7 @@ const nav = [
   ['/bang-gia/', 'Bảng giá'],
   ['/gioi-thieu/', 'Về Tino'],
   ['/tuyen-dung/', 'Tuyển dụng'],
-  ['/tin-tuc/', 'Cẩm nang'],
+  ['/cam-nang/', 'Cẩm nang'],
   ['/lien-he/', 'Liên hệ']
 ];
 
@@ -42,8 +42,8 @@ function isNavActive(url: string, path: string): boolean {
   if (url === '/category/dichvuvesinh/') {
     return path.startsWith('/category/dichvuvesinh') || services.some(s => path === `/${s.slug}/`);
   }
-  if (url === '/tin-tuc/') {
-    return path.startsWith('/tin-tuc') || path.startsWith('/category/dich-vu-phu') || path.startsWith('/author/');
+  if (url === '/cam-nang/') {
+    return path.startsWith('/cam-nang') || path.startsWith('/tin-tuc') || path.startsWith('/category/dich-vu-phu') || path.startsWith('/author/');
   }
   return path.startsWith(url);
 }
@@ -119,7 +119,7 @@ function isNavActive(url: string, path: string): boolean {
           <h2>Khám phá</h2>
           <a href="/gioi-thieu/">Về Tino</a>
           <a href="/bang-gia/">Bảng giá</a>
-          <a href="/tin-tuc/">Cẩm nang vệ sinh</a>
+          <a href="/cam-nang/">Cẩm nang vệ sinh</a>
           <a href="/tuyen-dung/">Tuyển dụng</a>
           <a href="/lien-he/">Liên hệ</a>
         </div>

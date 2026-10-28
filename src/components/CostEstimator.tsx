@@ -15,6 +15,21 @@ export interface EstimatorService {
 
 const SERVICES: EstimatorService[] = [
   {
+    id: 'dich-vu-ve-sinh-cong-nghiep',
+    name: 'Tổng vệ sinh nhà sau xây dựng',
+    unit: 'm²',
+    defaultQty: 100,
+    minQty: 30,
+    maxQty: 800,
+    presets: [50, 80, 100, 150, 250],
+    calculate: (qty) => ({
+      min: qty * 12000,
+      max: qty * 20000,
+      unitRate: '12.000 – 20.000 đ/m²',
+      note: 'Áp dụng cho nhà phố, biệt thự hoặc công trình sau xây dựng/sửa chữa: thu gom rác thô, sủi sơn xi măng và đánh sàn.'
+    })
+  },
+  {
     id: 've-sinh-chung-cu',
     name: 'Tổng vệ sinh chung cư trọn gói',
     unit: 'm²',
@@ -39,21 +54,6 @@ const SERVICES: EstimatorService[] = [
         note: `Tổng vệ sinh căn hộ chung cư trọn gói ${qty}m² theo đơn giá 30.000 đ/m² (cam kết không phát sinh phụ phí).`
       };
     }
-  },
-  {
-    id: 'dich-vu-ve-sinh-cong-nghiep',
-    name: 'Tổng vệ sinh nhà sau xây dựng',
-    unit: 'm²',
-    defaultQty: 100,
-    minQty: 30,
-    maxQty: 800,
-    presets: [50, 80, 100, 150, 250],
-    calculate: (qty) => ({
-      min: qty * 12000,
-      max: qty * 20000,
-      unitRate: '12.000 – 20.000 đ/m²',
-      note: 'Áp dụng cho nhà phố, biệt thự hoặc công trình sau xây dựng/sửa chữa: thu gom rác thô, sủi sơn xi măng và đánh sàn.'
-    })
   },
   {
     id: 've-sinh-nha-o',
@@ -155,7 +155,7 @@ function formatVND(amount: number): string {
 }
 
 export const CostEstimator: React.FC = () => {
-  const [selectedServiceId, setSelectedServiceId] = useState('ve-sinh-chung-cu');
+  const [selectedServiceId, setSelectedServiceId] = useState('dich-vu-ve-sinh-cong-nghiep');
   const service = SERVICES.find(s => s.id === selectedServiceId) || SERVICES[0];
   const [quantity, setQuantity] = useState(service.defaultQty);
 

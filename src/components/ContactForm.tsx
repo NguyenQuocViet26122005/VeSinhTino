@@ -23,7 +23,7 @@ export const ContactForm: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    service: 'Tổng vệ sinh chung cư trọn gói',
+    service: 'Tổng vệ sinh nhà sau xây dựng',
     notes: '',
     area: ''
   });
@@ -328,8 +328,8 @@ export const ContactForm: React.FC = () => {
                     onChange={e => setFormData({ ...formData, service: e.target.value })}
                     className="form-select"
                   >
-                    <option value="Tổng vệ sinh chung cư trọn gói">Tổng vệ sinh chung cư trọn gói</option>
                     <option value="Tổng vệ sinh nhà sau xây dựng">Tổng vệ sinh nhà sau xây dựng</option>
+                    <option value="Tổng vệ sinh chung cư trọn gói">Tổng vệ sinh chung cư trọn gói</option>
                     <option value="Vệ sinh nhà ở & Nhà cũ">Vệ sinh nhà ở & Nhà cũ</option>
                     <option value="Vệ sinh kho & Nhà xưởng">Vệ sinh kho & Nhà xưởng</option>
                     <option value="Vệ sinh kính tòa nhà cao tầng">Vệ sinh kính tòa nhà cao tầng</option>

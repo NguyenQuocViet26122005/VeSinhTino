@@ -16,22 +16,6 @@ export interface ServiceDetail {
 
 const SERVICES_DATA: ServiceDetail[] = [
   {
-    slug: 've-sinh-nha-o',
-    name: 'Tổng vệ sinh chung cư trọn gói',
-    short: 'Chung cư trọn gói',
-    tag: 'Tiết kiệm & Chuẩn chỉ',
-    photo: 'f3e9578413dffb6cd7a69149858785c1',
-    description: 'Dịch vụ trọn gói cho căn hộ chung cư 1PN, 2PN, 3PN với đơn giá chuẩn 30.000 đ/m², đầy đủ thiết bị chuyên dụng và hóa chất an toàn.',
-    intro: 'Tổng vệ sinh chung cư trọn gói 50m² từ 1tr6, áp dụng đơn giá 30k/m². Tino làm sạch chi tiết từng phòng ngủ, phòng khách, ban công, bếp và nhà tắm trước khi dọn vào ở.',
-    tasks: [
-      'Hút bụi trần thạch cao, lau khe cửa kính và ban công',
-      'Tẩy sạch dầu mỡ khu bếp, bồn rửa và tủ kệ âm tường',
-      'Khử khuẩn, chà sạch tường gạch và thiết bị phòng tắm',
-      'Lau sàn gạch/sàn gỗ bằng dung dịch bảo dưỡng an toàn'
-    ],
-    priceHighlight: '30.000 đ/m² (50m² từ 1.6tr)'
-  },
-  {
     slug: 'dich-vu-ve-sinh-cong-nghiep',
     name: 'Tổng vệ sinh nhà sau xây dựng',
     short: 'Sau xây dựng',
@@ -46,6 +30,22 @@ const SERVICES_DATA: ServiceDetail[] = [
       'Nghiệm thu chi tiết từng phòng theo danh mục kiểm tra'
     ],
     priceHighlight: 'Từ 12.000 – 20.000 đ/m²'
+  },
+  {
+    slug: 've-sinh-nha-o',
+    name: 'Tổng vệ sinh chung cư trọn gói',
+    short: 'Chung cư trọn gói',
+    tag: 'Tiết kiệm & Chuẩn chỉ',
+    photo: 'f3e9578413dffb6cd7a69149858785c1',
+    description: 'Dịch vụ trọn gói cho căn hộ chung cư 1PN, 2PN, 3PN với đơn giá chuẩn 30.000 đ/m², đầy đủ thiết bị chuyên dụng và hóa chất an toàn.',
+    intro: 'Tổng vệ sinh chung cư trọn gói 50m² từ 1tr6, áp dụng đơn giá 30k/m². Tino làm sạch chi tiết từng phòng ngủ, phòng khách, ban công, bếp và nhà tắm trước khi dọn vào ở.',
+    tasks: [
+      'Hút bụi trần thạch cao, lau khe cửa kính và ban công',
+      'Tẩy sạch dầu mỡ khu bếp, bồn rửa và tủ kệ âm tường',
+      'Khử khuẩn, chà sạch tường gạch và thiết bị phòng tắm',
+      'Lau sàn gạch/sàn gỗ bằng dung dịch bảo dưỡng an toàn'
+    ],
+    priceHighlight: '30.000 đ/m² (50m² từ 1.6tr)'
   },
   {
     slug: 've-sinh-nha-xuong',

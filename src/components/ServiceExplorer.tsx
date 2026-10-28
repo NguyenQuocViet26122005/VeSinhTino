@@ -32,13 +32,13 @@ const SERVICES_DATA: ServiceDetail[] = [
     priceHighlight: 'Từ 12.000 – 20.000 đ/m²'
   },
   {
-    slug: 've-sinh-nha-o',
+    slug: 've-sinh-chung-cu',
     name: 'Tổng vệ sinh chung cư trọn gói',
     short: 'Chung cư trọn gói',
     tag: 'Tiết kiệm & Chuẩn chỉ',
-    photo: 'f3e9578413dffb6cd7a69149858785c1',
+    photo: 'tino-chung-cu-binh-chanh',
     description: 'Dịch vụ trọn gói cho căn hộ chung cư 1PN, 2PN, 3PN với đơn giá chuẩn 30.000 đ/m², đầy đủ thiết bị chuyên dụng và hóa chất an toàn.',
-    intro: 'Tổng vệ sinh chung cư trọn gói 50m² từ 1tr6, áp dụng đơn giá 30k/m². Tino làm sạch chi tiết từng phòng ngủ, phòng khách, ban công, bếp và nhà tắm trước khi dọn vào ở.',
+    intro: 'Tổng vệ sinh chung cư trọn gói 50m² từ 1tr6, áp dụng đơn giá 30k/m² (hình ảnh thực tế thi công tại Bình Chánh, TP.HCM). Tino làm sạch chi tiết từng phòng ngủ, phòng khách, bếp và nhà tắm trước khi dọn vào ở.',
     tasks: [
       'Hút bụi trần thạch cao, lau khe cửa kính và ban công',
       'Tẩy sạch dầu mỡ khu bếp, bồn rửa và tủ kệ âm tường',
@@ -46,6 +46,22 @@ const SERVICES_DATA: ServiceDetail[] = [
       'Lau sàn gạch/sàn gỗ bằng dung dịch bảo dưỡng an toàn'
     ],
     priceHighlight: '30.000 đ/m² (50m² từ 1.6tr)'
+  },
+  {
+    slug: 've-sinh-nha-o',
+    name: 'Vệ sinh nhà ở & Nhà cũ',
+    short: 'Nhà ở & Nhà cũ',
+    tag: 'Chăm chút tổ ấm',
+    photo: 'f3e9578413dffb6cd7a69149858785c1',
+    description: 'Tổng vệ sinh nhà phố, biệt thự, nhà liền kề định kỳ hoặc dọn vào nhà cũ sạch sẽ.',
+    intro: 'Một căn nhà sạch bắt đầu từ những chi tiết nhỏ. Dịch vụ vệ sinh nhà ở giúp bạn chăm sóc không gian sống toàn diện, đặc biệt sau cải tạo hoặc trước khi chuyển vào nhà mới.',
+    tasks: [
+      'Vệ sinh phòng khách, phòng ngủ và lối đi cầu thang',
+      'Làm sạch cửa sổ kính, kệ tủ âm và đánh sàn gạch/đá',
+      'Khử khuẩn, tẩy ố mốc toàn diện khu vực bếp và nhà tắm',
+      'Kiểm tra từng ngóc ngách, nghiệm thu hài lòng mới thanh toán'
+    ],
+    priceHighlight: 'Từ 10.000 – 20.000 đ/m²'
   },
   {
     slug: 've-sinh-nha-xuong',
@@ -122,7 +138,7 @@ export const ServiceExplorer: React.FC = () => {
   };
 
   const handleScrollToEstimator = (slug: string) => {
-    const targetSlug = slug === 've-sinh-nha-o' ? 've-sinh-chung-cu' : slug;
+    const targetSlug = slug;
     if (typeof window !== 'undefined') {
       (window as unknown as { __tino_pending_service?: string }).__tino_pending_service = targetSlug;
     }
@@ -196,7 +212,10 @@ export const ServiceExplorer: React.FC = () => {
           </div>
 
           <div className="explorer-actions">
-            <a href={`/${current.slug}/`} className="button">
+            <a
+              href={current.slug === 've-sinh-chung-cu' ? '/ve-sinh-nha-o/#goi-ve-sinh-chung-cu' : `/${current.slug}/`}
+              className="button"
+            >
               Xem chi tiết dịch vụ
               <span aria-hidden="true">↗</span>
             </a>

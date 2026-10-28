@@ -5,7 +5,7 @@ import GlareHover from './react-bits/GlareHover';
 
 export interface ProjectItem {
   id: string;
-  category: 'home' | 'glass' | 'factory' | 'floor' | 'furnishing';
+  category: 'apartment' | 'home' | 'glass' | 'factory' | 'floor' | 'furnishing';
   categoryLabel: string;
   title: string;
   caption: string;
@@ -20,7 +20,7 @@ const PROJECTS: ProjectItem[] = [
   {
     id: 'f3e9578413dffb6cd7a69149858785c1',
     category: 'home',
-    categoryLabel: 'Nhà ở & Căn hộ',
+    categoryLabel: 'Nhà ở & Nhà phố',
     title: 'Tổng vệ sinh nhà phố 4 tầng Nguyễn Duy Cung, Gò Vấp',
     caption: 'Sàn đá bóng loáng phản chiếu ánh sáng tự nhiên, toàn bộ nội thất và khung cửa kính được làm sạch tinh tươm.',
     tag: 'Bàn giao thực tế',
@@ -91,8 +91,8 @@ const PROJECTS: ProjectItem[] = [
   },
   {
     id: 'b486da45979bde972f03edd7f9a890e5',
-    category: 'home',
-    categoryLabel: 'Nhà ở & Căn hộ',
+    category: 'apartment',
+    categoryLabel: 'Căn hộ chung cư',
     title: 'Thi công đồng bộ căn hộ Quang Trung, Gò Vấp',
     caption: 'Kỹ thuật viên Tino thao tác đồng bộ: lau khung kính trên cao, hút bụi sàn đá và xử lý tủ kệ âm tường.',
     tag: 'Phối hợp kỹ thuật',
@@ -113,17 +113,29 @@ const PROJECTS: ProjectItem[] = [
     solution: 'Đội ngũ kỹ thuật viên có chứng chỉ an toàn đu dây khảo sát điểm neo mái, sử dụng hệ thống dây cáp chịu tải kép, bình phun và cần gạt kính chuyên dụng để làm sạch từng hàng kính từ trên xuống.',
     result: 'Đội ngũ kỹ thuật tiếp cận các vị trí kính trên cao, vệ sinh theo từng khu vực và kiểm tra chất lượng bề mặt sau khi hoàn thành.'
   },
+    {
+    id: 'tino-chung-cu-binh-chanh',
+    category: 'apartment',
+    categoryLabel: 'Căn hộ chung cư',
+    title: 'Tổng vệ sinh căn hộ chung cư tại Tân Kiên, Bình Chánh',
+    caption: 'Không gian phòng khách, sảnh căn hộ và các phòng ngủ được hút bụi mịn, sủi keo và vệ sinh bóng loáng trước bàn giao.',
+    tag: 'Chung cư Bình Chánh',
+    image: '/images/tino-chung-cu-binh-chanh.webp',
+    problem: 'Căn hộ sau hoàn thiện nội thất tại Tân Kiên, Bình Chánh còn đọng bụi mịn trong các khe tủ, kệ gỗ và vết keo, bột trét trên sàn nhà.',
+    solution: 'Hút bụi công nghiệp toàn diện trần, tường, khe tủ và ray trượt; tẩy keo, sủi bột trét trên sàn gỗ và sàn gạch bóng; lau sạch thiết bị và khử khuẩn trước khi gia chủ dọn vào ở.',
+    result: 'Sàn gạch bóng gương sạch sẽ, sàn gỗ phòng ngủ khô thoáng, nội thất bàn giao sạch bụi chuẩn bị cho gia chủ dọn đồ vào ở.'
+  },
   {
-    id: '3b21a7ec444d0b39',
-    category: 'home',
-    categoryLabel: 'Nhà ở & Căn hộ',
-    title: 'Tổng vệ sinh phòng ngủ & ban công căn hộ chung cư',
-    caption: 'Không gian phòng ngủ và ban công căn hộ được hút sạch bụi mịn, làm sạch khung kính và sàn nhà trước khi gia đình dọn vào ở.',
-    tag: 'Bàn giao căn hộ',
-    image: '/images/3b21a7ec444d0b39.webp',
-    problem: 'Căn hộ sau khi thi công nội thất dính bụi bột trét thạch cao ở các gờ kệ, vết keo dán sàn và bụi bám tại khung cửa ban công.',
-    solution: 'Hút bụi công nghiệp kỹ lưỡng các khe giường tủ âm tường, sủi keo ron gạch, lau sạch kính cửa lùa ban công và khử mùi bằng dung dịch sinh học an toàn.',
-    result: 'Các bề mặt gỗ, kính và sàn gạch sạch sẽ, thông thoáng, sẵn sàng để gia chủ sắp xếp đồ dùng sinh hoạt.'
+    id: 'tino-chung-cu-binh-chanh-phong-ngu',
+    category: 'apartment',
+    categoryLabel: 'Căn hộ chung cư',
+    title: 'Vệ sinh phòng ngủ sàn gỗ căn hộ tại Bình Chánh',
+    caption: 'Sàn gỗ phòng ngủ được hút bụi mịn khe chân tường và lau bằng dung dịch bảo dưỡng chuyên dụng an toàn.',
+    tag: 'Sàn gỗ phòng ngủ',
+    image: '/images/tino-chung-cu-binh-chanh-phong-ngu.webp',
+    problem: 'Phòng ngủ căn hộ sau khi lắp giường tủ gỗ bám nhiều bụi gỗ li ti và vệt keo dán nẹp chỉ sàn gỗ.',
+    solution: 'Dùng đầu hút lông mềm hút sạch bụi mịn trong ngăn kéo, hộc tủ và khe nẹp chân tường; lau bảo dưỡng sàn gỗ bằng khăn vi sợi ẩm.',
+    result: 'Phòng ngủ sạch mát, không bám bụi sàn, vân gỗ sáng bóng tự nhiên và an toàn cho sức khỏe.'
   },
   {
     id: 'e6ecb611e10bc770',
@@ -140,7 +152,7 @@ const PROJECTS: ProjectItem[] = [
   {
     id: 'e28b5ab0b1d848ea',
     category: 'home',
-    categoryLabel: 'Nhà ở & Căn hộ',
+    categoryLabel: 'Nhà ở & Nhà phố',
     title: 'Nghiệm thu bàn giao nhà phố sau xây dựng',
     caption: 'Từng chi tiết len chân tường, khung cửa sổ và sàn gạch được chủ nhà kiểm tra hài lòng.',
     tag: 'Nghiệm thu thực tế',
@@ -176,7 +188,7 @@ const PROJECTS: ProjectItem[] = [
   {
     id: '0dffb2a53aec534128d29cd9bf60aea5',
     category: 'home',
-    categoryLabel: 'Nhà ở & Căn hộ',
+    categoryLabel: 'Nhà ở & Nhà phố',
     title: 'Phục hồi không gian bếp cũ ố dầu mỡ Tôn Đản, Quận 4',
     caption: 'Xử lý triệt để mảng dầu mỡ cháy kết tủa và muội khói lâu năm trên tường gạch, mặt đá bếp.',
     tag: 'Phục hồi sâu',
@@ -212,7 +224,7 @@ const PROJECTS: ProjectItem[] = [
   {
     id: '92a7f6090b410117',
     category: 'home',
-    categoryLabel: 'Nhà ở & Căn hộ',
+    categoryLabel: 'Nhà ở & Nhà cũ',
     title: 'Cải tạo & làm sạch sâu nhà ở cũ',
     caption: 'Tẩy ố mốc lâu năm, khử mùi ẩm mốc và phục hồi độ sáng tự nhiên cho toàn bộ không gian.',
     tag: 'Vệ sinh nhà cũ',
@@ -237,7 +249,8 @@ const PROJECTS: ProjectItem[] = [
 
 const TABS = [
   { key: 'all', label: `Tất cả công trình (${PROJECTS.length})` },
-  { key: 'home', label: 'Nhà ở & Căn hộ' },
+  { key: 'apartment', label: 'Căn hộ chung cư' },
+  { key: 'home', label: 'Nhà ở & Nhà phố' },
   { key: 'glass', label: 'Kính cao ốc' },
   { key: 'factory', label: 'Kho xưởng' },
   { key: 'floor', label: 'Đánh bóng sàn' },

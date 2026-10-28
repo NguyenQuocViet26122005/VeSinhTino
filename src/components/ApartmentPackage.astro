@@ -105,6 +105,31 @@ const { compact = false } = Astro.props;
       </div>
     </div>
 
+    <!-- Real Projects Showcase Strip -->
+    <div class="package-gallery-strip">
+      <div class="gallery-lead">
+        <span class="gallery-badge">HÌNH ẢNH THỰC TẾ</span>
+        <h4 class="gallery-title">Công trình căn hộ hoàn thiện tại Tân Kiên, Bình Chánh, TP.HCM</h4>
+        <p class="gallery-desc">Hình ảnh thi công thực tế của đội ngũ Tino — Sàn gạch bóng gương, phòng ngủ sàn gỗ và nội thất được hút bụi mịn, khử khuẩn sạch bóng trước giờ bàn giao.</p>
+      </div>
+      <div class="gallery-photos-grid">
+        <figure class="gallery-photo-card">
+          <div class="photo-card-wrap">
+            <img src="/images/tino-chung-cu-binh-chanh.webp" alt="Sảnh và hành lang căn hộ chung cư Bình Chánh sau khi vệ sinh" width="576" height="1024" loading="lazy" decoding="async" />
+            <span class="photo-tag">Sảnh &amp; Lối vào</span>
+          </div>
+          <figcaption>Sàn gạch bóng gương sạch keo dán và bụi mịn sau thi công</figcaption>
+        </figure>
+        <figure class="gallery-photo-card">
+          <div class="photo-card-wrap">
+            <img src="/images/tino-chung-cu-binh-chanh-phong-ngu.webp" alt="Phòng ngủ sàn gỗ căn hộ chung cư Bình Chánh sau khi vệ sinh" width="576" height="1024" loading="lazy" decoding="async" />
+            <span class="photo-tag">Phòng ngủ sàn gỗ</span>
+          </div>
+          <figcaption>Hút bụi mịn khe chân tường và lau bảo dưỡng sàn gỗ tự nhiên</figcaption>
+        </figure>
+      </div>
+    </div>
+
     <!-- Package Inclusions List -->
     <div class="package-inclusions">
       <h4 class="inclusions-title">
@@ -303,6 +328,92 @@ const { compact = false } = Astro.props;
     font-size: 13.5px;
     padding: 10px 16px;
   }
+  .package-gallery-strip {
+    background: #f1f7fb;
+    border: 1px solid rgba(15, 41, 66, 0.08);
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 28px;
+  }
+  .gallery-lead {
+    margin-bottom: 16px;
+  }
+  .gallery-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--brand, #0f2942);
+    background: rgba(15, 41, 66, 0.08);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+  }
+  .gallery-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--brand, #0f2942);
+    margin: 0 0 6px;
+  }
+  .gallery-desc {
+    font-size: 13.5px;
+    color: var(--muted, #475569);
+    margin: 0;
+    line-height: 1.5;
+  }
+  .gallery-photos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .gallery-photo-card {
+    margin: 0;
+    background: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(15, 41, 66, 0.08);
+  }
+  .photo-card-wrap {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: #0f2942;
+  }
+  .photo-card-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  .gallery-photo-card:hover .photo-card-wrap img {
+    transform: scale(1.03);
+  }
+  .photo-tag {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background: rgba(15, 41, 66, 0.85);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    backdrop-filter: blur(4px);
+  }
+  .gallery-photo-card figcaption {
+    font-size: 12.5px;
+    color: var(--muted, #475569);
+    padding: 10px 12px;
+    line-height: 1.4;
+    background: #ffffff;
+  }
+  @media (max-width: 640px) {
+    .gallery-photos-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
   .package-inclusions {
     background: #f8fafc;
     border: 1px solid rgba(15, 41, 66, 0.08);

@@ -9,7 +9,7 @@ Mỗi khi khách hàng điền form tư vấn và bấm **"Gửi yêu cầu kh�
 ## 1. Trạng thái kết nối hiện tại
 
 * **Tên Bot**: `@tino_thong_bao_bot` (Tino thong bao)
-* **Chat ID nhận tin**: `5193894351` (Tài khoản Telegram của bạn)
+* **Chat ID nhận tin hiện tại**: `6668216030` (@hainam_68 - Nam Nguyễn Hải)
 * **Cấu hình lưu tại**: [`src/data/site.ts`](file:///c:/Users/Modern%2014/Videos/VeSinhTino/src/data/site.ts#L1)
 * **Định dạng tin nhắn nhận được**:
   ```text

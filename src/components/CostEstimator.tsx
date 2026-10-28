@@ -18,7 +18,7 @@ const SERVICES: EstimatorService[] = [
     id: 've-sinh-chung-cu',
     name: 'Tổng vệ sinh chung cư trọn gói',
     unit: 'm²',
-    defaultQty: 50,
+    defaultQty: 70,
     minQty: 40,
     maxQty: 250,
     presets: [50, 65, 85, 100, 120],
@@ -26,19 +26,17 @@ const SERVICES: EstimatorService[] = [
       if (qty <= 50) {
         return {
           min: 1600000,
-          max: 2000000,
-          unitRate: 'Trọn gói 50m² từ 1.600.000 đ',
+          max: 1600000,
+          unitRate: '30.000 đ/m² (Gói 50m² từ 1.600.000 đ)',
           note: 'Tổng vệ sinh chung cư trọn gói 50m² từ 1tr6. Hút bụi, lau kính, làm sạch khu bếp, toilet và sàn toàn diện.'
         };
       }
-      const extra = qty - 50;
-      const min = 1600000 + extra * 20000;
-      const max = 2000000 + extra * 25000;
+      const total = qty * 30000;
       return {
-        min,
-        max,
-        unitRate: 'Gói 50m² từ 1.600.000 đ (+20k–25k/m² phát sinh)',
-        note: `Tổng vệ sinh căn hộ chung cư trọn gói ${qty}m² (gói chuẩn 50m² kèm diện tích vượt).`
+        min: total,
+        max: total,
+        unitRate: '30.000 đ/m²',
+        note: `Tổng vệ sinh căn hộ chung cư trọn gói ${qty}m² theo đơn giá 30.000 đ/m² (cam kết không phát sinh phụ phí).`
       };
     }
   },
@@ -208,7 +206,7 @@ export const CostEstimator: React.FC = () => {
       serviceName: service.name,
       serviceId: service.id,
       quantity: `${calculatedQty} ${service.unit}`,
-      estimateText: `${formatVND(min)} – ${formatVND(max)}`
+      estimateText: min === max ? formatVND(min) : `${formatVND(min)} – ${formatVND(max)}`
     };
 
     if (typeof window !== 'undefined') {
@@ -317,9 +315,15 @@ export const CostEstimator: React.FC = () => {
           <div className="result-card-inner">
             <span className="result-kicker">KHOẢNG GIÁ DỰ KIẾN</span>
             <div className="result-range">
-              <span className="result-amount">{formatVND(min)}</span>
-              <span className="result-dash">–</span>
-              <span className="result-amount">{formatVND(max)}</span>
+              {min === max ? (
+                <span className="result-amount">{formatVND(min)}</span>
+              ) : (
+                <>
+                  <span className="result-amount">{formatVND(min)}</span>
+                  <span className="result-dash">–</span>
+                  <span className="result-amount">{formatVND(max)}</span>
+                </>
+              )}
             </div>
 
             <div className="result-breakdown">
@@ -350,7 +354,7 @@ export const CostEstimator: React.FC = () => {
               </button>
               <a
                 href={`https://zalo.me/0925649666?text=${encodeURIComponent(
-                  `Chào Tino, tôi cần tư vấn dịch vụ ${service.name} với diện tích khoảng ${calculatedQty} ${service.unit} (khoảng giá ${formatVND(min)} - ${formatVND(max)}). Nhờ Tino hỗ trợ tư vấn và khảo sát!`
+                  `Chào Tino, tôi cần tư vấn dịch vụ ${service.name} với diện tích khoảng ${calculatedQty} ${service.unit} (${min === max ? `dự kiến ${formatVND(min)}` : `khoảng giá ${formatVND(min)} - ${formatVND(max)}`}). Nhờ Tino hỗ trợ tư vấn và khảo sát!`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"

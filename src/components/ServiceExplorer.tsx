@@ -21,15 +21,15 @@ const SERVICES_DATA: ServiceDetail[] = [
     short: 'Chung cư trọn gói',
     tag: 'Tiết kiệm & Chuẩn chỉ',
     photo: 'f3e9578413dffb6cd7a69149858785c1',
-    description: 'Dịch vụ trọn gói cho căn hộ chung cư 1PN, 2PN, 3PN với đầy đủ thiết bị chuyên dụng và hóa chất an toàn.',
-    intro: 'Tổng vệ sinh chung cư trọn gói 50m² từ 1tr6. Tino làm sạch chi tiết từng phòng ngủ, phòng khách, ban công, bếp và nhà tắm trước khi dọn vào ở.',
+    description: 'Dịch vụ trọn gói cho căn hộ chung cư 1PN, 2PN, 3PN với đơn giá chuẩn 30.000 đ/m², đầy đủ thiết bị chuyên dụng và hóa chất an toàn.',
+    intro: 'Tổng vệ sinh chung cư trọn gói 50m² từ 1tr6, áp dụng đơn giá 30k/m². Tino làm sạch chi tiết từng phòng ngủ, phòng khách, ban công, bếp và nhà tắm trước khi dọn vào ở.',
     tasks: [
       'Hút bụi trần thạch cao, lau khe cửa kính và ban công',
       'Tẩy sạch dầu mỡ khu bếp, bồn rửa và tủ kệ âm tường',
       'Khử khuẩn, chà sạch tường gạch và thiết bị phòng tắm',
       'Lau sàn gạch/sàn gỗ bằng dung dịch bảo dưỡng an toàn'
     ],
-    priceHighlight: '50m² từ 1.600.000 đ'
+    priceHighlight: '30.000 đ/m² (50m² từ 1.6tr)'
   },
   {
     slug: 'dich-vu-ve-sinh-cong-nghiep',

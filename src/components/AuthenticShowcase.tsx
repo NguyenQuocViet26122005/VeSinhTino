@@ -390,6 +390,12 @@ export const AuthenticShowcase: React.FC = () => {
         ))}
       </div>
 
+      {/* Mobile Swipe Hint */}
+      <div className="showcase-swipe-hint">
+        <span>Vuốt ngang xem công trình thực tế</span>
+        <span className="swipe-badge">{displayed.length} công trình →</span>
+      </div>
+
       {/* Grid of Projects with Storytelling Layout (compact with load more) */}
       <div className="showcase-grid">
         {displayed.map(item => (
@@ -463,7 +469,7 @@ export const AuthenticShowcase: React.FC = () => {
                   className="showcase-action-btn"
                   onClick={() => handleRequestSimilar(item)}
                 >
-                  Tôi cần vệ sinh như công trình này
+                  Tư vấn công trình tương tự
                   <span aria-hidden="true">↗</span>
                 </button>
               </div>

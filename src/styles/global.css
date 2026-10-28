@@ -84,18 +84,40 @@ html{-webkit-text-size-adjust:100%}button,a,summary{touch-action:manipulation}bu
 }
 @media(max-width: 600px) {
   .trust-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    margin-top: 35px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 24px;
   }
   .trust-card {
-    padding: 24px 20px !important;
+    padding: 15px 13px !important;
+    border-radius: 14px !important;
+  }
+  .trust-card-top {
+    margin-bottom: 10px;
+  }
+  .trust-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
+  .trust-icon svg {
+    width: 18px;
+    height: 18px;
   }
   .trust-title {
-    font-size: 17px;
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin-bottom: 5px;
   }
   .trust-desc {
-    font-size: 13px;
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: var(--muted, #506d82);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 }
 

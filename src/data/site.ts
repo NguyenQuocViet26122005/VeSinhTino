@@ -14,8 +14,7 @@ export const commonPrices: PriceRow[] = [
 export const apartmentPrices: PriceRow[] = [
  {name:'Căn hộ 1 phòng ngủ / Studio (≈ 50m²)',price:'Từ 1.600.000',unit:'Căn',source:commonSource},
  {name:'Căn hộ 2 phòng ngủ (65–85m²)',price:'1.950.000–2.550.000',unit:'Căn',source:commonSource},
- {name:'Căn hộ 3 phòng ngủ & Duplex (85–120m²)',price:'2.550.000–3.600.000',unit:'Căn',source:commonSource},
- {name:'Đơn giá diện tích sàn tiêu chuẩn',price:'30.000',unit:'m²',source:commonSource}
+ {name:'Căn hộ 3 phòng ngủ & Duplex (85–120m²)',price:'2.550.000–3.600.000',unit:'Căn',source:commonSource}
 ];
 export const factoryPrices: PriceRow[] = [
  {name:'Nhà xưởng dưới 500m²',price:'10.000–15.000',unit:'m²',source:'https://vesinhtino.com/ve-sinh-nha-xuong/'},

@@ -42,7 +42,7 @@ const SERVICES: EstimatorService[] = [
         return {
           min: 1600000,
           max: 1600000,
-          unitRate: '30.000 đ/m² (Gói 50m² từ 1.600.000 đ)',
+          unitRate: 'Gói 50m² từ 1.600.000 đ',
           note: 'Tổng vệ sinh chung cư trọn gói 50m² từ 1tr6. Hút bụi, lau kính, làm sạch khu bếp, toilet và sàn toàn diện.'
         };
       }
@@ -50,8 +50,8 @@ const SERVICES: EstimatorService[] = [
       return {
         min: total,
         max: total,
-        unitRate: '30.000 đ/m²',
-        note: `Tổng vệ sinh căn hộ chung cư trọn gói ${qty}m² theo đơn giá 30.000 đ/m² (cam kết không phát sinh phụ phí).`
+        unitRate: 'Trọn gói theo diện tích',
+        note: `Tổng vệ sinh căn hộ chung cư trọn gói ${qty}m² (cam kết không phát sinh phụ phí sau khi thống nhất).`
       };
     }
   },

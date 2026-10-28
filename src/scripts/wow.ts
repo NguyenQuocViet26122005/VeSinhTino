@@ -56,15 +56,22 @@ function initWow() {
 
   mm.add('(prefers-reduced-motion: no-preference)', () => {
     const opening = gsap.timeline({ defaults: { ease: 'power3.out' } });
-    opening
-      .from('.hero-word', { y: 35, opacity: 0, duration: 0.8, clearProps: 'opacity' })
-      .from('.hero-line', { y: 22, opacity: 0, duration: 0.65, clearProps: 'opacity' }, 0.1)
-      .from(
+    if (document.querySelector('.hero-word')) {
+      opening.from('.hero-word', { y: 35, opacity: 0, duration: 0.8, clearProps: 'opacity' });
+    }
+    if (document.querySelector('.hero-line')) {
+      opening.from('.hero-line', { y: 22, opacity: 0, duration: 0.65, clearProps: 'opacity' }, 0.1);
+    }
+    if (document.querySelector('.wow-hero-description, .hero-actions')) {
+      opening.from(
         '.wow-hero-description, .hero-actions',
         { y: 16, opacity: 0, stagger: 0.08, duration: 0.5, clearProps: 'opacity' },
         0.25
-      )
-      .from('.window-perspective', { y: 40, opacity: 0, duration: 0.9, clearProps: 'opacity' }, 0.1);
+      );
+    }
+    if (document.querySelector('.window-perspective')) {
+      opening.from('.window-perspective', { y: 40, opacity: 0, duration: 0.9, clearProps: 'opacity' }, 0.1);
+    }
 
     const motion = { progress: 35 };
     gsap.to(motion, {
@@ -81,33 +88,37 @@ function initWow() {
       }
     });
 
-    gsap.to('.glass-caption', {
-      y: -35,
-      rotation: 0,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: root,
-        start: 'top top',
-        end: 'bottom top',
-        scrub: 0.6
-      }
-    });
+    const captionEl = document.querySelector('.glass-caption');
+    if (captionEl) {
+      gsap.to(captionEl, {
+        y: -35,
+        rotation: 0,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: root,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 0.6
+        }
+      });
+    }
 
     for (const sel of [
       '.wow-intro h2',
       '.wow-section-top h2',
       '.wow-work-heading h2',
       '.price-heading h2',
-      '.wow-process > h2',
       '.faq-section h2',
       '.wow-close h2'
     ]) {
-      gsap.from(sel, {
+      const el = document.querySelector(sel);
+      if (!el) continue;
+      gsap.from(el, {
         y: 32,
         opacity: 0,
         duration: 0.7,
         ease: 'power3.out',
-        scrollTrigger: { trigger: sel, start: 'top 92%', once: true },
+        scrollTrigger: { trigger: el, start: 'top 92%', once: true },
         clearProps: 'transform,opacity'
       });
     }
@@ -123,26 +134,33 @@ function initWow() {
       })
     );
 
-    document.querySelectorAll('.wow-process li').forEach((el, i) =>
-      gsap.from(el, {
-        y: 24,
-        opacity: 0,
-        duration: 0.7,
-        delay: i * 0.08,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: '.wow-process ol', start: 'top 88%', once: true },
-        clearProps: 'transform,opacity'
-      })
-    );
+    const processList = document.querySelector('.wow-process ol');
+    const processItems = document.querySelectorAll('.wow-process li');
+    if (processList && processItems.length > 0) {
+      processItems.forEach((el, i) =>
+        gsap.from(el, {
+          y: 24,
+          opacity: 0,
+          duration: 0.7,
+          delay: i * 0.08,
+          ease: 'power2.out',
+          scrollTrigger: { trigger: processList, start: 'top 88%', once: true },
+          clearProps: 'transform,opacity'
+        })
+      );
+    }
 
-    gsap.from('.price-content', {
-      y: 28,
-      opacity: 0,
-      duration: 0.8,
-      ease: 'power2.out',
-      scrollTrigger: { trigger: '.price-content', start: 'top 90%', once: true },
-      clearProps: 'transform,opacity'
-    });
+    const priceContent = document.querySelector('.price-content');
+    if (priceContent) {
+      gsap.from(priceContent, {
+        y: 28,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: priceContent, start: 'top 90%', once: true },
+        clearProps: 'transform,opacity'
+      });
+    }
   });
 
   mm.add(

@@ -77,7 +77,21 @@ export const ContactForm: React.FC = () => {
     return () => window.removeEventListener('tino:prefill-contact', handlePrefill);
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const buildZaloUrl = () => {
+    const lines = [
+      `Chào Tino, tôi cần tư vấn & báo giá dịch vụ vệ sinh:`,
+      `• Khách hàng: ${formData.name.trim() || 'Khách hàng'}`,
+      `• Số điện thoại / Zalo: ${formData.phone.trim()}`,
+      `• Dịch vụ: ${formData.service}`,
+      formData.area.trim() ? `• Khối lượng / Diện tích: ${formData.area.trim()}` : null,
+      formData.notes.trim() ? `• Ghi chú / Địa chỉ: ${formData.notes.trim()}` : null,
+      `Nhờ Tino tư vấn và hỗ trợ sớm giúp tôi nhé!`
+    ].filter(Boolean);
+
+    return `https://zalo.me/0925649666?text=${encodeURIComponent(lines.join('\n'))}`;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
 
@@ -98,53 +112,25 @@ export const ContactForm: React.FC = () => {
       return;
     }
 
-    // 2. Client-side rate-limit cooldown (prevents rapid-fire bot/spam clicks)
-    const now = Date.now();
-    const lastSubmit = Number(localStorage.getItem('tino_contact_timestamp') || '0');
-    if (now - lastSubmit < 20000) {
-      setErrorMessage('Yêu cầu của bạn đã được ghi nhận cách đây ít giây. Vui lòng đợi trong giây lát hoặc gọi trực tiếp Hotline 0925 649 666!');
-      return;
-    }
-
     setSubmitting(true);
 
     try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.name.trim(),
-          phone: formData.phone.trim(),
-          service: formData.service,
-          area: formData.area.trim(),
-          notes: formData.notes.trim(),
-          honeypot
-        })
-      });
-
-      const data = await res.json().catch(() => null);
-
-      if (res.ok && data?.ok) {
-        try {
-          localStorage.setItem('tino_contact_timestamp', String(Date.now()));
-        } catch {
-          // Ignore local storage error
-        }
-        setSubmitting(false);
-        setSubmitted(true);
-      } else {
-        setSubmitting(false);
-        setErrorMessage(
-          data?.error ||
-          'Chưa thể gửi yêu cầu tự động lúc này. Quý khách vui lòng gọi ngay Hotline 0925 649 666 hoặc nhắn tin Zalo để được hỗ trợ tức thì!'
-        );
-      }
+      localStorage.setItem('tino_contact_timestamp', String(Date.now()));
     } catch {
-      setSubmitting(false);
-      setErrorMessage(
-        'Không thể kết nối đến máy chủ tiếp nhận. Quý khách vui lòng gọi Hotline 0925 649 666 hoặc nhắn tin Zalo để được hỗ trợ ngay!'
-      );
+      // Ignore local storage error
     }
+
+    const zaloUrl = buildZaloUrl();
+
+    // Direct open Zalo in a new tab / native app
+    try {
+      window.open(zaloUrl, '_blank', 'noopener,noreferrer');
+    } catch {
+      // If browser blocks popup, user can tap the prominent Zalo button on the success screen
+    }
+
+    setSubmitting(false);
+    setSubmitted(true);
   };
 
   return (
@@ -216,31 +202,75 @@ export const ContactForm: React.FC = () => {
           {submitted ? (
             <div className="contact-success-state">
               <div className="success-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
-              <h4>Đã gửi yêu cầu thành công!</h4>
+              <h4>Yêu cầu đã chuyển tới Zalo!</h4>
               <p>
-                Thông tin của bạn đã được chuyển thẳng tới hệ thống kỹ thuật Vệ Sinh Tino. Chúng tôi sẽ gọi lại hoặc phản hồi qua Zalo trong vòng 5–10 phút!
+                Tino đã tạo sẵn nội dung yêu cầu của bạn. Ứng dụng Zalo sẽ tự động mở để bạn gửi thông tin & hình ảnh hiện trạng thực tế.
               </p>
-              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center', marginTop: '12px' }}>
+
+              {/* Summary of submitted details */}
+              <div className="success-summary-box">
+                <div className="summary-row">
+                  <span className="summary-label">Khách hàng:</span>
+                  <strong>{formData.name.trim() || 'Khách hàng'} ({formData.phone.trim()})</strong>
+                </div>
+                <div className="summary-row">
+                  <span className="summary-label">Dịch vụ:</span>
+                  <span>{formData.service}</span>
+                </div>
+                {formData.area.trim() && (
+                  <div className="summary-row">
+                    <span className="summary-label">Diện tích / Khối lượng:</span>
+                    <span>{formData.area.trim()}</span>
+                  </div>
+                )}
+                {formData.notes.trim() && (
+                  <div className="summary-row">
+                    <span className="summary-label">Ghi chú / Địa chỉ:</span>
+                    <span>{formData.notes.trim()}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="success-actions">
                 <a
-                  href={`https://zalo.me/0925649666?text=${encodeURIComponent(
-                    `Chào Tino, tôi là ${formData.name || 'khách hàng'} (${formData.phone}), vừa gửi yêu cầu khảo sát dịch vụ ${formData.service}. Nhờ Tino tư vấn và hỗ trợ sớm giúp tôi!`
-                  )}`}
+                  href={buildZaloUrl()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="button"
-                  style={{ minHeight: '46px', padding: '10px 22px', fontSize: '13.5px' }}
+                  className="button success-zalo-btn"
                 >
-                  Mở Zalo gửi ảnh hiện trạng <span aria-hidden="true">↗</span>
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                  </svg>
+                  Mở Zalo gửi ảnh & nhận báo giá (0925 649 666) ↗
                 </a>
-                <button
-                  type="button"
-                  className="button light reset-form-btn"
-                  onClick={() => setSubmitted(false)}
-                >
-                  Gửi thêm yêu cầu khác
-                </button>
+
+                <div className="success-secondary-row">
+                  <a href="tel:0925649666" className="button light success-call-btn">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    Gọi Hotline 0925 649 666
+                  </a>
+
+                  <button
+                    type="button"
+                    className="button light reset-form-btn"
+                    onClick={() => {
+                      setSubmitted(false);
+                      setFormData({
+                        name: '',
+                        phone: '',
+                        service: 'Tổng vệ sinh nhà sau xây dựng',
+                        notes: '',
+                        area: ''
+                      });
+                    }}
+                  >
+                    Gửi yêu cầu khác
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
@@ -259,7 +289,7 @@ export const ContactForm: React.FC = () => {
                 />
               </div>
               <h4 className="form-title">Để lại thông tin nhận tư vấn</h4>
-              <p className="form-sub">Tino sẽ gọi lại hoặc phản hồi qua Zalo trong 5–10 phút.</p>
+              <p className="form-sub">Tự động kết nối Zalo Hotline 0925 649 666 để gửi ảnh hiện trạng & nhận báo giá.</p>
 
               {errorMessage && (
                 <div
@@ -371,7 +401,7 @@ export const ContactForm: React.FC = () => {
               </div>
 
               <button type="submit" disabled={submitting} className="button form-submit-btn">
-                {submitting ? 'Đang gửi yêu cầu...' : 'Gửi yêu cầu khảo sát & báo giá'}
+                {submitting ? 'Đang kết nối Zalo...' : 'Gửi yêu cầu & Mở Zalo tư vấn'}
                 <span aria-hidden="true">↗</span>
               </button>
               <p className="form-disclaimer">
@@ -379,7 +409,7 @@ export const ContactForm: React.FC = () => {
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
                   <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                 </svg>
-                Cam kết bảo mật thông tin liên hệ. Không làm phiền sau khi tư vấn.
+                Kết nối trực tiếp Zalo Hotline 0925 649 666 · Cam kết không phát sinh chi phí
               </p>
             </form>
           )}

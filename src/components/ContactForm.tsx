@@ -329,19 +329,13 @@ export const ContactForm: React.FC = () => {
                     onChange={e => setFormData({ ...formData, service: e.target.value })}
                     className="form-select"
                   >
-                    <optgroup label="Căn hộ & Nhà ở">
-                      <option value="Tổng vệ sinh nhà sau xây dựng">Tổng vệ sinh nhà sau xây dựng</option>
-                      <option value="Tổng vệ sinh chung cư trọn gói">Tổng vệ sinh chung cư trọn gói</option>
-                      <option value="Vệ sinh nhà ở & Nhà cũ">Vệ sinh nhà ở & Nhà cũ</option>
-                    </optgroup>
-                    <optgroup label="Doanh nghiệp & Công nghiệp">
-                      <option value="Vệ sinh kho & Nhà xưởng">Vệ sinh kho & Nhà xưởng</option>
-                      <option value="Vệ sinh kính tòa nhà cao tầng">Vệ sinh kính tòa nhà cao tầng</option>
-                    </optgroup>
-                    <optgroup label="Tiện ích & Nội thất">
-                      <option value="Giặt ghế sofa & Nệm tại nhà">Giặt ghế sofa & Nệm tại nhà</option>
-                      <option value="Giặt thảm văn phòng">Giặt thảm văn phòng</option>
-                    </optgroup>
+                    <option value="Tổng vệ sinh nhà sau xây dựng">Tổng vệ sinh nhà sau xây dựng</option>
+                    <option value="Tổng vệ sinh chung cư trọn gói">Tổng vệ sinh chung cư trọn gói</option>
+                    <option value="Vệ sinh nhà ở & Nhà cũ">Vệ sinh nhà ở & Nhà cũ</option>
+                    <option value="Vệ sinh kho & Nhà xưởng">Vệ sinh kho & Nhà xưởng</option>
+                    <option value="Vệ sinh kính tòa nhà cao tầng">Vệ sinh kính tòa nhà cao tầng</option>
+                    <option value="Giặt ghế sofa & Nệm tại nhà">Giặt ghế sofa & Nệm tại nhà</option>
+                    <option value="Giặt thảm văn phòng">Giặt thảm văn phòng</option>
                   </select>
                 </div>
 

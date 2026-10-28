@@ -154,24 +154,6 @@ function formatVND(amount: number): string {
   return new Intl.NumberFormat('vi-VN').format(amount) + ' đ';
 }
 
-const ESTIMATOR_GROUPS = [
-  {
-    id: 'nha-o',
-    label: 'Căn hộ & Nhà ở',
-    serviceIds: ['dich-vu-ve-sinh-cong-nghiep', 've-sinh-chung-cu', 've-sinh-nha-o']
-  },
-  {
-    id: 'doanh-nghiep',
-    label: 'Kho xưởng & Kính cao ốc',
-    serviceIds: ['ve-sinh-nha-xuong', 've-sinh-kinh-toa-nha']
-  },
-  {
-    id: 'noi-that',
-    label: 'Nội thất & Tiện ích',
-    serviceIds: ['dich-vu-giat-ghe-sofa', 'dich-vu-giat-tham']
-  }
-];
-
 export const CostEstimator: React.FC = () => {
   const [selectedServiceId, setSelectedServiceId] = useState('dich-vu-ve-sinh-cong-nghiep');
   const service = SERVICES.find(s => s.id === selectedServiceId) || SERVICES[0];
@@ -255,27 +237,16 @@ export const CostEstimator: React.FC = () => {
             <span className="control-label">
               1. Chọn dịch vụ bạn cần tính chi phí:
             </span>
-            <div className="estimator-categories-stack">
-              {ESTIMATOR_GROUPS.map(group => (
-                <div key={group.id} className="estimator-group-row">
-                  <span className="estimator-group-badge">{group.label}</span>
-                  <div className="service-chip-group">
-                    {group.serviceIds.map(id => {
-                      const s = SERVICES.find(item => item.id === id);
-                      if (!s) return null;
-                      return (
-                        <button
-                          key={s.id}
-                          type="button"
-                          className={`service-chip ${selectedServiceId === s.id ? 'is-selected' : ''}`}
-                          onClick={() => handleServiceChange(s.id)}
-                        >
-                          {s.name}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+            <div className="service-chip-group">
+              {SERVICES.map(s => (
+                <button
+                  key={s.id}
+                  type="button"
+                  className={`service-chip ${selectedServiceId === s.id ? 'is-selected' : ''}`}
+                  onClick={() => handleServiceChange(s.id)}
+                >
+                  {s.name}
+                </button>
               ))}
             </div>
           </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { contact } from '../data/site';
 
 const SERVICE_ID_TO_NAME: Record<string, string> = {
   'dich-vu-ve-sinh-cong-nghiep': 'Tổng vệ sinh nhà sau xây dựng',
@@ -34,6 +35,7 @@ export const ContactForm: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [copied, setCopied] = useState(false);
+  const [submittedTime, setSubmittedTime] = useState('');
 
   // Listen for prefill events from CostEstimator or AuthenticShowcase
   useEffect(() => {
@@ -128,24 +130,69 @@ export const ContactForm: React.FC = () => {
       return;
     }
 
+    // Rate-limit check: 15s cooldown to prevent double clicks
+    const now = Date.now();
+    const lastSubmit = Number(localStorage.getItem('tino_last_submit') || '0');
+    if (now - lastSubmit < 15000) {
+      setErrorMessage('Yêu cầu của bạn vừa được gửi đi. Vui lòng đợi trong giây lát hoặc gọi trực tiếp Hotline 0925 649 666!');
+      return;
+    }
+
     setSubmitting(true);
 
+    const nowFormatted = new Date().toLocaleString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+
+    const leadData = {
+      name: formData.name.trim() || 'Khách hàng',
+      phone: cleanPhone,
+      service: formData.service,
+      area: formData.area.trim() || 'Chưa cung cấp',
+      notes: formData.notes.trim() || 'Không có ghi chú',
+      createdAt: new Date().toISOString(),
+      displayTime: nowFormatted,
+      source: 'Website Vệ Sinh Tino'
+    };
+
+    // 1. Local backup in localStorage
     try {
-      localStorage.setItem('tino_contact_timestamp', String(Date.now()));
+      localStorage.setItem('tino_last_submit', String(now));
+      const existing = JSON.parse(localStorage.getItem('tino_leads') || '[]');
+      existing.unshift(leadData);
+      localStorage.setItem('tino_leads', JSON.stringify(existing.slice(0, 50)));
     } catch {
       // Ignore local storage error
     }
 
-    // Auto-copy message to clipboard so user can simply paste into Zalo!
-    await copyToClipboard(getFormattedMessage());
+    // 2. Dispatch to Webhook (Google Apps Script / Zalo Bot Webhook) if configured
+    const webhookUrl =
+      (typeof window !== 'undefined' &&
+        (window as unknown as { __TINO_WEBHOOK_URL__?: string }).__TINO_WEBHOOK_URL__) ||
+      contact.webhookUrl ||
+      '';
 
-    // Direct open Zalo in a new tab / native app
-    try {
-      window.open('https://zalo.me/0925649666', '_blank', 'noopener,noreferrer');
-    } catch {
-      // If browser blocks popup, user can tap the prominent Zalo button on the success screen
+    if (webhookUrl) {
+      try {
+        await fetch(webhookUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(leadData)
+        });
+      } catch (err) {
+        console.warn('Webhook notice:', err);
+      }
     }
 
+    // Copy message to clipboard for seamless Zalo forwarding if user chooses to chat
+    await copyToClipboard(getFormattedMessage());
+
+    setSubmittedTime(nowFormatted);
     setSubmitting(false);
     setSubmitted(true);
   };
@@ -161,7 +208,7 @@ export const ContactForm: React.FC = () => {
           </p>
 
           <div className="contact-channels">
-            <a href="tel:0925649666" className="channel-box phone-box">
+            <a href={'tel:' + contact.phone} className="channel-box phone-box">
               <div className="channel-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
@@ -169,13 +216,13 @@ export const ContactForm: React.FC = () => {
               </div>
               <div className="channel-info">
                 <small>Tư vấn & Khảo sát miễn phí</small>
-                <strong>0925 649 666</strong>
+                <strong>{contact.display}</strong>
               </div>
               <span className="channel-badge">Gọi ngay</span>
             </a>
 
             <a
-              href="https://zalo.me/0925649666"
+              href={contact.zalo}
               target="_blank"
               rel="noopener noreferrer"
               className="channel-box zalo-box"
@@ -221,53 +268,46 @@ export const ContactForm: React.FC = () => {
               <div className="success-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
-              <h4>Đã tạo yêu cầu & sẵn sàng gửi Zalo!</h4>
+              <h4>Tiếp nhận yêu cầu thành công!</h4>
+              <p>
+                Cảm ơn <strong>{formData.name.trim() || 'Quý khách'}</strong>! Tino đã tiếp nhận thông tin yêu cầu dịch vụ. Đội ngũ kỹ thuật sẽ liên hệ qua SĐT/Zalo <strong>{formData.phone.trim()}</strong> trong vòng 5–10 phút để trao đổi và báo giá chi tiết.
+              </p>
 
-              {/* Zalo Auto-copy notice & 3-step guide */}
-              <div className="zalo-notice-box">
-                <div className="zalo-notice-badge">
-                  <span className="notice-icon" aria-hidden="true">📋</span>
-                  <span>{copied ? '✓ ĐÃ TỰ ĐỘNG SAO CHÉP NỘI DUNG' : 'ĐÃ TỰ ĐỘNG SAO CHÉP NỘI DUNG'}</span>
+              {/* Summary of submitted details */}
+              <div className="success-summary-box">
+                <div className="summary-row">
+                  <span className="summary-label">Khách hàng:</span>
+                  <span className="summary-value">{formData.name.trim() || 'Khách hàng'}</span>
                 </div>
-                <p>
-                  Do chính sách bảo mật của Zalo không hỗ trợ tự điền chữ vào khung chat, <strong>Tino đã tự động sao chép sẵn tin nhắn yêu cầu</strong> vào thiết bị của bạn.
-                </p>
-                <div className="zalo-mini-steps">
-                  <div className="mini-step">
-                    <span className="mini-num">1</span>
-                    <span>Mở Zalo</span>
-                  </div>
-                  <div className="mini-arrow" aria-hidden="true">→</div>
-                  <div className="mini-step">
-                    <span className="mini-num">2</span>
-                    <span>Chọn <strong>Dán (Paste)</strong></span>
-                  </div>
-                  <div className="mini-arrow" aria-hidden="true">→</div>
-                  <div className="mini-step">
-                    <span className="mini-num">3</span>
-                    <span>Bấm <strong>Gửi</strong> kèm ảnh</span>
-                  </div>
+                <div className="summary-row">
+                  <span className="summary-label">Số điện thoại / Zalo:</span>
+                  <strong className="summary-value" style={{ color: '#0872af' }}>{formData.phone.trim()}</strong>
                 </div>
-              </div>
-
-              {/* Message preview box with 1-click copy button */}
-              <div className="zalo-msg-preview-card">
-                <div className="preview-card-header">
-                  <span className="preview-title">Nội dung tin nhắn:</span>
-                  <button
-                    type="button"
-                    className={`copy-code-btn ${copied ? 'is-copied' : ''}`}
-                    onClick={() => copyToClipboard(getFormattedMessage())}
-                  >
-                    {copied ? '✓ Đã sao chép' : '📋 Sao chép lại'}
-                  </button>
+                <div className="summary-row">
+                  <span className="summary-label">Dịch vụ yêu cầu:</span>
+                  <span className="summary-value">{formData.service}</span>
                 </div>
-                <pre className="zalo-msg-pre">{getFormattedMessage()}</pre>
+                {formData.area.trim() && (
+                  <div className="summary-row">
+                    <span className="summary-label">Khối lượng / Diện tích:</span>
+                    <span className="summary-value">{formData.area.trim()}</span>
+                  </div>
+                )}
+                {formData.notes.trim() && (
+                  <div className="summary-row">
+                    <span className="summary-label">Ghi chú / Địa chỉ:</span>
+                    <span className="summary-value">{formData.notes.trim()}</span>
+                  </div>
+                )}
+                <div className="summary-row">
+                  <span className="summary-label">Thời gian tiếp nhận:</span>
+                  <span className="summary-value">{submittedTime || 'Vừa xong'}</span>
+                </div>
               </div>
 
               <div className="success-actions">
                 <a
-                  href="https://zalo.me/0925649666"
+                  href={contact.zalo}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="button success-zalo-btn"
@@ -276,15 +316,18 @@ export const ContactForm: React.FC = () => {
                   <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                   </svg>
-                  Mở Zalo 0925 649 666 (Dán & Gửi ngay) ↗
+                  Nhắn Zalo gửi ảnh/video công trình ↗
                 </a>
+                <p className="success-zalo-hint">
+                  {copied ? '✓ Đã sao chép sẵn thông tin yêu cầu vào bộ nhớ tạm' : 'Tùy chọn: Nhắn Zalo Hotline nếu bạn muốn gửi thêm ảnh/video công trình thực tế'}
+                </p>
 
                 <div className="success-secondary-row">
-                  <a href="tel:0925649666" className="button light success-call-btn">
+                  <a href={'tel:' + contact.phone} className="button light success-call-btn">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
                     </svg>
-                    Gọi Hotline 0925 649 666
+                    Gọi Hotline {contact.display}
                   </a>
 
                   <button
@@ -322,7 +365,7 @@ export const ContactForm: React.FC = () => {
                 />
               </div>
               <h4 className="form-title">Để lại thông tin nhận tư vấn</h4>
-              <p className="form-sub">Tự động kết nối Zalo Hotline 0925 649 666 để gửi ảnh hiện trạng & nhận báo giá.</p>
+              <p className="form-sub">Tino sẽ gọi lại hoặc phản hồi qua Zalo trong 5–10 phút.</p>
 
               {errorMessage && (
                 <div
@@ -348,10 +391,10 @@ export const ContactForm: React.FC = () => {
                   </div>
                   <div>{errorMessage}</div>
                   <div style={{ marginTop: '8px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                    <a href="tel:0925649666" style={{ color: 'var(--brand)', fontWeight: 600, textDecoration: 'underline' }}>
-                      Gọi Hotline: 0925 649 666
+                    <a href={'tel:' + contact.phone} style={{ color: 'var(--brand, #0872af)', fontWeight: 600, textDecoration: 'underline' }}>
+                      Gọi Hotline: {contact.display}
                     </a>
-                    <a href="https://zalo.me/0925649666" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--brand)', fontWeight: 600, textDecoration: 'underline' }}>
+                    <a href={contact.zalo} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--brand, #0872af)', fontWeight: 600, textDecoration: 'underline' }}>
                       Chat Zalo trực tiếp ↗
                     </a>
                   </div>
@@ -434,7 +477,7 @@ export const ContactForm: React.FC = () => {
               </div>
 
               <button type="submit" disabled={submitting} className="button form-submit-btn">
-                {submitting ? 'Đang kết nối Zalo...' : 'Gửi yêu cầu & Mở Zalo tư vấn'}
+                {submitting ? 'Đang gửi yêu cầu...' : 'Gửi yêu cầu khảo sát & báo giá'}
                 <span aria-hidden="true">↗</span>
               </button>
               <p className="form-disclaimer">
@@ -442,7 +485,7 @@ export const ContactForm: React.FC = () => {
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
                   <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                 </svg>
-                Kết nối trực tiếp Zalo Hotline 0925 649 666 · Cam kết không phát sinh chi phí
+                Cam kết bảo mật thông tin liên hệ · Khảo sát miễn phí tận nơi · Không làm phiền
               </p>
             </form>
           )}

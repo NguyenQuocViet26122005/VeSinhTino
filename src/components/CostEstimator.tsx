@@ -158,6 +158,12 @@ export const CostEstimator: React.FC = () => {
   const [selectedServiceId, setSelectedServiceId] = useState('dich-vu-ve-sinh-cong-nghiep');
   const service = SERVICES.find(s => s.id === selectedServiceId) || SERVICES[0];
   const [quantity, setQuantity] = useState(service.defaultQty);
+  const [inputStr, setInputStr] = useState(String(service.defaultQty));
+
+  const updateQuantity = (newQty: number) => {
+    setQuantity(newQty);
+    setInputStr(String(newQty));
+  };
 
   // Listen for external sync from ServiceExplorer or pending trigger
   useEffect(() => {
@@ -165,7 +171,7 @@ export const CostEstimator: React.FC = () => {
       const found = SERVICES.find(s => s.id === slug);
       if (found) {
         setSelectedServiceId(found.id);
-        setQuantity(found.defaultQty);
+        updateQuantity(found.defaultQty);
       }
     };
 
@@ -188,7 +194,7 @@ export const CostEstimator: React.FC = () => {
   const handleServiceChange = (id: string) => {
     setSelectedServiceId(id);
     const target = SERVICES.find(s => s.id === id);
-    if (target) setQuantity(target.defaultQty);
+    if (target) updateQuantity(target.defaultQty);
   };
 
   // Enforce minimum billing quantity
@@ -262,14 +268,29 @@ export const CostEstimator: React.FC = () => {
                   type="number"
                   min={service.minQty}
                   max={service.maxQty}
-                  value={quantity}
+                  value={inputStr}
                   onChange={e => {
-                    const val = Number(e.target.value);
-                    setQuantity(Number.isNaN(val) ? service.minQty : val);
+                    let val = e.target.value;
+                    // Strip leading zeros if followed by another digit (e.g. '057' -> '57', '00' -> '0')
+                    val = val.replace(/^0+(?=\d)/, '');
+                    setInputStr(val);
+                    if (val !== '') {
+                      const num = Number(val);
+                      if (!isNaN(num)) {
+                        setQuantity(num);
+                      }
+                    } else {
+                      setQuantity(0);
+                    }
                   }}
                   onBlur={() => {
-                    if (quantity < service.minQty) setQuantity(service.minQty);
-                    if (quantity > service.maxQty) setQuantity(service.maxQty);
+                    let num = Number(inputStr);
+                    if (inputStr === '' || isNaN(num) || num < service.minQty) {
+                      num = service.minQty;
+                    } else if (num > service.maxQty) {
+                      num = service.maxQty;
+                    }
+                    updateQuantity(num);
                   }}
                   className="qty-number-input"
                 />
@@ -288,7 +309,7 @@ export const CostEstimator: React.FC = () => {
               min={service.minQty}
               max={service.maxQty}
               value={isBelowMin ? service.minQty : quantity}
-              onChange={e => setQuantity(Number(e.target.value))}
+              onChange={e => updateQuantity(Number(e.target.value))}
               className="qty-slider"
               aria-label={`Chọn số ${service.unit}`}
             />
@@ -306,7 +327,7 @@ export const CostEstimator: React.FC = () => {
                     key={p.qty}
                     type="button"
                     className={`preset-btn ${quantity === p.qty ? 'is-active' : ''}`}
-                    onClick={() => setQuantity(p.qty)}
+                    onClick={() => updateQuantity(p.qty)}
                   >
                     {p.label}
                   </button>
@@ -320,7 +341,7 @@ export const CostEstimator: React.FC = () => {
                     key={p}
                     type="button"
                     className={`preset-btn ${quantity === p ? 'is-active' : ''}`}
-                    onClick={() => setQuantity(p)}
+                    onClick={() => updateQuantity(p)}
                   >
                     {p} {service.unit}
                   </button>

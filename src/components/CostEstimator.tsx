@@ -266,6 +266,7 @@ export const CostEstimator: React.FC = () => {
                 <input
                   id="qty-input"
                   type="number"
+                  inputMode="numeric"
                   min={service.minQty}
                   max={service.maxQty}
                   value={inputStr}

@@ -1062,7 +1062,7 @@
   .wow-work { padding: 60px 0 65px; }
   .wow-work-heading { padding-bottom: 30px; }
   .wow-work-heading > span { font-size: 12.5px; letter-spacing: .08em; }
-  .wow-work-heading h2 { font-size: 73px; margin-top: 22px; }
+  .wow-work-heading h2 { font-size: clamp(38px, 12vw, 64px); line-height: 1.1; margin-top: 16px; }
   .wow-work-heading > p { position: static; font-size: 13.5px; margin-top: 23px; margin-bottom: 0; }
   .wow-work-grid { gap: 18px; grid-template-columns: 1fr; }
   .work-shot-1 { padding-top: 10px; }
@@ -1074,7 +1074,7 @@
   .work-shot figcaption strong { font-size: 19px; }
   .work-shot figcaption > span { font-size: 12.5px; }
   .wow-pricing { padding-block: 65px; }
-  .price-heading h2 { font-size: 53px; }
+  .price-heading h2 { font-size: clamp(34px, 10vw, 50px); line-height: 1.2; }
   .price-heading h2 br { display: block; }
   .price-heading > p:first-child { font-size: 12.5px; letter-spacing: .08em; margin-bottom: 22px; }
   .price-heading > p { font-size: 14.5px; }
@@ -1157,11 +1157,16 @@
   cursor: pointer;
   transition: all 200ms var(--ease-out);
 }
-.showcase-tab:hover {
-  background: #ffffff;
-  border-color: #0872af40;
-  color: var(--green);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .showcase-tab:hover {
+    background: #ffffff;
+    border-color: #0872af40;
+    color: var(--green);
+    transform: translateY(-1px);
+  }
+}
+.showcase-tab:active {
+  transform: scale(0.97);
 }
 .showcase-tab.is-active {
   background: var(--green-dark);
@@ -1169,8 +1174,10 @@
   color: #f5f9fc;
   box-shadow: 0 4px 14px rgba(8, 44, 74, 0.2);
 }
-.showcase-tab.is-active:hover {
-  color: #f5f9fc;
+@media (hover: hover) and (pointer: fine) {
+  .showcase-tab.is-active:hover {
+    color: #f5f9fc;
+  }
 }
 
 .showcase-grid {
@@ -1353,10 +1360,15 @@
   place-items: center;
   transition: all 200ms var(--ease-out);
 }
-.showcase-modal-close:hover {
-  background: var(--green-dark);
-  color: #ffffff;
-  transform: rotate(90deg) scale(1.1);
+@media (hover: hover) and (pointer: fine) {
+  .showcase-modal-close:hover {
+    background: var(--green-dark);
+    color: #ffffff;
+    transform: rotate(90deg) scale(1.1);
+  }
+}
+.showcase-modal-close:active {
+  transform: scale(0.95);
 }
 
 .showcase-modal-image-wrap {
@@ -1519,12 +1531,17 @@
   .showcase-modal-close {
     top: 12px;
     right: 12px;
-    width: 36px;
-    height: 36px;
-    font-size: 18px;
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .showcase-modal-box {
     max-height: 92vh;
+    max-height: 92dvh;
+    overscroll-behavior: contain;
   }
   .showcase-modal-info {
     padding: 18px 20px;

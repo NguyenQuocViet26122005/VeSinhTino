@@ -300,6 +300,8 @@ export const ContactForm: React.FC = () => {
                 <input
                   id="user-name"
                   type="text"
+                  autoComplete="name"
+                  enterKeyHint="next"
                   placeholder="Ví dụ: Anh Tuấn / Chị Lan"
                   value={formData.name}
                   onChange={e => setFormData({ ...formData, name: e.target.value })}
@@ -312,6 +314,8 @@ export const ContactForm: React.FC = () => {
                 <input
                   id="user-phone"
                   type="tel"
+                  autoComplete="tel"
+                  enterKeyHint="next"
                   required
                   placeholder="Ví dụ: 0925 649 666"
                   value={formData.phone}
@@ -344,6 +348,7 @@ export const ContactForm: React.FC = () => {
                   <input
                     id="user-area"
                     type="text"
+                    enterKeyHint="next"
                     placeholder="VD: 50m² hoặc 1 bộ"
                     value={formData.area}
                     onChange={e => setFormData({ ...formData, area: e.target.value })}
@@ -357,6 +362,7 @@ export const ContactForm: React.FC = () => {
                 <textarea
                   id="user-notes"
                   rows={2}
+                  enterKeyHint="done"
                   placeholder="VD: Chung cư 2 phòng ngủ 65m², mới sửa xong cần dọn vào ở..."
                   value={formData.notes}
                   onChange={e => setFormData({ ...formData, notes: e.target.value })}

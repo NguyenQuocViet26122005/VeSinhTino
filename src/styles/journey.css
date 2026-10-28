@@ -85,9 +85,15 @@
   font-weight: 700;
 }
 
-.explorer-tab:hover {
-  background: #dbeef7;
-  border-color: #bcd9ea;
+@media (hover: hover) and (pointer: fine) {
+  .explorer-tab:hover {
+    background: #dbeef7;
+    border-color: #bcd9ea;
+  }
+}
+
+.explorer-tab:active {
+  transform: scale(0.97);
 }
 
 .explorer-tab.is-active {
@@ -320,12 +326,14 @@
   touch-action: manipulation;
 }
 
-.showcase-action-btn:hover {
-  background: #082c4a;
-  color: #a9e7f5;
-  border-color: #082c4a;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(8, 44, 74, 0.15);
+@media (hover: hover) and (pointer: fine) {
+  .showcase-action-btn:hover {
+    background: #082c4a;
+    color: #a9e7f5;
+    border-color: #082c4a;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(8, 44, 74, 0.15);
+  }
 }
 
 .showcase-action-btn:active {
@@ -516,9 +524,15 @@
   touch-action: manipulation;
 }
 
-.service-chip:hover {
-  background: #e6f1f8;
-  border-color: #bcd9ea;
+@media (hover: hover) and (pointer: fine) {
+  .service-chip:hover {
+    background: #e6f1f8;
+    border-color: #bcd9ea;
+  }
+}
+
+.service-chip:active {
+  transform: scale(0.97);
 }
 
 .service-chip.is-selected {
@@ -561,9 +575,10 @@
 .qty-slider {
   width: 100%;
   accent-color: #0872af;
-  height: 8px;
+  height: 24px;
   cursor: pointer;
   margin-top: 6px;
+  touch-action: pan-x;
 }
 
 .preset-buttons {
@@ -595,8 +610,15 @@
   touch-action: manipulation;
 }
 
-.preset-btn:hover {
-  background: #dbeaf4;
+@media (hover: hover) and (pointer: fine) {
+  .preset-btn:hover {
+    background: #dbeaf4;
+  }
+}
+
+.preset-btn:active {
+  transform: scale(0.96);
+  background: #d0e4f2;
 }
 
 .preset-btn.is-active {
@@ -746,10 +768,12 @@
   touch-action: manipulation;
 }
 
-.result-cta-btn:hover {
-  background: #008be0;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+@media (hover: hover) and (pointer: fine) {
+  .result-cta-btn:hover {
+    background: #008be0;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  }
 }
 
 .result-cta-btn:active {
@@ -769,9 +793,11 @@
   transition: color 140ms ease;
 }
 
-.zalo-quick-link:hover {
-  color: #ffffff;
-  text-decoration: underline;
+@media (hover: hover) and (pointer: fine) {
+  .zalo-quick-link:hover {
+    color: #ffffff;
+    text-decoration: underline;
+  }
 }
 
 /* --- 4. Smart Contact Section --- */
@@ -839,23 +865,25 @@
   touch-action: manipulation;
 }
 
-.channel-box:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(8, 44, 74, 0.08);
+@media (hover: hover) and (pointer: fine) {
+  .channel-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(8, 44, 74, 0.08);
+  }
+
+  .hotline-box:hover {
+    border-color: #0872af;
+    background: #f0f8fd;
+  }
+
+  .zalo-box:hover {
+    border-color: #0068ff;
+    background: #f0f5ff;
+  }
 }
 
 .channel-box:active {
   transform: scale(0.98);
-}
-
-.hotline-box:hover {
-  border-color: #0872af;
-  background: #f0f8fd;
-}
-
-.zalo-box:hover {
-  border-color: #0068ff;
-  background: #f0f5ff;
 }
 
 .channel-icon {
@@ -1005,8 +1033,14 @@
   touch-action: manipulation;
 }
 
-.form-submit-btn:hover {
-  background: #082c4a;
+@media (hover: hover) and (pointer: fine) {
+  .form-submit-btn:hover {
+    background: #082c4a;
+  }
+}
+
+.form-submit-btn:active {
+  transform: scale(0.98);
 }
 
 .form-disclaimer {
@@ -1172,17 +1206,33 @@
   .service-chip {
     padding: 8px 14px;
     font-size: 12.5px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   .preset-buttons {
-    gap: 6px;
+    gap: 8px;
+    margin-top: 6px;
   }
   .preset-btn {
-    padding: 5px 10px;
-    font-size: 11.5px;
+    padding: 7px 12px;
+    font-size: 12px;
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   .qty-number-input {
-    width: 55px;
-    font-size: 15px;
+    width: 65px;
+    font-size: 16px;
+    padding: 6px 8px;
+    text-align: center;
+  }
+  .form-input,
+  .form-select,
+  .form-textarea {
+    font-size: 16px !important;
   }
   .result-cta-btn {
     font-size: 13.5px;
@@ -1241,9 +1291,15 @@
   width: 100%;
 }
 
-.service-gallery button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(8, 44, 74, 0.14);
+@media (hover: hover) and (pointer: fine) {
+  .service-gallery button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(8, 44, 74, 0.14);
+  }
+}
+
+.service-gallery button:active {
+  transform: scale(0.98);
 }
 
 .service-gallery button:focus-visible {
@@ -1259,8 +1315,10 @@
   transition: transform 300ms cubic-bezier(.22, 1, .36, 1);
 }
 
-.service-gallery button:hover img {
-  transform: scale(1.03);
+@media (hover: hover) and (pointer: fine) {
+  .service-gallery button:hover img {
+    transform: scale(1.03);
+  }
 }
 
 /* About Page Fleet & Mobile Team Showcase */
@@ -1364,24 +1422,30 @@
   touch-action: manipulation;
 }
 
-.showcase-expand-btn:hover {
-  background: #082c4a;
-  color: #f5f9fc;
-  border-color: #082c4a;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(8, 44, 74, 0.18);
+@media (hover: hover) and (pointer: fine) {
+  .showcase-expand-btn:hover {
+    background: #082c4a;
+    color: #f5f9fc;
+    border-color: #082c4a;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(8, 44, 74, 0.18);
+  }
+
+  .showcase-expand-btn:hover svg {
+    transform: translateY(2px);
+  }
+
+  .showcase-expand-btn[aria-expanded="true"]:hover svg {
+    transform: translateY(-2px);
+  }
+}
+
+.showcase-expand-btn:active {
+  transform: scale(0.97);
 }
 
 .showcase-expand-btn svg {
   transition: transform 200ms ease;
-}
-
-.showcase-expand-btn:hover svg {
-  transform: translateY(2px);
-}
-
-.showcase-expand-btn[aria-expanded="true"]:hover svg {
-  transform: translateY(-2px);
 }
 
 @media (max-width: 700px) {

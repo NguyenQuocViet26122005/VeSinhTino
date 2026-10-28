@@ -75,7 +75,7 @@ const PROJECTS: ProjectItem[] = [
     image: '/images/tino-danh-san-tho.webp',
     problem: 'Sàn đá mài terrazzo tại sảnh tòa nhà bị ố mờ mất bóng do lưu lượng người đi lại đông đúc.',
     solution: 'Mài phục hồi bằng 5 đầu số đĩa kim cương từ thô đến mịn, đánh bóng tăng cường bằng pad trắng hóa chất phủ bóng.',
-    result: 'Độ bóng đạt trên 85 GU (bóng gương), tăng khả năng chống thấm nước và chống bám bẩn lâu dài.'
+    result: 'Bề mặt sàn sáng bóng rõ nét, nhẵn mịn và chống bám bụi bẩn hiệu quả hơn khi đưa vào sử dụng hàng ngày.'
   },
   {
     id: '122cac8e1bd2f9d6',
@@ -147,7 +147,7 @@ const PROJECTS: ProjectItem[] = [
     image: '/images/e6ecb611e10bc770.webp',
     problem: 'Xưởng cơ khí 1.200m² chuyển giao mặt bằng, trần bám nhiều mạng nhện và bụi xơ vải, sàn loang lổ vết dầu máy.',
     solution: 'Dùng giàn giáo và máy thổi áp lực quét mạng nhện trần xưởng, dùng máy chà sàn liên hợp tải nặng tẩy dầu sàn bê tông.',
-    result: 'Bàn giao mặt bằng kho sạch sẽ đạt tiêu chuẩn tiếp nhận của đối tác FDI Nhật Bản.'
+    result: 'Bàn giao mặt bằng kho xưởng sạch sẽ, thông thoáng, đáp ứng tiêu chuẩn tiếp nhận và vận hành sản xuất.'
   },
   {
     id: 'e28b5ab0b1d848ea',
@@ -219,7 +219,7 @@ const PROJECTS: ProjectItem[] = [
     image: '/images/934c3c727f9a36a0.webp',
     problem: 'Bụi mịn sau khi cắt gạch và chà nhám bay lơ lửng khắp không gian, máy hút bụi gia đình lập tức bị nghẹt lọc.',
     solution: 'Trang bị 3 máy hút bụi công nghiệp 80L 3 motor công suất 3600W, hút khô và ướt đồng thời.',
-    result: 'Thu gom hơn 150kg bụi mịn chỉ trong 3 giờ, làm sạch triệt để không để bụi tái phân tán vào không khí.'
+    result: 'Thu gom triệt để lượng lớn bụi mịn và bột bả, làm sạch không gian nhanh chóng và không để bụi bay ngược vào không khí.'
   },
   {
     id: '92a7f6090b410117',

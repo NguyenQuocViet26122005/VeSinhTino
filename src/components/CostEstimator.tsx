@@ -154,6 +154,24 @@ function formatVND(amount: number): string {
   return new Intl.NumberFormat('vi-VN').format(amount) + ' đ';
 }
 
+const ESTIMATOR_GROUPS = [
+  {
+    id: 'nha-o',
+    label: 'Căn hộ & Nhà ở',
+    serviceIds: ['dich-vu-ve-sinh-cong-nghiep', 've-sinh-chung-cu', 've-sinh-nha-o']
+  },
+  {
+    id: 'doanh-nghiep',
+    label: 'Kho xưởng & Kính cao ốc',
+    serviceIds: ['ve-sinh-nha-xuong', 've-sinh-kinh-toa-nha']
+  },
+  {
+    id: 'noi-that',
+    label: 'Nội thất & Tiện ích',
+    serviceIds: ['dich-vu-giat-ghe-sofa', 'dich-vu-giat-tham']
+  }
+];
+
 export const CostEstimator: React.FC = () => {
   const [selectedServiceId, setSelectedServiceId] = useState('dich-vu-ve-sinh-cong-nghiep');
   const service = SERVICES.find(s => s.id === selectedServiceId) || SERVICES[0];
@@ -162,8 +180,7 @@ export const CostEstimator: React.FC = () => {
   // Listen for external sync from ServiceExplorer or pending trigger
   useEffect(() => {
     const applyServiceSlug = (slug: string) => {
-      const targetId = slug === 've-sinh-nha-o' ? 've-sinh-chung-cu' : slug;
-      const found = SERVICES.find(s => s.id === targetId || s.id === slug);
+      const found = SERVICES.find(s => s.id === slug);
       if (found) {
         setSelectedServiceId(found.id);
         setQuantity(found.defaultQty);
@@ -235,19 +252,30 @@ export const CostEstimator: React.FC = () => {
         {/* Controls Column */}
         <div className="estimator-controls">
           <div className="control-group">
-            <label className="control-label" htmlFor="estimator-service-select">
-              1. Chọn dịch vụ bạn cần:
-            </label>
-            <div className="service-chip-group">
-              {SERVICES.map(s => (
-                <button
-                  key={s.id}
-                  type="button"
-                  className={`service-chip ${selectedServiceId === s.id ? 'is-selected' : ''}`}
-                  onClick={() => handleServiceChange(s.id)}
-                >
-                  {s.name}
-                </button>
+            <span className="control-label">
+              1. Chọn dịch vụ bạn cần tính chi phí:
+            </span>
+            <div className="estimator-categories-stack">
+              {ESTIMATOR_GROUPS.map(group => (
+                <div key={group.id} className="estimator-group-row">
+                  <span className="estimator-group-badge">{group.label}</span>
+                  <div className="service-chip-group">
+                    {group.serviceIds.map(id => {
+                      const s = SERVICES.find(item => item.id === id);
+                      if (!s) return null;
+                      return (
+                        <button
+                          key={s.id}
+                          type="button"
+                          className={`service-chip ${selectedServiceId === s.id ? 'is-selected' : ''}`}
+                          onClick={() => handleServiceChange(s.id)}
+                        >
+                          {s.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -294,19 +322,40 @@ export const CostEstimator: React.FC = () => {
               aria-label={`Chọn số ${service.unit}`}
             />
 
-            <div className="preset-buttons">
-              <span className="preset-label">Gợi ý nhanh:</span>
-              {service.presets.map(p => (
-                <button
-                  key={p}
-                  type="button"
-                  className={`preset-btn ${quantity === p ? 'is-active' : ''}`}
-                  onClick={() => setQuantity(p)}
-                >
-                  {p} {service.unit}
-                </button>
-              ))}
-            </div>
+            {selectedServiceId === 've-sinh-chung-cu' ? (
+              <div className="preset-buttons">
+                <span className="preset-label">Mẫu căn hộ phổ biến:</span>
+                {[
+                  { qty: 50, label: '50m² (1PN / Studio · 1.6tr)' },
+                  { qty: 65, label: '65m² (2PN tiêu chuẩn)' },
+                  { qty: 85, label: '85m² (2PN lớn / 3PN)' },
+                  { qty: 120, label: '120m² (3PN / Duplex)' }
+                ].map(p => (
+                  <button
+                    key={p.qty}
+                    type="button"
+                    className={`preset-btn ${quantity === p.qty ? 'is-active' : ''}`}
+                    onClick={() => setQuantity(p.qty)}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="preset-buttons">
+                <span className="preset-label">Gợi ý nhanh:</span>
+                {service.presets.map(p => (
+                  <button
+                    key={p}
+                    type="button"
+                    className={`preset-btn ${quantity === p ? 'is-active' : ''}`}
+                    onClick={() => setQuantity(p)}
+                  >
+                    {p} {service.unit}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

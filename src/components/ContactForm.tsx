@@ -3,16 +3,17 @@
 import React, { useState, useEffect } from 'react';
 
 const SERVICE_ID_TO_NAME: Record<string, string> = {
-  've-sinh-chung-cu': 'Tổng vệ sinh chung cư trọn gói',
   'dich-vu-ve-sinh-cong-nghiep': 'Tổng vệ sinh nhà sau xây dựng',
   've-sinh-nha-sau-xay': 'Tổng vệ sinh nhà sau xây dựng',
-  've-sinh-nha-o': 'Tổng vệ sinh chung cư trọn gói',
+  've-sinh-chung-cu': 'Tổng vệ sinh chung cư trọn gói',
+  've-sinh-nha-o': 'Vệ sinh nhà ở & Nhà cũ',
   've-sinh-nha-cu': 'Vệ sinh nhà ở & Nhà cũ',
   've-sinh-nha-xuong': 'Vệ sinh kho & Nhà xưởng',
   've-sinh-kinh-toa-nha': 'Vệ sinh kính tòa nhà cao tầng',
   'dich-vu-giat-ghe-sofa': 'Giặt ghế sofa & Nệm tại nhà',
   'dich-vu-giat-tham': 'Giặt thảm văn phòng',
-  home: 'Tổng vệ sinh chung cư trọn gói',
+  apartment: 'Tổng vệ sinh chung cư trọn gói',
+  home: 'Vệ sinh nhà ở & Nhà cũ',
   factory: 'Vệ sinh kho & Nhà xưởng',
   glass: 'Vệ sinh kính tòa nhà cao tầng',
   furnishing: 'Giặt ghế sofa & Nệm tại nhà',
@@ -328,13 +329,19 @@ export const ContactForm: React.FC = () => {
                     onChange={e => setFormData({ ...formData, service: e.target.value })}
                     className="form-select"
                   >
-                    <option value="Tổng vệ sinh nhà sau xây dựng">Tổng vệ sinh nhà sau xây dựng</option>
-                    <option value="Tổng vệ sinh chung cư trọn gói">Tổng vệ sinh chung cư trọn gói</option>
-                    <option value="Vệ sinh nhà ở & Nhà cũ">Vệ sinh nhà ở & Nhà cũ</option>
-                    <option value="Vệ sinh kho & Nhà xưởng">Vệ sinh kho & Nhà xưởng</option>
-                    <option value="Vệ sinh kính tòa nhà cao tầng">Vệ sinh kính tòa nhà cao tầng</option>
-                    <option value="Giặt ghế sofa & Nệm tại nhà">Giặt ghế sofa & Nệm tại nhà</option>
-                    <option value="Giặt thảm văn phòng">Giặt thảm văn phòng</option>
+                    <optgroup label="Căn hộ & Nhà ở">
+                      <option value="Tổng vệ sinh nhà sau xây dựng">Tổng vệ sinh nhà sau xây dựng</option>
+                      <option value="Tổng vệ sinh chung cư trọn gói">Tổng vệ sinh chung cư trọn gói</option>
+                      <option value="Vệ sinh nhà ở & Nhà cũ">Vệ sinh nhà ở & Nhà cũ</option>
+                    </optgroup>
+                    <optgroup label="Doanh nghiệp & Công nghiệp">
+                      <option value="Vệ sinh kho & Nhà xưởng">Vệ sinh kho & Nhà xưởng</option>
+                      <option value="Vệ sinh kính tòa nhà cao tầng">Vệ sinh kính tòa nhà cao tầng</option>
+                    </optgroup>
+                    <optgroup label="Tiện ích & Nội thất">
+                      <option value="Giặt ghế sofa & Nệm tại nhà">Giặt ghế sofa & Nệm tại nhà</option>
+                      <option value="Giặt thảm văn phòng">Giặt thảm văn phòng</option>
+                    </optgroup>
                   </select>
                 </div>
 

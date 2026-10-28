@@ -146,27 +146,41 @@ const SERVICES_DATA: ServiceDetail[] = [
 ];
 
 const SERVICE_GROUPS = [
-  { id: 'all', label: 'Tất cả danh mục' },
   { id: 'home', label: 'Căn hộ & Nhà ở' },
   { id: 'business', label: 'Kho xưởng & Cao ốc' },
   { id: 'furnishing', label: 'Nội thất & Tiện ích' }
 ] as const;
 
 export const ServiceExplorer: React.FC = () => {
+  const [activeCategory, setActiveCategory] = useState<'home' | 'business' | 'furnishing'>('home');
   const [selectedSlug, setSelectedSlug] = useState<string>(SERVICES_DATA[0].slug);
-  const [activeCategory, setActiveCategory] = useState<'all' | 'home' | 'business' | 'furnishing'>('all');
 
-  const filteredServices = activeCategory === 'all'
-    ? SERVICES_DATA
-    : SERVICES_DATA.filter(s => s.category === activeCategory);
+  // Sync with external events if triggered
+  React.useEffect(() => {
+    const handleServiceSelect = (e: Event) => {
+      const customEvent = e as CustomEvent<{ slug: string }>;
+      const targetSlug = customEvent.detail?.slug;
+      if (targetSlug) {
+        const found = SERVICES_DATA.find(s => s.slug === targetSlug);
+        if (found) {
+          setActiveCategory(found.category);
+          setSelectedSlug(found.slug);
+        }
+      }
+    };
+    window.addEventListener('tino:select-service', handleServiceSelect);
+    return () => window.removeEventListener('tino:select-service', handleServiceSelect);
+  }, []);
+
+  const filteredServices = SERVICES_DATA.filter(s => s.category === activeCategory);
 
   const current = SERVICES_DATA.find(s => s.slug === selectedSlug) || filteredServices[0] || SERVICES_DATA[0];
 
-  const handleCategoryChange = (catId: 'all' | 'home' | 'business' | 'furnishing') => {
+  const handleCategoryChange = (catId: 'home' | 'business' | 'furnishing') => {
     setActiveCategory(catId);
-    if (catId !== 'all') {
-      const match = SERVICES_DATA.find(s => s.category === catId);
-      if (match) setSelectedSlug(match.slug);
+    const firstOfCat = SERVICES_DATA.find(s => s.category === catId);
+    if (firstOfCat) {
+      setSelectedSlug(firstOfCat.slug);
     }
   };
 
@@ -188,22 +202,24 @@ export const ServiceExplorer: React.FC = () => {
 
   return (
     <div className="service-explorer">
-      {/* Category Group Filter Bar */}
-      <div className="explorer-group-filter" role="tablist" aria-label="Phân nhóm danh mục">
+      {/* 1. Category Segmented Control (Apple-style segmented control) */}
+      <div className="explorer-segmented-bar" role="tablist" aria-label="Nhóm danh mục dịch vụ">
         {SERVICE_GROUPS.map(cat => (
           <button
             key={cat.id}
             type="button"
-            className={`group-filter-pill ${activeCategory === cat.id ? 'is-active' : ''}`}
+            role="tab"
+            aria-selected={activeCategory === cat.id}
+            className={`explorer-segment-btn ${activeCategory === cat.id ? 'is-active' : ''}`}
             onClick={() => handleCategoryChange(cat.id)}
           >
-            {cat.label}
+            <span className="segment-label">{cat.label}</span>
           </button>
         ))}
       </div>
 
-      {/* Category Navigation Pills */}
-      <div className="explorer-tabs" role="tablist" aria-label="Danh mục dịch vụ">
+      {/* 2. Sub-services within active category (Clean, non-stacked pills) */}
+      <div className="explorer-subtabs" role="tablist" aria-label="Dịch vụ trong nhóm">
         {filteredServices.map((item) => {
           const originalIdx = SERVICES_DATA.findIndex(s => s.slug === item.slug);
           return (
@@ -212,18 +228,17 @@ export const ServiceExplorer: React.FC = () => {
               type="button"
               role="tab"
               aria-selected={current.slug === item.slug}
-              className={`explorer-tab ${current.slug === item.slug ? 'is-active' : ''}`}
+              className={`explorer-subtab-pill ${current.slug === item.slug ? 'is-active' : ''}`}
               onClick={() => handleSelectBySlug(item.slug)}
             >
-              <span className="tab-number">{'0' + (originalIdx + 1)}</span>
-              <span className="tab-name">{item.short}</span>
-              <span className="tab-category-badge">{item.categoryLabel}</span>
+              <span className="subtab-num">{'0' + (originalIdx + 1)}</span>
+              <span className="subtab-name">{item.name}</span>
             </button>
           );
         })}
       </div>
 
-      {/* Selected Service Card Content */}
+      {/* 3. Selected Service Card Content */}
       <div className="explorer-card">
         <div className="explorer-media">
           <img

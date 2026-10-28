@@ -1,0 +1,43 @@
+/* Final craft pass: Tino's blue identity, functional glass and quiet motion. */
+:root{--motion-press:100ms;--motion-ui:180ms;--ease-ui:cubic-bezier(.22,1,.36,1);--shadow-float:0 12px 32px #04213924}
+body{font-optical-sizing:auto}
+body.home-page .header,body.inner-page .header{background:#082c4af0;border-bottom:1px solid #ffffff18;box-shadow:0 8px 28px #031c3214}
+@supports(backdrop-filter:blur(16px)){body.home-page .header,body.inner-page .header{background:#082c4ae8;backdrop-filter:blur(16px) saturate(135%);-webkit-backdrop-filter:blur(16px) saturate(135%)}}
+.header .desktop-nav a{transition:color var(--motion-ui) ease}
+.header .desktop-nav a[aria-current]:after{width:18px;height:2px;border-radius:2px;left:calc(50% - 9px)}
+body .mobile-nav{background:#f5f9fc;color:#10354e;box-shadow:var(--shadow-float);transform-origin:calc(100% - 35px) top}
+.mobile-nav a{border-bottom:1px solid #d5e4ee;min-height:48px}
+.mobile-nav a[aria-current]{color:#0867a0;font-weight:600}
+.button,.wow-button,.floating-btn,.menu-toggle{touch-action:manipulation;transition:transform var(--motion-ui) var(--ease-ui),background-color var(--motion-ui) ease,box-shadow var(--motion-ui) ease}
+body .button:active,body .wow-button:active,.floating-btn:active,.menu-toggle:active{transform:scale(.97);transition-duration:var(--motion-press)}
+.service-index-row>button:active{background:#d4ecf7}
+.button:focus-visible,.wow-button:focus-visible,.menu-toggle:focus-visible,.floating-btn:focus-visible{outline:3px solid #26a8e8;outline-offset:5px}
+.header :focus-visible{outline-color:#a9e7f5}
+body .page-kicker{display:none}
+body .service-hero>img{box-shadow:8px 18px 35px #082c4a16}
+body .inner-page .article-layout p{max-width:70ch}
+body .inner-page h1,body .inner-page h2{letter-spacing:-.035em}
+body .wow-hero h1{letter-spacing:-.035em}
+body .hero-line{letter-spacing:-.035em}
+body .wow-location{letter-spacing:.015em}
+body .hero-gridline{display:none}
+body .hero-word{letter-spacing:-.04em}
+body .hero-word{line-height:1.08;margin-bottom:clamp(18px,2vw,30px)}
+body .wow-intro h2,body .wow-close h2,body .price-heading h2{letter-spacing:-.035em}
+body .window-scene{box-shadow:12px 22px 46px #031b3555}
+body .is-clean .window-scene{box-shadow:12px 22px 46px #031b3555,0 6px 30px #96e2ff20}
+body .trust-icon svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+body .trust-num{display:none}
+body .trust-card{border:0!important;box-shadow:0 6px 22px #082c4a09!important}
+body .trust-title{line-height:1.5;letter-spacing:-.025em}
+body .trust-desc{font-size:14px;line-height:1.8}
+body .photo-dialog{border:0;box-shadow:0 24px 90px #031b3566}
+body .photo-dialog::backdrop{background:#031d32b8}
+body .dialog-close{min-width:44px;min-height:44px}
+body .floating-contact{right:max(18px,env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom))}
+html{scrollbar-color:#7aa7c1 #e6f1f8}
+::selection{background:#a9e7f5;color:#082c4a}
+@media(max-width:1000px){body .nav-inner{gap:12px}body .mobile-nav{max-height:calc(100dvh - 90px)}}
+@media(prefers-reduced-transparency:reduce),(prefers-contrast:more){body.home-page .header,body.inner-page .header{background:#082c4a;backdrop-filter:none;-webkit-backdrop-filter:none}body .mobile-nav{background:#f5f9fc}body .window-haze{backdrop-filter:none}body .glass-instruction{background:#082c4a}}
+@media(prefers-contrast:more){a:focus-visible,button:focus-visible,summary:focus-visible{outline-width:4px}.mobile-nav a{border-color:#506d82}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}body .button,body .wow-button,body .floating-btn,body .menu-toggle{transition:background-color 100ms ease}body .button:active,body .wow-button:active,body .floating-btn:active,body .menu-toggle:active{transform:none!important}body .trust-card:hover{transform:none}::view-transition-old(root),::view-transition-new(root){animation:none!important}}

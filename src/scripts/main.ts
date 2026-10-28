@@ -62,6 +62,8 @@ function ensureGlobalListeners() {
 }
 
 function initMain() {
+  menuMorph?.destroy();
+  menuMorph = undefined;
   if (mainMm) {
     mainMm.revert();
     mainMm = null;
@@ -81,6 +83,8 @@ function initMain() {
     iconLoading = true;
     import('morphicons/dom')
       .then(({ createMorph }) => {
+        if (!menuPath.isConnected) return;
+        menuMorph?.destroy();
         menuMorph = createMorph(
           menuPath,
           toggle?.getAttribute('aria-expanded') === 'true' ? closeShape : menuShape,
@@ -110,6 +114,9 @@ function initMain() {
       mobile.hidden = !nextOpen;
       toggle.setAttribute('aria-expanded', String(nextOpen));
       toggle.setAttribute('aria-label', nextOpen ? 'Đóng menu' : 'Mở menu');
+      if (nextOpen && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        mobile.animate([{opacity:.6,transform:'translateY(-6px)'},{opacity:1,transform:'translateY(0)'}],{duration:180,easing:'cubic-bezier(.22,1,.36,1)'});
+      }
       updateMenuIcon(nextOpen);
       loadMenuIcon();
     };

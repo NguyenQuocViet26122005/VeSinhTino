@@ -9,7 +9,7 @@ import '@fontsource/manrope/600.css';
 import '@fontsource/manrope/700.css';
 import { contact, services, image } from '../data/site';
 import { ClientRouter } from 'astro:transitions';
-import GlobalSpark from '../components/react-bits/GlobalSpark';
+import '../styles/finish.css';
 import FloatingContact from '../components/FloatingContact';
 
 interface Props {
@@ -142,7 +142,7 @@ function isNavActive(url: string, path: string): boolean {
       <p id="dialog-caption"></p>
     </dialog>
 
-    <GlobalSpark client:idle />
+
     <script src="../scripts/main.ts"></script>
   </body>
 </html>

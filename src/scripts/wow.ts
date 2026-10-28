@@ -3,12 +3,17 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
+let initializedHero: HTMLElement | null = null;
 let currentMm: gsap.MatchMedia | null = null;
 let dragFrame = 0;
+let cleanupGesture: (() => void) | undefined;
 
 function initWow() {
   const root = document.querySelector<HTMLElement>('.wow-hero');
-  if (!root) return; // Not on home page
+  if (!root || initializedHero === root) return;
+  initializedHero = root;
+  cleanupGesture?.();
+  cleanupGesture = undefined;
 
   if (currentMm) {
     currentMm.revert();
@@ -42,6 +47,7 @@ function initWow() {
 
   slider?.addEventListener('input', () => {
     manual = true;
+    cancelMotion();
     wipe(Number(slider.value));
   });
 
@@ -231,53 +237,89 @@ function initWow() {
 
   document.fonts.ready.then(() => ScrollTrigger.refresh());
 
-  let pendingValue = 35;
+  let pendingValue = Number(slider?.value ?? 35);
   let touchRect: DOMRect | null = null;
-  function fromPointer(event: PointerEvent) {
-    if (!touch) return;
-    if (!touchRect) touchRect = touch.getBoundingClientRect();
-    const rect = touchRect;
-    pendingValue = Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100));
-    if (!dragFrame)
-      dragFrame = requestAnimationFrame(() => {
-        wipe(pendingValue);
-        dragFrame = 0;
-      });
+  let activePointer: number | null = null;
+  let startX = 0;
+  let startValue = 35;
+  let lastX = 0;
+  let lastTime = 0;
+  let velocity = 0;
+  let moved = false;
+  let springFrame = 0;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function cancelMotion() {
+    cancelAnimationFrame(springFrame);
+    springFrame = 0;
   }
-
-  touch?.addEventListener('pointerdown', (event) => {
-    if (event.button !== 0) return;
-    manual = true;
-    dragging = true;
+  function settle(releaseVelocity: number) {
+    cancelMotion();
+    if (reduced.matches || Math.abs(releaseVelocity) < 3) return;
+    let value = Number(slider?.value ?? pendingValue);
+    const target = Math.max(0, Math.min(100, value + releaseVelocity * .08));
+    let speed = releaseVelocity;
+    let previous = performance.now();
+    const tick = (now: number) => {
+      const dt = Math.min((now - previous) / 1000, .032);
+      previous = now;
+      // Critically damped spring; small substeps keep it stable after a slow frame.
+      for (let i = 0; i < 4; i++) {
+        speed += ((target - value) * 400 - speed * 40) * dt / 4;
+        value += speed * dt / 4;
+      }
+      value = Math.max(0, Math.min(100, value));
+      wipe(value);
+      if (Math.abs(target - value) < .05 && Math.abs(speed) < .5) {
+        wipe(target); springFrame = 0; return;
+      }
+      springFrame = requestAnimationFrame(tick);
+    };
+    springFrame = requestAnimationFrame(tick);
+  }
+  touch?.addEventListener('pointerdown', event => {
+    if (!event.isPrimary || event.button !== 0 || activePointer !== null) return;
+    cancelMotion();
+    manual = true; dragging = true; moved = false;
+    activePointer = event.pointerId;
     touchRect = touch.getBoundingClientRect();
+    startX = lastX = event.clientX; lastTime = event.timeStamp; velocity = 0;
+    startValue = Number(slider?.value ?? 35); pendingValue = startValue;
     touch.setPointerCapture(event.pointerId);
-    root?.classList.add('is-dragging');
-    fromPointer(event);
+    root.classList.add('is-dragging');
   });
-
-  touch?.addEventListener('pointermove', (event) => {
-    if (dragging) fromPointer(event);
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && touch) {
-      const r = touchRect || (touchRect = touch.getBoundingClientRect());
-      touch.parentElement?.style.setProperty('--light-x', ((event.clientX - r.left) / r.width) * 100 + '%');
-      touch.parentElement?.style.setProperty('--light-y', ((event.clientY - r.top) / r.height) * 100 + '%');
-    }
+  touch?.addEventListener('pointermove', event => {
+    if (event.pointerId !== activePointer || !touchRect) return;
+    const width = touchRect.width;
+    const delta = event.clientX - startX;
+    moved ||= Math.abs(delta) > 5;
+    const dt = event.timeStamp - lastTime;
+    if (dt > 0) velocity = .5 * velocity + .5 * (event.clientX - lastX) / width * 100000 / dt;
+    lastX = event.clientX; lastTime = event.timeStamp;
+    pendingValue = Math.max(0, Math.min(100, startValue + delta / width * 100));
+    if (!dragFrame) dragFrame = requestAnimationFrame(() => { wipe(pendingValue); dragFrame = 0; });
   });
-
-  function finishDrag() {
-    touchRect = null;
-    if (dragFrame) {
-      cancelAnimationFrame(dragFrame);
-      dragFrame = 0;
-      wipe(pendingValue);
-    }
-    dragging = false;
+  function finishDrag(event: PointerEvent) {
+    if (event.pointerId !== activePointer) return;
+    cancelAnimationFrame(dragFrame); dragFrame = 0;
+    const released = event.type === 'pointerup';
+    if (released && !moved && touchRect) pendingValue = (event.clientX - touchRect.left) / touchRect.width * 100;
+    wipe(pendingValue);
+    dragging = false; activePointer = null; touchRect = null;
     root?.classList.remove('is-dragging');
+    if (released && moved && event.timeStamp - lastTime < 80) settle(Math.max(-150, Math.min(150, velocity)));
   }
-
   touch?.addEventListener('pointerup', finishDrag);
   touch?.addEventListener('pointercancel', finishDrag);
   touch?.addEventListener('lostpointercapture', finishDrag);
+  const stopWhenHidden = () => { if (document.hidden) cancelMotion(); };
+  const stopForPreference = () => { if (reduced.matches) cancelMotion(); };
+  document.addEventListener('visibilitychange', stopWhenHidden);
+  reduced.addEventListener('change', stopForPreference);
+  cleanupGesture = () => {
+    cancelMotion(); cancelAnimationFrame(dragFrame); dragFrame = 0;
+    document.removeEventListener('visibilitychange', stopWhenHidden);
+    reduced.removeEventListener('change', stopForPreference);
+  };
 
   touch?.addEventListener('keydown', (event) => {
     let v = Number(slider?.value ?? 35);
@@ -287,12 +329,14 @@ function initWow() {
     else if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') v -= 5;
     else return;
     event.preventDefault();
+    cancelMotion();
     manual = true;
     wipe(v);
   });
 
   document.querySelector('#wipe-reset')?.addEventListener('click', () => {
     manual = true;
+    cancelMotion();
     wipe(0);
   });
 }
@@ -307,6 +351,9 @@ if (!hasWowLoaded && document.readyState === 'complete') {
   initWow();
 }
 document.addEventListener('astro:before-swap', () => {
+  initializedHero = null;
+  cleanupGesture?.();
+  cleanupGesture = undefined;
   if (currentMm) {
     currentMm.revert();
     currentMm = null;

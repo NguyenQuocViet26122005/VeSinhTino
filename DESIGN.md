@@ -118,3 +118,9 @@ Service selection uses buttons with aria-pressed and adjacent detail-page links.
 - Do not claim this documentation or the Google CLI is a globally installed Codex skill.
 
 Source specification: https://github.com/google-labs-code/design.md/blob/main/docs/spec.md
+
+## Final interaction pass (28 October 2026)
+
+The header uses a navy translucent functional layer, with solid fallbacks for reduced transparency and high contrast. Shared press feedback is immediate; menu opening stays below 200ms. Glass dragging preserves grab position, uses primary-pointer capture, and hands a bounded release velocity into a critically damped spring. Any new input cancels settling; keyboard and reduced-motion interactions remain direct. Gesture frames and Morphicons instances are cleaned up on Astro navigation.
+
+Remove global click sparkles: the glass interaction is the authored moment. Trust features use consistent authored SVG icons rather than emoji. Preserve existing factual content; no new performance or safety claims added.

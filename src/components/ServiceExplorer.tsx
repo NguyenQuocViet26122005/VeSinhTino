@@ -20,7 +20,7 @@ const SERVICES_DATA: ServiceDetail[] = [
     name: 'Tổng vệ sinh nhà sau xây dựng',
     short: 'Sau xây dựng',
     tag: 'Cho mọi công trình',
-    photo: 'b486da45979bde972f03edd7f9a890e5',
+    photo: '/images/explorer/dich-vu-ve-sinh-cong-nghiep.webp',
     description: 'Làm sạch tổng thể sau thi công, hoàn thiện phần thô trước khi đưa công trình vào vận hành.',
     intro: 'Từ bụi bê tông, sơn dính đến bột trét tường, Tino kết hợp máy hút bụi 3 motor cùng máy chà sàn công nghiệp để làm sạch toàn diện.',
     tasks: [
@@ -36,7 +36,7 @@ const SERVICES_DATA: ServiceDetail[] = [
     name: 'Tổng vệ sinh chung cư trọn gói',
     short: 'Chung cư trọn gói',
     tag: 'Tiết kiệm & Chuẩn chỉ',
-    photo: 'tino-chung-cu-binh-chanh',
+    photo: '/images/explorer/ve-sinh-chung-cu.webp',
     description: 'Dịch vụ trọn gói cho căn hộ chung cư 1PN, 2PN, 3PN với đơn giá chuẩn 30.000 đ/m², đầy đủ thiết bị chuyên dụng và hóa chất an toàn.',
     intro: 'Tổng vệ sinh chung cư trọn gói 50m² từ 1tr6, áp dụng đơn giá 30k/m² (hình ảnh thực tế thi công tại Bình Chánh, TP.HCM). Tino làm sạch chi tiết từng phòng ngủ, phòng khách, bếp và nhà tắm trước khi dọn vào ở.',
     tasks: [
@@ -52,7 +52,7 @@ const SERVICES_DATA: ServiceDetail[] = [
     name: 'Vệ sinh nhà ở & Nhà cũ',
     short: 'Nhà ở & Nhà cũ',
     tag: 'Chăm chút tổ ấm',
-    photo: 'f3e9578413dffb6cd7a69149858785c1',
+    photo: '/images/explorer/ve-sinh-nha-o.webp',
     description: 'Tổng vệ sinh nhà phố, biệt thự, nhà liền kề định kỳ hoặc dọn vào nhà cũ sạch sẽ.',
     intro: 'Một căn nhà sạch bắt đầu từ những chi tiết nhỏ. Dịch vụ vệ sinh nhà ở giúp bạn chăm sóc không gian sống toàn diện, đặc biệt sau cải tạo hoặc trước khi chuyển vào nhà mới.',
     tasks: [
@@ -68,7 +68,7 @@ const SERVICES_DATA: ServiceDetail[] = [
     name: 'Vệ sinh kho & Nhà xưởng',
     short: 'Kho & Nhà xưởng',
     tag: 'Không gian sản xuất',
-    photo: 'e6ecb611e10bc770',
+    photo: '/images/explorer/ve-sinh-nha-xuong.webp',
     description: 'Vệ sinh kho bãi, xưởng sản xuất theo diện tích và điều kiện vận hành thực tế.',
     intro: 'Không gian sản xuất cần phương án phù hợp. Tino khảo sát trực tiếp để xác định trang thiết bị, thời gian thi công không gián đoạn sản xuất.',
     tasks: [
@@ -84,7 +84,7 @@ const SERVICES_DATA: ServiceDetail[] = [
     name: 'Vệ sinh kính tòa nhà cao tầng',
     short: 'Kính tòa nhà',
     tag: 'Trong hơn, sáng hơn',
-    photo: 'c949d223bc44f1ae',
+    photo: '/images/explorer/ve-sinh-kinh-toa-nha.webp',
     description: 'Làm sạch kính mặt ngoài và mặt trong cao ốc bằng phương án thi công an toàn chuẩn kỹ thuật.',
     intro: 'Bề mặt kính sạch giúp không gian đón trọn ánh sáng tự nhiên. Đội ngũ có chứng chỉ đu dây an toàn, kết hợp giàn giáo hoặc xe nâng.',
     tasks: [
@@ -100,7 +100,7 @@ const SERVICES_DATA: ServiceDetail[] = [
     name: 'Giặt ghế sofa & Nệm tại nhà',
     short: 'Ghế sofa & Nệm',
     tag: 'Êm ái mỗi ngày',
-    photo: '122cac8e1bd2f9d6',
+    photo: '/images/explorer/dich-vu-giat-ghe-sofa.webp',
     description: 'Chăm sóc sofa vải nỉ, da và nệm ngủ tại nhà bằng công nghệ phun hút sinh học an toàn.',
     intro: 'Chiếc sofa là nơi gia đình quây quần mỗi ngày. Tino dùng máy phun hút áp lực kết hợp dung dịch khử khuẩn, khử mùi ẩm mốc sâu.',
     tasks: [
@@ -116,7 +116,7 @@ const SERVICES_DATA: ServiceDetail[] = [
     name: 'Giặt thảm văn phòng & Trang trí',
     short: 'Giặt thảm văn phòng',
     tag: 'Sạch từ bề mặt',
-    photo: 'e20602f023e8669e',
+    photo: '/images/explorer/dich-vu-giat-tham.webp',
     description: 'Vệ sinh thảm trải sàn văn phòng, thảm len trang trí bằng máy giặt mâm xoay chuyên dụng.',
     intro: 'Bụi bẩn và vết cà phê lâu ngày trong thảm được đánh bật hoàn toàn, giúp không khí văn phòng trong lành và bảo vệ tuổi thọ sợi thảm.',
     tasks: [
@@ -188,10 +188,11 @@ export const ServiceExplorer: React.FC = () => {
       <div className="explorer-card">
         <div className="explorer-media">
           <img
-            src={`/images/${current.photo}.webp`}
+            key={current.slug}
+            src={current.photo}
             alt={current.name}
-            width={768}
-            height={560}
+            width={800}
+            height={640}
             loading="lazy"
             decoding="async"
             className="explorer-img"

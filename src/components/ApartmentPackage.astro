@@ -1,0 +1,389 @@
+---
+import { contact } from '../data/site';
+
+interface Props {
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+---
+
+<div class={`apartment-package-section ${compact ? 'is-compact' : ''}`} id="goi-ve-sinh-chung-cu">
+  <div class="package-card">
+    <div class="package-header">
+      <div class="package-pill">GÓI DỊCH VỤ CHUYÊN BIỆT CHO CĂN HỘ</div>
+      <h3 class="package-title">Tổng vệ sinh chung cư trọn gói</h3>
+      <p class="package-subtitle">
+        Khảo sát nhanh, chốt giá trọn gói <strong>50m² từ 1.600.000 đ (1tr6)</strong>. Cam kết không phát sinh bất kỳ phụ phí nào sau khi thống nhất.
+      </p>
+    </div>
+
+    <div class="package-tiers-grid">
+      <!-- Tier 1: 1PN / Studio -->
+      <div class="tier-card">
+        <div class="tier-top">
+          <span class="tier-type">CĂN HỘ 1PN / STUDIO</span>
+          <div class="tier-price-row">
+            <span class="tier-price">Từ 1.600.000 đ</span>
+            <span class="tier-unit">/ trọn gói</span>
+          </div>
+          <p class="tier-meta">Diện tích quy chuẩn: <strong>Khoảng 50m²</strong></p>
+        </div>
+        <ul class="tier-details">
+          <li><strong>Thời gian:</strong> 3 – 4 giờ hoàn thiện</li>
+          <li><strong>Đội ngũ:</strong> 2 – 3 kỹ thuật viên Tino</li>
+          <li><strong>Thiết bị:</strong> Máy hút bụi 3 motor & hóa chất sinh học</li>
+          <li><strong>Phù hợp:</strong> Căn hộ studio, 1 phòng ngủ đón tân gia</li>
+        </ul>
+        <a
+          href={`https://zalo.me/${contact.phone}?text=${encodeURIComponent(
+            'Chào Tino, tôi cần tư vấn Gói tổng vệ sinh chung cư trọn gói cho căn hộ 1PN / 50m² (từ 1.600.000 đ). Nhờ Tino tư vấn đặt lịch!'
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="button light tier-cta"
+        >
+          Đặt lịch căn 1PN ↗
+        </a>
+      </div>
+
+      <!-- Tier 2: 2PN (Highlight) -->
+      <div class="tier-card is-popular">
+        <div class="tier-badge">LỰA CHỌN PHỔ BIẾN NHẤT</div>
+        <div class="tier-top">
+          <span class="tier-type">CĂN HỘ 2 PHÒNG NGỦ</span>
+          <div class="tier-price-row">
+            <span class="tier-price">1.900.000 – 2.200.000 đ</span>
+            <span class="tier-unit">/ trọn gói</span>
+          </div>
+          <p class="tier-meta">Diện tích quy chuẩn: <strong>65m² – 75m²</strong></p>
+        </div>
+        <ul class="tier-details">
+          <li><strong>Thời gian:</strong> 4 – 5 giờ hoàn thiện</li>
+          <li><strong>Đội ngũ:</strong> 3 – 4 kỹ thuật viên Tino</li>
+          <li><strong>Thiết bị:</strong> Máy hút bụi, máy chà sàn vi sợi, máy hút nước</li>
+          <li><strong>Phù hợp:</strong> Căn hộ 2 phòng ngủ sau sửa chữa, dọn vào ở</li>
+        </ul>
+        <a
+          href={`https://zalo.me/${contact.phone}?text=${encodeURIComponent(
+            'Chào Tino, tôi cần tư vấn Gói tổng vệ sinh chung cư trọn gói cho căn hộ 2PN (65m²–75m², giá 1.9–2.2 triệu). Nhờ Tino hỗ trợ!'
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="button tier-cta"
+        >
+          Đặt lịch căn 2PN ↗
+        </a>
+      </div>
+
+      <!-- Tier 3: 3PN / Duplex -->
+      <div class="tier-card">
+        <div class="tier-top">
+          <span class="tier-type">CĂN HỘ 3PN &amp; DUPLEX</span>
+          <div class="tier-price-row">
+            <span class="tier-price">2.500.000 – 2.900.000 đ</span>
+            <span class="tier-unit">/ trọn gói</span>
+          </div>
+          <p class="tier-meta">Diện tích quy chuẩn: <strong>90m² – 120m²+</strong></p>
+        </div>
+        <ul class="tier-details">
+          <li><strong>Thời gian:</strong> 5 – 6 giờ hoàn thiện</li>
+          <li><strong>Đội ngũ:</strong> 4 – 5 kỹ thuật viên chuyên trách</li>
+          <li><strong>Thiết bị:</strong> Bộ trang bị làm sạch cao cấp toàn diện</li>
+          <li><strong>Phù hợp:</strong> Căn hộ 3PN, căn góc, duplex nhiều kính và tủ âm</li>
+        </ul>
+        <a
+          href={`https://zalo.me/${contact.phone}?text=${encodeURIComponent(
+            'Chào Tino, tôi cần tư vấn Gói tổng vệ sinh chung cư trọn gói cho căn hộ 3PN (90m²–120m², giá 2.5–2.9 triệu). Nhờ Tino hỗ trợ!'
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="button light tier-cta"
+        >
+          Đặt lịch căn 3PN ↗
+        </a>
+      </div>
+    </div>
+
+    <!-- Package Inclusions List -->
+    <div class="package-inclusions">
+      <h4 class="inclusions-title">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+        Các hạng mục đã bao gồm trọn gói trong dịch vụ:
+      </h4>
+      <div class="inclusions-grid">
+        <div class="inclusion-item">
+          <span class="inc-check" aria-hidden="true">✓</span>
+          <span><strong>Hút bụi toàn bộ căn hộ:</strong> Trần thạch cao, rèm cửa, khe cửa sổ nhôm kính và đường ray trượt ban công.</span>
+        </div>
+        <div class="inclusion-item">
+          <span class="inc-check" aria-hidden="true">✓</span>
+          <span><strong>Sủi sơn &amp; keo dán:</strong> Bóc sạch keo silicone, vết bột trét, xi măng bám trên kính, khung cửa và len chân tường.</span>
+        </div>
+        <div class="inclusion-item">
+          <span class="inc-check" aria-hidden="true">✓</span>
+          <span><strong>Làm sạch sâu khu bếp:</strong> Tẩy dầu mỡ bề mặt bếp từ/gas, máy hút mùi, bồn rửa inox và toàn bộ tủ bếp trên dưới.</span>
+        </div>
+        <div class="inclusion-item">
+          <span class="inc-check" aria-hidden="true">✓</span>
+          <span><strong>Khử khuẩn &amp; tẩy ố toilet:</strong> Vách kính tắm, gương soi, bồn cầu, lavabo và tẩy ố ron gạch chống trơn.</span>
+        </div>
+        <div class="inclusion-item">
+          <span class="inc-check" aria-hidden="true">✓</span>
+          <span><strong>Đánh bóng &amp; bảo dưỡng sàn:</strong> Sử dụng dung dịch sinh học trung tính an toàn cho trẻ nhỏ và người lớn tuổi.</span>
+        </div>
+        <div class="inclusion-item">
+          <span class="inc-check" aria-hidden="true">✓</span>
+          <span><strong>Nghiệm thu từng phòng:</strong> Khách hàng đi kiểm tra từng góc, hoàn toàn hài lòng mới thanh toán chi phí.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Contact Footer -->
+    <div class="package-footer">
+      <div class="package-footer-left">
+        <strong>Bạn cần tư vấn hoặc đặt lịch gấp cho căn hộ?</strong>
+        <p>Tino có mặt khảo sát và thi công nhanh chóng tại tất cả chung cư ở TP.HCM.</p>
+      </div>
+      <div class="package-footer-actions">
+        <a href={`tel:${contact.phone}`} class="button">
+          Gọi Hotline: {contact.display}
+          <span aria-hidden="true">↗</span>
+        </a>
+        <a
+          href={`https://zalo.me/${contact.phone}?text=${encodeURIComponent(
+            'Chào Tino, tôi cần báo giá vệ sinh chung cư trọn gói 50m2 từ 1tr6. Nhờ Tino gửi bảng chi tiết!'
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="button light"
+        >
+          Gửi ảnh qua Zalo ↗
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .apartment-package-section {
+    margin: 40px 0 20px;
+  }
+  .package-card {
+    background: #ffffff;
+    border: 1px solid rgba(15, 41, 66, 0.12);
+    border-radius: 16px;
+    padding: 36px 32px;
+    box-shadow: 0 4px 20px rgba(15, 41, 66, 0.05);
+  }
+  .package-header {
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto 32px;
+  }
+  .package-pill {
+    display: inline-block;
+    padding: 4px 14px;
+    background: rgba(15, 41, 66, 0.06);
+    color: var(--brand, #0f2942);
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+  .package-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--brand, #0f2942);
+    margin: 0 0 10px;
+    line-height: 1.3;
+  }
+  .package-subtitle {
+    font-size: 15px;
+    color: var(--muted, #475569);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .package-subtitle strong {
+    color: var(--brand, #0f2942);
+    font-weight: 700;
+  }
+  .package-tiers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .tier-card {
+    position: relative;
+    border: 1px solid rgba(15, 41, 66, 0.12);
+    border-radius: 14px;
+    padding: 24px 20px;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .tier-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(15, 41, 66, 0.08);
+  }
+  .tier-card.is-popular {
+    background: #ffffff;
+    border: 2px solid var(--brand, #0f2942);
+    box-shadow: 0 8px 30px rgba(15, 41, 66, 0.1);
+  }
+  .tier-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--brand, #0f2942);
+    color: #ffffff;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: 999px;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+  .tier-type {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--muted, #64748b);
+    margin-bottom: 8px;
+  }
+  .tier-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .tier-price {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--brand, #0f2942);
+  }
+  .tier-unit {
+    font-size: 13px;
+    color: var(--muted, #64748b);
+  }
+  .tier-meta {
+    font-size: 13px;
+    color: var(--muted, #475569);
+    margin: 0 0 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed rgba(15, 41, 66, 0.12);
+  }
+  .tier-details {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px;
+    font-size: 13px;
+    color: #334155;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .tier-details strong {
+    color: var(--brand, #0f2942);
+  }
+  .tier-cta {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    font-size: 13.5px;
+    padding: 10px 16px;
+  }
+  .package-inclusions {
+    background: #f8fafc;
+    border: 1px solid rgba(15, 41, 66, 0.08);
+    border-radius: 12px;
+    padding: 24px 22px;
+    margin-bottom: 24px;
+  }
+  .inclusions-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--brand, #0f2942);
+    margin: 0 0 16px;
+  }
+  .inclusions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 24px;
+  }
+  .inclusion-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: #334155;
+  }
+  .inc-check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background: rgba(16, 185, 129, 0.15);
+    color: #059669;
+    font-weight: 700;
+    border-radius: 50%;
+    font-size: 11px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .package-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(15, 41, 66, 0.08);
+    flex-wrap: wrap;
+  }
+  .package-footer-left strong {
+    display: block;
+    font-size: 15px;
+    color: var(--brand, #0f2942);
+    margin-bottom: 4px;
+  }
+  .package-footer-left p {
+    font-size: 13.5px;
+    color: var(--muted, #64748b);
+    margin: 0;
+  }
+  .package-footer-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 900px) {
+    .package-tiers-grid {
+      grid-template-columns: 1fr;
+    }
+    .inclusions-grid {
+      grid-template-columns: 1fr;
+    }
+    .package-card {
+      padding: 24px 18px;
+    }
+    .package-title {
+      font-size: 22px;
+    }
+  }
+</style>

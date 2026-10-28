@@ -10,7 +10,7 @@
     "check": "astro check",
     "verify": "node scripts/verify.mjs",
     "design:lint": "designmd lint DESIGN.md",
-    "test:contact": "node --test scripts/contact.test.mjs",
+    "test:contact": "node --test scripts/contact.test.mjs scripts/contact-runtime.test.mjs",
     "verify:secrets": "node scripts/check-public-secrets.mjs"
   },
   "dependencies": {

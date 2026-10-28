@@ -21,6 +21,13 @@ const SERVICE_ID_TO_NAME: Record<string, string> = {
   floor: 'Tổng vệ sinh nhà sau xây dựng'
 };
 
+const escapeHtml = (str: string) =>
+  str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+
 export const ContactForm: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -169,7 +176,42 @@ export const ContactForm: React.FC = () => {
       // Ignore local storage error
     }
 
-    // 2. Dispatch to Webhook (Google Apps Script / Zalo Bot Webhook) if configured
+    // 2. Dispatch to Telegram Bot (Instant notification to phone / group)
+    if (contact.telegram?.botToken && contact.telegram?.chatId) {
+      const telegramText = [
+        `🔔 <b>CÓ YÊU CẦU BÁO GIÁ MỚI - VỆ SINH TINO</b>`,
+        ``,
+        `👤 <b>Khách hàng:</b> ${escapeHtml(leadData.name)}`,
+        `📞 <b>Số điện thoại:</b> <code>${leadData.phone}</code>`,
+        `🧹 <b>Dịch vụ:</b> ${escapeHtml(leadData.service)}`,
+        leadData.area && leadData.area !== 'Chưa cung cấp' ? `📐 <b>Diện tích / Khối lượng:</b> ${escapeHtml(leadData.area)}` : null,
+        leadData.notes && leadData.notes !== 'Không có ghi chú' ? `📝 <b>Ghi chú / Địa chỉ:</b> ${escapeHtml(leadData.notes)}` : null,
+        `⏰ <b>Thời gian tiếp nhận:</b> ${leadData.displayTime}`,
+        ``,
+        `🌐 <i>Tiếp nhận từ website Vệ Sinh Tino</i>`
+      ]
+        .filter(Boolean)
+        .join('\n');
+
+      try {
+        await fetch(
+          `https://api.telegram.org/bot${contact.telegram.botToken}/sendMessage`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: contact.telegram.chatId,
+              text: telegramText,
+              parse_mode: 'HTML'
+            })
+          }
+        );
+      } catch (err) {
+        console.warn('Telegram notification notice:', err);
+      }
+    }
+
+    // 3. Dispatch to Webhook (Google Apps Script / Webhook) if configured
     const webhookUrl =
       (typeof window !== 'undefined' &&
         (window as unknown as { __TINO_WEBHOOK_URL__?: string }).__TINO_WEBHOOK_URL__) ||

@@ -1,4 +1,4 @@
-export const contact = { phone: '0925649666', display: '0925 649 666', email: 'vesinhtino@gmail.com', zalo: 'https://zalo.me/0925649666', hours: '08:00 – 20:00', webhookUrl: '', addresses: ['557 Tô Ký, Trung Mỹ Tây, Quận 12, TP.HCM','151 Nguyễn Đình Chính, Phường 11, Phú Nhuận, TP.HCM','37B Nguyễn Văn Linh, Tân Thuận Tây, Quận 7, TP.HCM'] };
+export const contact = { phone: '0925649666', display: '0925 649 666', email: 'vesinhtino@gmail.com', zalo: 'https://zalo.me/0925649666', hours: '08:00 – 20:00', telegram: { botToken: '9244077221:AAGzzv0mqr10Kq4prUqz4nSiln41twpJWb4', chatId: '5193894351' }, webhookUrl: '', addresses: ['557 Tô Ký, Trung Mỹ Tây, Quận 12, TP.HCM','151 Nguyễn Đình Chính, Phường 11, Phú Nhuận, TP.HCM','37B Nguyễn Văn Linh, Tân Thuận Tây, Quận 7, TP.HCM'] };
 export const image = (id: string) => '/images/' + id + '.webp';
 export type PriceRow = { name: string; price: string; unit: string; source: string };
 const commonSource = 'https://vesinhtino.com/dich-vu-ve-sinh-cong-nghiep/';

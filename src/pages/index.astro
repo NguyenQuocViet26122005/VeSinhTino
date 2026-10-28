@@ -4,7 +4,10 @@ import PriceTable from '../components/PriceTable.astro';
 import QuestionFigure from '../components/QuestionFigure';
 import AuthenticShowcase from '../components/AuthenticShowcase';
 import TrustCards from '../components/TrustCards';
-import { image, commonPrices, contact, steps, faqs, services } from '../data/site';
+import ServiceExplorer from '../components/ServiceExplorer';
+import CostEstimator from '../components/CostEstimator';
+import ContactForm from '../components/ContactForm';
+import { image, commonPrices, contact, steps, faqs } from '../data/site';
 import '../styles/wow.css';
 ---
 
@@ -15,23 +18,23 @@ import '../styles/wow.css';
     <div class="hero-gridline" aria-hidden="true"></div>
 
     <div class="wow-hero-copy">
-      <p class="wow-location"><span></span> Vệ sinh nhà ở & công nghiệp · TP.HCM</p>
+      <p class="wow-location"><span></span> Vệ sinh nhà ở, văn phòng & công trình · TP.HCM</p>
       <h1 id="hero-title">
         <span class="hero-word">Sạch<span class="hero-period">.</span></span>
-        <span class="hero-line">để sống nhẹ.</span>
+        <span class="hero-line">để không gian bừng sáng.</span>
       </h1>
       <p class="wow-hero-description">
-        Không gian sạch hơn.<br/>
-        Thêm thời gian cho điều bạn yêu.
+        Không gian sạch thoáng hơn.<br/>
+        Thêm thời gian trọn vẹn cho điều bạn yêu.
       </p>
       <div class="hero-actions">
-        <a class="wow-button" href="/lien-he/">
-          <span>Nhận báo giá</span>
+        <a class="wow-button" href="#uoc-tinh-chi-phi">
+          <span>Nhận báo giá nhanh</span>
           <span class="cta-disc" aria-hidden="true">
             <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </span>
         </a>
-        <a href="#dich-vu" class="hero-secondary-link">Khám phá 6 dịch vụ <span aria-hidden="true">↓</span></a>
+        <a href="#cong-trinh" class="hero-secondary-link">Xem công trình thực tế <span aria-hidden="true">↓</span></a>
       </div>
     </div>
 
@@ -115,45 +118,16 @@ import '../styles/wow.css';
     <TrustCards client:visible />
   </section>
 
-  <!-- Scene 3: Interactive Service Showroom -->
+  <!-- Scene 3 (Section A): Chọn đúng nhu cầu ("Bạn cần làm sạch không gian nào?") -->
   <section id="dich-vu" class="wow-services container">
     <div class="wow-section-top">
-      <h2>Không gian của bạn.<br/><span>Cách chăm sóc của Tino.</span></h2>
-      <p>Chọn dịch vụ để khám phá.</p>
+      <h2>Bạn cần làm sạch<br/><span>không gian nào?</span></h2>
+      <p>Chọn dịch vụ để xem mô tả ngắn, phạm vi công việc và đơn giá tham khảo.</p>
     </div>
-    <div class="service-showroom">
-      <div class="service-display">
-        {services.map((s, i) => (
-          <div class="service-scene" data-service-scene={i} hidden={i !== 0}>
-            <img src={image(s.photo)} alt={s.name} width="768" height="850" loading="lazy" decoding="async" />
-            <div>
-              <span>{s.tag}</span>
-              <p>{s.description}</p>
-              <a href={'/' + s.slug + '/'}>Xem dịch vụ <span aria-hidden="true">↗</span></a>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div class="service-index" role="group" aria-label="Chọn dịch vụ">
-        {services.map((s, i) => (
-          <div class:list={['service-index-row', { 'is-active': i === 0 }]}>
-            <button data-service-select={i} aria-pressed={i === 0}>
-              <span class="service-index-no">{'0' + (i + 1)}</span>
-              <span>{s.name}</span>
-              <span class="service-index-symbol" aria-hidden="true">+</span>
-            </button>
-            <a href={'/' + s.slug + '/'} aria-label={'Xem ' + s.name.toLowerCase()}>↗</a>
-          </div>
-        ))}
-        <p class="service-index-note">
-          Từ tổ ấm đến công trình.<br/>
-          Một đội ngũ, nhiều giải pháp làm sạch.
-        </p>
-      </div>
-    </div>
+    <ServiceExplorer client:visible />
   </section>
 
-  <!-- Scene 4: Real Work Photographic Gallery -->
+  <!-- Scene 4 (Section B): Công trình thực tế — Điểm "WOW" thứ 2 -->
   <section class="wow-work">
     <div class="container">
       <div class="wow-work-heading">
@@ -161,32 +135,41 @@ import '../styles/wow.css';
           <span>CHĂM CHÚT TỪNG CHI TIẾT</span>
           <h2>Làm thật.<br/><em>Sạch thật.</em></h2>
         </div>
-        <p>100% hình ảnh thực tế từ các công trình thi công & bàn giao của đội ngũ Vệ Sinh Tino tại TP.HCM.</p>
+        <p>100% hình ảnh thực tế từ các công trình thi công & bàn giao của đội ngũ Vệ Sinh Tino tại TP.HCM kèm câu chuyện hiện trạng và kết quả.</p>
       </div>
       <AuthenticShowcase client:visible />
     </div>
   </section>
 
-  <!-- Scene 5: Transparent Pricing -->
+  <!-- Scene 5 (Section C): Chi phí minh bạch & Công cụ ước tính -->
   <section id="bang-gia" class="wow-pricing container">
     <div class="price-heading">
       <p>MINH BẠCH NGAY TỪ ĐẦU</p>
       <h2>Sạch sẽ.<br/><span>Rõ ràng.</span></h2>
       <p>Hạng mục rõ. Chi phí rõ.<br/>Thống nhất trước khi bắt đầu.</p>
-      <a class="wow-inline-link" href="/bang-gia/">Tất cả bảng giá <span aria-hidden="true">↗</span></a>
+      <a class="wow-inline-link" href="/bang-gia/">Tất cả bảng giá chi tiết <span aria-hidden="true">↗</span></a>
     </div>
     <div class="price-content">
-      <p class="mobile-table-note">Vuốt ngang để xem đủ bảng giá →</p>
-      <PriceTable rows={commonPrices} caption="Bảng giá dịch vụ vệ sinh tổng hợp"/>
-      <p class="price-note">
-        Đơn giá theo bảng công bố của Tino. Chi phí cụ thể được thống nhất sau khi trao đổi và khảo sát.
-      </p>
+      <!-- Interactive Estimator -->
+      <CostEstimator client:visible />
+
+      <!-- Full Reference Table -->
+      <div style="margin-top: 45px;">
+        <p class="mobile-table-note">Vuốt ngang để xem đủ bảng giá tổng hợp →</p>
+        <PriceTable rows={commonPrices} caption="Bảng giá dịch vụ vệ sinh tổng hợp"/>
+        <p class="price-note">
+          Đơn giá theo bảng công bố chính thức của Tino. Chi phí cụ thể được thống nhất sau khi trao đổi và khảo sát, cam kết không phát sinh.
+        </p>
+      </div>
     </div>
   </section>
 
-  <!-- Scene 6: Process & FAQ -->
+  <!-- Scene 6 (Section D): Quy trình 4 bước chuẩn hóa -->
   <section class="wow-process container">
-    <h2>Nhẹ nhàng.<br/>Từ đầu đến cuối.</h2>
+    <div class="wow-section-top">
+      <h2>Nhẹ nhàng.<br/><span>Từ đầu đến cuối.</span></h2>
+      <p>4 bước làm việc chuẩn mực — Khách hàng hài lòng nghiệm thu mới thanh toán.</p>
+    </div>
     <ol>
       {steps.map(([number, title, description]) => (
         <li>
@@ -200,11 +183,12 @@ import '../styles/wow.css';
     </ol>
   </section>
 
+  <!-- Scene 7 (Section E): Gỡ bỏ băn khoăn trước khi liên hệ (FAQ) -->
   <section class="section container faq-section">
     <div>
       <h2>Còn điều gì<br/>bạn băn khoăn?</h2>
       <QuestionFigure client:visible/>
-      <a class="text-link" href={'tel:' + contact.phone}>{contact.display} ↗</a>
+      <a class="text-link" href={'tel:' + contact.phone}>Hotline tư vấn: {contact.display} ↗</a>
     </div>
     <div class="faq-list">
       {faqs.map(([q, a]) => (
@@ -216,14 +200,19 @@ import '../styles/wow.css';
     </div>
   </section>
 
-  <!-- Scene 7: Decisive Contact Close -->
+  <!-- Scene 8 (Section F): Liên hệ thuận tiện -->
+  <section class="container">
+    <ContactForm client:visible />
+  </section>
+
+  <!-- Scene 9: Decisive Contact Close -->
   <section class="wow-close">
     <div class="container">
       <p>MỘT KHÔNG GIAN MỚI BẮT ĐẦU TỪ ĐÂY</p>
       <h2>Bạn nghỉ ngơi.<br/>Tino lo phần còn lại.</h2>
       <div class="close-actions">
-        <a class="wow-button" href="/lien-he/">
-          <span>Nhận báo giá</span>
+        <a class="wow-button" href="#lien-he-tu-van">
+          <span>Nhận báo giá ngay</span>
           <span class="cta-disc" aria-hidden="true">
             <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </span>

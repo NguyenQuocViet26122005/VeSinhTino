@@ -16,7 +16,7 @@ export interface EstimatorService {
 const SERVICES: EstimatorService[] = [
   {
     id: 've-sinh-nha-o',
-    name: 'Tổng vệ sinh nhà ở / sau xây dựng',
+    name: 'Vệ sinh nhà ở & Căn hộ',
     unit: 'm²',
     defaultQty: 80,
     minQty: 30,
@@ -27,6 +27,21 @@ const SERVICES: EstimatorService[] = [
       max: qty * 20000,
       unitRate: '10.000 – 20.000 đ/m²',
       note: 'Áp dụng cho căn hộ, nhà phố sau xây dựng hoặc tổng vệ sinh định kỳ.'
+    })
+  },
+  {
+    id: 'dich-vu-ve-sinh-cong-nghiep',
+    name: 'Vệ sinh công nghiệp sau xây dựng',
+    unit: 'm²',
+    defaultQty: 100,
+    minQty: 30,
+    maxQty: 800,
+    presets: [50, 100, 150, 250, 400],
+    calculate: (qty) => ({
+      min: qty * 10000,
+      max: qty * 20000,
+      unitRate: '10.000 – 20.000 đ/m²',
+      note: 'Bao gồm hút bụi mịn, sủi keo sơn, xi măng và làm sạch sâu sau xây dựng.'
     })
   },
   {
@@ -74,12 +89,12 @@ const SERVICES: EstimatorService[] = [
       min: qty * 15000,
       max: qty * 25000,
       unitRate: '15.000 – 25.000 đ/m² (Dây đu)',
-      note: 'Mức giá tham khảo theo phương án đu dây chuyên nghiệp. Có phương án giàn giáo (12k-20k) hoặc xe nâng (18k-30k).'
+      note: 'Mức giá tham khảo theo phương án đu dây chuyên nghiệp. Có phương án giàn giáo hoặc xe nâng.'
     })
   },
   {
     id: 'dich-vu-giat-ghe-sofa',
-    name: 'Giặt ghế sofa tại nhà',
+    name: 'Giặt ghế sofa & Nệm tại nhà',
     unit: 'Bộ / Cái',
     defaultQty: 1,
     minQty: 1,
@@ -118,14 +133,25 @@ export const CostEstimator: React.FC = () => {
   const service = SERVICES.find(s => s.id === selectedServiceId) || SERVICES[0];
   const [quantity, setQuantity] = useState(service.defaultQty);
 
-  // Listen for external sync from ServiceExplorer
+  // Listen for external sync from ServiceExplorer or pending trigger
   useEffect(() => {
-    const handleSync = (e: Event) => {
-      const customEvent = e as CustomEvent<{ slug: string }>;
-      const found = SERVICES.find(s => s.id === customEvent.detail?.slug);
+    const applyServiceSlug = (slug: string) => {
+      const found = SERVICES.find(s => s.id === slug);
       if (found) {
         setSelectedServiceId(found.id);
         setQuantity(found.defaultQty);
+      }
+    };
+
+    if (typeof window !== 'undefined' && (window as unknown as { __tino_pending_service?: string }).__tino_pending_service) {
+      applyServiceSlug((window as unknown as { __tino_pending_service: string }).__tino_pending_service);
+      delete (window as unknown as { __tino_pending_service?: string }).__tino_pending_service;
+    }
+
+    const handleSync = (e: Event) => {
+      const customEvent = e as CustomEvent<{ slug: string }>;
+      if (customEvent.detail?.slug) {
+        applyServiceSlug(customEvent.detail.slug);
       }
     };
     window.addEventListener('tino:select-service', handleSync);
@@ -139,22 +165,31 @@ export const CostEstimator: React.FC = () => {
     if (target) setQuantity(target.defaultQty);
   };
 
-  const { min, max, unitRate, note } = service.calculate(quantity);
+  // Enforce minimum billing quantity
+  const isBelowMin = quantity < service.minQty;
+  const calculatedQty = isBelowMin ? service.minQty : quantity;
+  const { min, max, unitRate, note } = service.calculate(calculatedQty);
 
   const handleTransferToContact = () => {
     const contactSection = document.getElementById('lien-he-tu-van');
     if (contactSection) {
       contactSection.scrollIntoView({ behavior: 'smooth' });
     }
+    const detail = {
+      serviceName: service.name,
+      serviceId: service.id,
+      quantity: `${calculatedQty} ${service.unit}`,
+      estimateText: `${formatVND(min)} – ${formatVND(max)}`
+    };
+
+    if (typeof window !== 'undefined') {
+      (window as unknown as { __tino_pending_prefill?: typeof detail }).__tino_pending_prefill = detail;
+    }
+
     // Dispatch event to pre-populate contact form
     window.dispatchEvent(
       new CustomEvent('tino:prefill-contact', {
-        detail: {
-          serviceName: service.name,
-          serviceId: service.id,
-          quantity: `${quantity} ${service.unit}`,
-          estimateText: `${formatVND(min)} – ${formatVND(max)}`
-        }
+        detail
       })
     );
   };
@@ -202,18 +237,31 @@ export const CostEstimator: React.FC = () => {
                   min={service.minQty}
                   max={service.maxQty}
                   value={quantity}
-                  onChange={e => setQuantity(Math.max(1, Number(e.target.value)))}
+                  onChange={e => {
+                    const val = Number(e.target.value);
+                    setQuantity(Number.isNaN(val) ? service.minQty : val);
+                  }}
+                  onBlur={() => {
+                    if (quantity < service.minQty) setQuantity(service.minQty);
+                    if (quantity > service.maxQty) setQuantity(service.maxQty);
+                  }}
                   className="qty-number-input"
                 />
                 <span className="qty-unit-label">{service.unit}</span>
               </div>
             </div>
 
+            {isBelowMin && (
+              <p style={{ margin: '4px 0 8px', fontSize: '12.5px', color: '#b45309', lineHeight: 1.4 }}>
+                Khối lượng tối thiểu tiếp nhận là {service.minQty} {service.unit}. Tino áp dụng đơn giá theo khối lượng tối thiểu này.
+              </p>
+            )}
+
             <input
               type="range"
               min={service.minQty}
               max={service.maxQty}
-              value={quantity}
+              value={isBelowMin ? service.minQty : quantity}
               onChange={e => setQuantity(Number(e.target.value))}
               className="qty-slider"
               aria-label={`Chọn số ${service.unit}`}
@@ -252,7 +300,7 @@ export const CostEstimator: React.FC = () => {
               </div>
               <div className="breakdown-row">
                 <span>Khối lượng tính:</span>
-                <strong>{quantity} {service.unit}</strong>
+                <strong>{calculatedQty} {service.unit}</strong>
               </div>
               <div className="breakdown-row">
                 <span>Đơn giá áp dụng:</span>
@@ -273,7 +321,7 @@ export const CostEstimator: React.FC = () => {
               </button>
               <a
                 href={`https://zalo.me/0925649666?text=${encodeURIComponent(
-                  `Chào Tino, tôi cần tư vấn dịch vụ ${service.name} với diện tích khoảng ${quantity} ${service.unit} (khoảng giá ${formatVND(min)} - ${formatVND(max)}). Nhờ Tino hỗ trợ tư vấn và khảo sát!`
+                  `Chào Tino, tôi cần tư vấn dịch vụ ${service.name} với diện tích khoảng ${calculatedQty} ${service.unit} (khoảng giá ${formatVND(min)} - ${formatVND(max)}). Nhờ Tino hỗ trợ tư vấn và khảo sát!`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"

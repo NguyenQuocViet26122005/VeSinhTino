@@ -122,6 +122,9 @@ export const ServiceExplorer: React.FC = () => {
   };
 
   const handleScrollToEstimator = (slug: string) => {
+    if (typeof window !== 'undefined') {
+      (window as unknown as { __tino_pending_service?: string }).__tino_pending_service = slug;
+    }
     const el = document.getElementById('uoc-tinh-chi-phi');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });

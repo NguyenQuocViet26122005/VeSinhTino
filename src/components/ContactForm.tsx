@@ -2,6 +2,20 @@
 
 import React, { useState, useEffect } from 'react';
 
+const SERVICE_ID_TO_NAME: Record<string, string> = {
+  've-sinh-nha-o': 'Vệ sinh nhà ở & Căn hộ',
+  'dich-vu-ve-sinh-cong-nghiep': 'Vệ sinh công nghiệp sau xây dựng',
+  've-sinh-nha-xuong': 'Vệ sinh kho & Nhà xưởng',
+  've-sinh-kinh-toa-nha': 'Vệ sinh kính tòa nhà cao tầng',
+  'dich-vu-giat-ghe-sofa': 'Giặt ghế sofa & Nệm tại nhà',
+  'dich-vu-giat-tham': 'Giặt thảm văn phòng',
+  home: 'Vệ sinh nhà ở & Căn hộ',
+  factory: 'Vệ sinh kho & Nhà xưởng',
+  glass: 'Vệ sinh kính tòa nhà cao tầng',
+  furnishing: 'Giặt ghế sofa & Nệm tại nhà',
+  floor: 'Vệ sinh công nghiệp sau xây dựng'
+};
+
 export const ContactForm: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -14,24 +28,44 @@ export const ContactForm: React.FC = () => {
   const [honeypot, setHoneypot] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   // Listen for prefill events from CostEstimator or AuthenticShowcase
   useEffect(() => {
+    const applyPrefill = (detail: {
+      serviceName?: string;
+      serviceId?: string;
+      quantity?: string;
+      estimateText?: string;
+    }) => {
+      const targetService =
+        (detail.serviceId && SERVICE_ID_TO_NAME[detail.serviceId]) ||
+        detail.serviceName;
+      setFormData(prev => ({
+        ...prev,
+        service: targetService || prev.service,
+        area: detail.quantity || prev.area,
+        notes: detail.estimateText
+          ? `Ghi chú: ${detail.estimateText}`
+          : prev.notes
+      }));
+    };
+
+    // Check if there was an earlier event before hydration
+    if (typeof window !== 'undefined' && (window as unknown as { __tino_pending_prefill?: unknown }).__tino_pending_prefill) {
+      applyPrefill((window as unknown as { __tino_pending_prefill: Parameters<typeof applyPrefill>[0] }).__tino_pending_prefill);
+      delete (window as unknown as { __tino_pending_prefill?: unknown }).__tino_pending_prefill;
+    }
+
     const handlePrefill = (e: Event) => {
       const customEvent = e as CustomEvent<{
         serviceName?: string;
+        serviceId?: string;
         quantity?: string;
         estimateText?: string;
       }>;
       if (customEvent.detail) {
-        setFormData(prev => ({
-          ...prev,
-          service: customEvent.detail.serviceName || prev.service,
-          area: customEvent.detail.quantity || prev.area,
-          notes: customEvent.detail.estimateText
-            ? `Ước tính: ${customEvent.detail.estimateText}. Cần Tino khảo sát và báo giá trọn gói.`
-            : prev.notes
-        }));
+        applyPrefill(customEvent.detail);
       }
     };
 
@@ -41,6 +75,7 @@ export const ContactForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage('');
 
     // 1. Honeypot check: silent return for bots
     if (honeypot) {
@@ -49,83 +84,63 @@ export const ContactForm: React.FC = () => {
     }
 
     if (!formData.phone.trim()) {
-      alert('Vui lòng nhập số điện thoại hoặc Zalo để Tino tiện liên hệ hỗ trợ bạn!');
+      setErrorMessage('Vui lòng nhập số điện thoại hoặc Zalo để Tino tiện liên hệ hỗ trợ bạn!');
+      return;
+    }
+
+    const cleanPhone = formData.phone.replace(/[\s.-]/g, '');
+    if (!/^(0|\+84)[0-9]{9,10}$/.test(cleanPhone)) {
+      setErrorMessage('Số điện thoại chưa đúng định dạng (cần 10 chữ số). Vui lòng kiểm tra lại!');
       return;
     }
 
     // 2. Client-side rate-limit cooldown (prevents rapid-fire bot/spam clicks)
     const now = Date.now();
     const lastSubmit = Number(localStorage.getItem('tino_contact_timestamp') || '0');
-    if (now - lastSubmit < 25000) {
-      alert('Yêu cầu của bạn đã được ghi nhận. Vui lòng đợi trong giây lát trước khi gửi tiếp!');
+    if (now - lastSubmit < 20000) {
+      setErrorMessage('Yêu cầu của bạn đã được ghi nhận cách đây ít giây. Vui lòng đợi trong giây lát hoặc gọi trực tiếp Hotline 0925 649 666!');
       return;
     }
 
     setSubmitting(true);
 
-    const escapeHtml = (s: string = '') =>
-      String(s)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-
-    // 3. First attempt: call secure serverless endpoint /api/contact (Cloudflare Pages Functions)
-    let serverSent = false;
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: formData.name,
-          phone: formData.phone,
+          name: formData.name.trim(),
+          phone: formData.phone.trim(),
           service: formData.service,
-          area: formData.area,
-          notes: formData.notes,
+          area: formData.area.trim(),
+          notes: formData.notes.trim(),
           honeypot
         })
       });
-      if (res.ok) {
-        serverSent = true;
+
+      const data = await res.json().catch(() => null);
+
+      if (res.ok && data?.ok) {
+        try {
+          localStorage.setItem('tino_contact_timestamp', String(Date.now()));
+        } catch {
+          // Ignore local storage error
+        }
+        setSubmitting(false);
+        setSubmitted(true);
+      } else {
+        setSubmitting(false);
+        setErrorMessage(
+          data?.error ||
+          'Chưa thể gửi yêu cầu tự động lúc này. Quý khách vui lòng gọi ngay Hotline 0925 649 666 hoặc nhắn tin Zalo để được hỗ trợ tức thì!'
+        );
       }
     } catch {
-      // In local dev without Cloudflare adapter, endpoint might not be active
+      setSubmitting(false);
+      setErrorMessage(
+        'Không thể kết nối đến máy chủ tiếp nhận. Quý khách vui lòng gọi Hotline 0925 649 666 hoặc nhắn tin Zalo để được hỗ trợ ngay!'
+      );
     }
-
-    // 4. Fallback for static dev environments
-    if (!serverSent) {
-      const telegramText = `🔔 <b>CÓ YÊU CẦU BÁO GIÁ MỚI - VỆ SINH TINO</b>
-
-👤 <b>Khách hàng:</b> ${escapeHtml(formData.name) || 'Khách hàng ẩn danh'}
-📞 <b>Số điện thoại / Zalo:</b> ${escapeHtml(formData.phone)}
-🧹 <b>Dịch vụ quan tâm:</b> ${escapeHtml(formData.service)}
-📐 <b>Diện tích / Khối lượng:</b> ${escapeHtml(formData.area) || 'Chưa cung cấp'}
-📝 <b>Ghi chú hiện trạng:</b> ${escapeHtml(formData.notes) || 'Không có'}
-
-⏰ <i>Thời gian gửi: ${new Date().toLocaleString('vi-VN')}</i>`;
-
-      try {
-        await fetch('https://api.telegram.org/bot9244077221:AAGzzv0mqr10Kq4prUqz4nSiln41twpJWb4/sendMessage', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: '5193894351',
-            text: telegramText,
-            parse_mode: 'HTML'
-          })
-        });
-      } catch (err) {
-        console.error('Lỗi gửi Telegram:', err);
-      }
-    }
-
-    try {
-      localStorage.setItem('tino_contact_timestamp', String(Date.now()));
-    } catch {
-      // Ignore storage errors in private browsing
-    }
-
-    setSubmitting(false);
-    setSubmitted(true);
   };
 
   return (
@@ -139,14 +154,14 @@ export const ContactForm: React.FC = () => {
           </p>
 
           <div className="contact-channels">
-            <a href="tel:0925649666" className="channel-box hotline-box">
+            <a href="tel:0925649666" className="channel-box phone-box">
               <div className="channel-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
                 </svg>
               </div>
               <div className="channel-info">
-                <small>Hotline tư vấn nhanh</small>
+                <small>Tư vấn & Khảo sát miễn phí</small>
                 <strong>0925 649 666</strong>
               </div>
               <span className="channel-badge">Gọi ngay</span>
@@ -242,6 +257,40 @@ export const ContactForm: React.FC = () => {
               <h4 className="form-title">Để lại thông tin nhận tư vấn</h4>
               <p className="form-sub">Tino sẽ gọi lại hoặc phản hồi qua Zalo trong 5–10 phút.</p>
 
+              {errorMessage && (
+                <div
+                  role="alert"
+                  style={{
+                    backgroundColor: 'rgba(239, 68, 68, 0.08)',
+                    border: '1px solid rgba(239, 68, 68, 0.25)',
+                    borderRadius: '8px',
+                    padding: '12px 14px',
+                    marginBottom: '16px',
+                    color: '#b91c1c',
+                    fontSize: '13.5px',
+                    lineHeight: '1.5'
+                  }}
+                >
+                  <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="8" x2="12" y2="12" />
+                      <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    Thông báo tiếp nhận:
+                  </div>
+                  <div>{errorMessage}</div>
+                  <div style={{ marginTop: '8px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    <a href="tel:0925649666" style={{ color: 'var(--brand)', fontWeight: 600, textDecoration: 'underline' }}>
+                      Gọi Hotline: 0925 649 666
+                    </a>
+                    <a href="https://zalo.me/0925649666" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--brand)', fontWeight: 600, textDecoration: 'underline' }}>
+                      Chat Zalo trực tiếp ↗
+                    </a>
+                  </div>
+                </div>
+              )}
+
               <div className="form-field">
                 <label htmlFor="user-name">Họ và tên của bạn:</label>
                 <input
@@ -311,7 +360,7 @@ export const ContactForm: React.FC = () => {
               </div>
 
               <button type="submit" disabled={submitting} className="button form-submit-btn">
-                {submitting ? 'Đang kết nối...' : 'Gửi yêu cầu khảo sát & báo giá'}
+                {submitting ? 'Đang gửi yêu cầu...' : 'Gửi yêu cầu khảo sát & báo giá'}
                 <span aria-hidden="true">↗</span>
               </button>
               <p className="form-disclaimer">

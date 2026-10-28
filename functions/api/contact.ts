@@ -25,14 +25,38 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     }
 
     if (!phone || typeof phone !== 'string' || !phone.trim()) {
-      return new Response(JSON.stringify({ ok: false, error: 'Thiếu số điện thoại' }), {
+      return new Response(JSON.stringify({ ok: false, error: 'Vui lòng cung cấp số điện thoại' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
       });
     }
 
-    const token = context.env.TELEGRAM_BOT_TOKEN || '9244077221:AAGzzv0mqr10Kq4prUqz4nSiln41twpJWb4';
-    const chatId = context.env.TELEGRAM_CHAT_ID || '5193894351';
+    // Basic phone validation (Vietnamese standard)
+    const cleanPhone = phone.replace(/[\s.-]/g, '');
+    if (!/^(0|\+84)[0-9]{9,10}$/.test(cleanPhone)) {
+      return new Response(JSON.stringify({ ok: false, error: 'Số điện thoại không hợp lệ (cần 10 chữ số)' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    const token = context.env.TELEGRAM_BOT_TOKEN;
+    const chatId = context.env.TELEGRAM_CHAT_ID;
+
+    // If serverless environment variables are not configured, do not expose any secrets
+    if (!token || !chatId) {
+      console.warn('Telegram environment variables TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not configured.');
+      return new Response(
+        JSON.stringify({
+          ok: false,
+          error: 'Hệ thống gửi tự động chưa được cấu hình biến môi trường trên máy chủ. Quý khách vui lòng gọi Hotline 0925 649 666 hoặc liên hệ Zalo.'
+        }),
+        {
+          status: 503,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    }
 
     const escapeHtml = (s: string = '') =>
       String(s)
@@ -52,13 +76,27 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       })
     });
 
-    const result = await res.json();
-    return new Response(JSON.stringify({ ok: res.ok, result }), {
-      status: res.ok ? 200 : 502,
+    const result = (await res.json().catch(() => ({}))) as { ok?: boolean; description?: string };
+    if (!res.ok || !result.ok) {
+      console.error('Telegram API error:', result);
+      return new Response(
+        JSON.stringify({
+          ok: false,
+          error: 'Không thể chuyển tiếp yêu cầu đến hệ thống trực ban. Quý khách vui lòng liên hệ trực tiếp qua Hotline 0925 649 666 hoặc Zalo.'
+        }),
+        {
+          status: 502,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    return new Response(JSON.stringify({ ok: true }), {
+      status: 200,
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (err: unknown) {
-    const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+    const errorMsg = err instanceof Error ? err.message : 'Lỗi hệ thống';
     return new Response(JSON.stringify({ ok: false, error: errorMsg }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }

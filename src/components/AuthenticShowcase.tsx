@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import GlareHover from './react-bits/GlareHover';
 
 export interface ProjectItem {
@@ -268,12 +268,21 @@ export const AuthenticShowcase: React.FC = () => {
     return filtered.slice(0, INITIAL_COUNT);
   }, [filtered, isExpanded]);
 
+  const lastActiveElement = useRef<HTMLElement | null>(null);
+  const modalBoxRef = useRef<HTMLDivElement | null>(null);
+
   const openModal = (item: ProjectItem) => {
+    if (typeof document !== 'undefined') {
+      lastActiveElement.current = document.activeElement as HTMLElement;
+    }
     setActivePhoto(item);
   };
 
   const closeModal = () => {
     setActivePhoto(null);
+    if (lastActiveElement.current) {
+      lastActiveElement.current.focus();
+    }
   };
 
   const handleRequestSimilar = (item: ProjectItem) => {
@@ -282,27 +291,69 @@ export const AuthenticShowcase: React.FC = () => {
     if (contactSection) {
       contactSection.scrollIntoView({ behavior: 'smooth' });
     }
+    const detail = {
+      serviceName: item.categoryLabel,
+      serviceId: item.category,
+      quantity: '1 công trình',
+      estimateText: `Tôi cần vệ sinh tương tự công trình: ${item.title}`
+    };
+    if (typeof window !== 'undefined') {
+      (window as unknown as { __tino_pending_prefill?: typeof detail }).__tino_pending_prefill = detail;
+    }
     window.dispatchEvent(
       new CustomEvent('tino:prefill-contact', {
-        detail: {
-          serviceName: item.categoryLabel,
-          serviceId: item.category,
-          quantity: '1 công trình',
-          estimateText: `Tôi cần vệ sinh tương tự công trình: ${item.title}`
-        }
+        detail
       })
     );
   };
 
   useEffect(() => {
     if (!activePhoto) return;
+
+    const timer = setTimeout(() => {
+      if (modalBoxRef.current) {
+        const focusable = modalBoxRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length > 0) {
+          focusable[0].focus();
+        }
+      }
+    }, 50);
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeModal();
+      if (e.key === 'Escape') {
+        closeModal();
+        return;
+      }
+      if (e.key === 'Tab' && modalBoxRef.current) {
+        const focusable = modalBoxRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      }
     };
+
     window.addEventListener('keydown', handleKeyDown);
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+
     return () => {
+      clearTimeout(timer);
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = prevOverflow;
     };
@@ -453,7 +504,7 @@ export const AuthenticShowcase: React.FC = () => {
           aria-modal="true"
           aria-label={activePhoto.title}
         >
-          <div className="showcase-modal-box" onClick={e => e.stopPropagation()}>
+          <div ref={modalBoxRef} className="showcase-modal-box" onClick={e => e.stopPropagation()}>
             <button
               type="button"
               className="showcase-modal-close"

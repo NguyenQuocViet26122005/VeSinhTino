@@ -7,6 +7,8 @@ export interface ServiceDetail {
   name: string;
   short: string;
   tag: string;
+  category: 'home' | 'business' | 'furnishing';
+  categoryLabel: string;
   photo: string;
   description: string;
   intro: string;
@@ -20,6 +22,8 @@ const SERVICES_DATA: ServiceDetail[] = [
     name: 'Tổng vệ sinh nhà sau xây dựng',
     short: 'Sau xây dựng',
     tag: 'Cho mọi công trình',
+    category: 'home',
+    categoryLabel: 'Nhà ở & Căn hộ',
     photo: 'b486da45979bde972f03edd7f9a890e5',
     description: 'Làm sạch tổng thể sau thi công, hoàn thiện phần thô trước khi đưa công trình vào vận hành.',
     intro: 'Từ bụi bê tông, sơn dính đến bột trét tường, Tino kết hợp máy hút bụi 3 motor cùng máy chà sàn công nghiệp để làm sạch toàn diện.',
@@ -36,6 +40,8 @@ const SERVICES_DATA: ServiceDetail[] = [
     name: 'Tổng vệ sinh chung cư trọn gói',
     short: 'Chung cư trọn gói',
     tag: 'Tiết kiệm & Chuẩn chỉ',
+    category: 'home',
+    categoryLabel: 'Nhà ở & Căn hộ',
     photo: 'tino-chung-cu-binh-chanh',
     description: 'Dịch vụ trọn gói cho căn hộ chung cư 1PN, 2PN, 3PN với đơn giá chuẩn 30.000 đ/m², đầy đủ thiết bị chuyên dụng và hóa chất an toàn.',
     intro: 'Tổng vệ sinh chung cư trọn gói 50m² từ 1tr6, áp dụng đơn giá 30k/m² (hình ảnh thực tế thi công tại Bình Chánh, TP.HCM). Tino làm sạch chi tiết từng phòng ngủ, phòng khách, bếp và nhà tắm trước khi dọn vào ở.',
@@ -52,6 +58,8 @@ const SERVICES_DATA: ServiceDetail[] = [
     name: 'Vệ sinh nhà ở & Nhà cũ',
     short: 'Nhà ở & Nhà cũ',
     tag: 'Chăm chút tổ ấm',
+    category: 'home',
+    categoryLabel: 'Nhà ở & Căn hộ',
     photo: 'f3e9578413dffb6cd7a69149858785c1',
     description: 'Tổng vệ sinh nhà phố, biệt thự, nhà liền kề định kỳ hoặc dọn vào nhà cũ sạch sẽ.',
     intro: 'Một căn nhà sạch bắt đầu từ những chi tiết nhỏ. Dịch vụ vệ sinh nhà ở giúp bạn chăm sóc không gian sống toàn diện, đặc biệt sau cải tạo hoặc trước khi chuyển vào nhà mới.',
@@ -68,6 +76,8 @@ const SERVICES_DATA: ServiceDetail[] = [
     name: 'Vệ sinh kho & Nhà xưởng',
     short: 'Kho & Nhà xưởng',
     tag: 'Không gian sản xuất',
+    category: 'business',
+    categoryLabel: 'Kho xưởng & Cao ốc',
     photo: 'e6ecb611e10bc770',
     description: 'Vệ sinh kho bãi, xưởng sản xuất theo diện tích và điều kiện vận hành thực tế.',
     intro: 'Không gian sản xuất cần phương án phù hợp. Tino khảo sát trực tiếp để xác định trang thiết bị, thời gian thi công không gián đoạn sản xuất.',
@@ -84,6 +94,8 @@ const SERVICES_DATA: ServiceDetail[] = [
     name: 'Vệ sinh kính tòa nhà cao tầng',
     short: 'Kính tòa nhà',
     tag: 'Trong hơn, sáng hơn',
+    category: 'business',
+    categoryLabel: 'Kho xưởng & Cao ốc',
     photo: 'c949d223bc44f1ae',
     description: 'Làm sạch kính mặt ngoài và mặt trong cao ốc bằng phương án thi công an toàn chuẩn kỹ thuật.',
     intro: 'Bề mặt kính sạch giúp không gian đón trọn ánh sáng tự nhiên. Đội ngũ có chứng chỉ đu dây an toàn, kết hợp giàn giáo hoặc xe nâng.',
@@ -100,6 +112,8 @@ const SERVICES_DATA: ServiceDetail[] = [
     name: 'Giặt ghế sofa & Nệm tại nhà',
     short: 'Ghế sofa & Nệm',
     tag: 'Êm ái mỗi ngày',
+    category: 'furnishing',
+    categoryLabel: 'Nội thất & Tiện ích',
     photo: '122cac8e1bd2f9d6',
     description: 'Chăm sóc sofa vải nỉ, da và nệm ngủ tại nhà bằng công nghệ phun hút sinh học an toàn.',
     intro: 'Chiếc sofa là nơi gia đình quây quần mỗi ngày. Tino dùng máy phun hút áp lực kết hợp dung dịch khử khuẩn, khử mùi ẩm mốc sâu.',
@@ -116,6 +130,8 @@ const SERVICES_DATA: ServiceDetail[] = [
     name: 'Giặt thảm văn phòng & Trang trí',
     short: 'Giặt thảm văn phòng',
     tag: 'Sạch từ bề mặt',
+    category: 'furnishing',
+    categoryLabel: 'Nội thất & Tiện ích',
     photo: 'e20602f023e8669e',
     description: 'Vệ sinh thảm trải sàn văn phòng, thảm len trang trí bằng máy giặt mâm xoay chuyên dụng.',
     intro: 'Bụi bẩn và vết cà phê lâu ngày trong thảm được đánh bật hoàn toàn, giúp không khí văn phòng trong lành và bảo vệ tuổi thọ sợi thảm.',
@@ -129,12 +145,33 @@ const SERVICES_DATA: ServiceDetail[] = [
   }
 ];
 
-export const ServiceExplorer: React.FC = () => {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const current = SERVICES_DATA[selectedIndex];
+const SERVICE_GROUPS = [
+  { id: 'all', label: 'Tất cả danh mục' },
+  { id: 'home', label: 'Căn hộ & Nhà ở' },
+  { id: 'business', label: 'Kho xưởng & Cao ốc' },
+  { id: 'furnishing', label: 'Nội thất & Tiện ích' }
+] as const;
 
-  const handleSelect = (index: number) => {
-    setSelectedIndex(index);
+export const ServiceExplorer: React.FC = () => {
+  const [selectedSlug, setSelectedSlug] = useState<string>(SERVICES_DATA[0].slug);
+  const [activeCategory, setActiveCategory] = useState<'all' | 'home' | 'business' | 'furnishing'>('all');
+
+  const filteredServices = activeCategory === 'all'
+    ? SERVICES_DATA
+    : SERVICES_DATA.filter(s => s.category === activeCategory);
+
+  const current = SERVICES_DATA.find(s => s.slug === selectedSlug) || filteredServices[0] || SERVICES_DATA[0];
+
+  const handleCategoryChange = (catId: 'all' | 'home' | 'business' | 'furnishing') => {
+    setActiveCategory(catId);
+    if (catId !== 'all') {
+      const match = SERVICES_DATA.find(s => s.category === catId);
+      if (match) setSelectedSlug(match.slug);
+    }
+  };
+
+  const handleSelectBySlug = (slug: string) => {
+    setSelectedSlug(slug);
   };
 
   const handleScrollToEstimator = (slug: string) => {
@@ -151,21 +188,39 @@ export const ServiceExplorer: React.FC = () => {
 
   return (
     <div className="service-explorer">
-      {/* Category Navigation Pills */}
-      <div className="explorer-tabs" role="tablist" aria-label="Danh mục dịch vụ">
-        {SERVICES_DATA.map((item, idx) => (
+      {/* Category Group Filter Bar */}
+      <div className="explorer-group-filter" role="tablist" aria-label="Phân nhóm danh mục">
+        {SERVICE_GROUPS.map(cat => (
           <button
-            key={item.slug}
+            key={cat.id}
             type="button"
-            role="tab"
-            aria-selected={selectedIndex === idx}
-            className={`explorer-tab ${selectedIndex === idx ? 'is-active' : ''}`}
-            onClick={() => handleSelect(idx)}
+            className={`group-filter-pill ${activeCategory === cat.id ? 'is-active' : ''}`}
+            onClick={() => handleCategoryChange(cat.id)}
           >
-            <span className="tab-number">{'0' + (idx + 1)}</span>
-            <span className="tab-name">{item.short}</span>
+            {cat.label}
           </button>
         ))}
+      </div>
+
+      {/* Category Navigation Pills */}
+      <div className="explorer-tabs" role="tablist" aria-label="Danh mục dịch vụ">
+        {filteredServices.map((item) => {
+          const originalIdx = SERVICES_DATA.findIndex(s => s.slug === item.slug);
+          return (
+            <button
+              key={item.slug}
+              type="button"
+              role="tab"
+              aria-selected={current.slug === item.slug}
+              className={`explorer-tab ${current.slug === item.slug ? 'is-active' : ''}`}
+              onClick={() => handleSelectBySlug(item.slug)}
+            >
+              <span className="tab-number">{'0' + (originalIdx + 1)}</span>
+              <span className="tab-name">{item.short}</span>
+              <span className="tab-category-badge">{item.categoryLabel}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Selected Service Card Content */}
@@ -185,7 +240,7 @@ export const ServiceExplorer: React.FC = () => {
 
         <div className="explorer-body">
           <div className="explorer-header">
-            <span className="explorer-kicker">DỊCH VỤ #{selectedIndex + 1} CỦA TINO</span>
+            <span className="explorer-kicker">DỊCH VỤ #{SERVICES_DATA.findIndex(s => s.slug === current.slug) + 1} · {current.categoryLabel.toUpperCase()}</span>
             <h3 className="explorer-title">{current.name}</h3>
             <p className="explorer-desc">{current.intro}</p>
             <div className="explorer-price-pill">

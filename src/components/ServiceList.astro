@@ -1,5 +1,280 @@
 ---
-import { services, image } from '../data/site';
+import { image } from '../data/site';
+
+interface Props {
+  compact?: boolean;
+}
+
 const { compact = false } = Astro.props;
+
+interface ServiceCardItem {
+  slug: string;
+  name: string;
+  tag: string;
+  description: string;
+  priceHighlight: string;
+  photo: string;
+  href: string;
+}
+
+interface ServiceCategoryGroup {
+  id: string;
+  title: string;
+  subtitle: string;
+  badge: string;
+  items: ServiceCardItem[];
+}
+
+const serviceCategoryGroups: ServiceCategoryGroup[] = [
+  {
+    id: 'nha-o-can-ho',
+    title: 'Nhóm Dịch vụ Căn hộ & Nhà ở',
+    subtitle: 'Giải pháp làm sạch toàn diện cho căn hộ chung cư, nhà phố và công trình sau xây dựng đón tân gia.',
+    badge: 'TỔ ẤM & CĂN HỘ',
+    items: [
+      {
+        slug: 'dich-vu-ve-sinh-cong-nghiep',
+        name: 'Tổng vệ sinh nhà sau xây dựng',
+        tag: 'Sau thi công',
+        description: 'Làm sạch tổng thể sau thi công, sủi sơn xi măng, đánh sàn máy mâm xoay và hoàn thiện bàn giao.',
+        priceHighlight: 'Từ 12.000 – 20.000 đ/m²',
+        photo: 'b486da45979bde972f03edd7f9a890e5',
+        href: '/dich-vu-ve-sinh-cong-nghiep/'
+      },
+      {
+        slug: 've-sinh-chung-cu',
+        name: 'Tổng vệ sinh chung cư trọn gói',
+        tag: 'Gói căn hộ chuyên sâu',
+        description: 'Vệ sinh chuyên sâu cho căn hộ 1PN, 2PN, 3PN với đơn giá chuẩn 30k/m², gói 50m² từ 1tr6. Ảnh thực tế tại Bình Chánh.',
+        priceHighlight: '30.000 đ/m² (50m² từ 1.6tr)',
+        photo: 'tino-chung-cu-binh-chanh',
+        href: '/ve-sinh-nha-o/#goi-ve-sinh-chung-cu'
+      },
+      {
+        slug: 've-sinh-nha-o',
+        name: 'Vệ sinh nhà ở & Nhà cũ',
+        tag: 'Chăm chút tổ ấm',
+        description: 'Tổng vệ sinh nhà phố, biệt thự định kỳ hoặc làm sạch sâu trước khi gia đình dọn vào nhà cũ.',
+        priceHighlight: 'Từ 10.000 – 20.000 đ/m²',
+        photo: 'f3e9578413dffb6cd7a69149858785c1',
+        href: '/ve-sinh-nha-o/'
+      }
+    ]
+  },
+  {
+    id: 'doanh-nghiep-kho-xuong',
+    title: 'Nhóm Doanh nghiệp & Công nghiệp',
+    subtitle: 'Đáp ứng quy mô diện tích lớn, đảm bảo tiến độ và tiêu chuẩn an toàn kỹ thuật cao nhất.',
+    badge: 'DOANH NGHIỆP & NHÀ XƯỞNG',
+    items: [
+      {
+        slug: 've-sinh-nha-xuong',
+        name: 'Vệ sinh kho & Nhà xưởng',
+        tag: 'Không gian sản xuất',
+        description: 'Vệ sinh kho bãi, quét bụi xà gồ trần xưởng và tẩy rửa dầu mỡ sàn bê tông, sàn epoxy công nghiệp.',
+        priceHighlight: 'Từ 6.000 – 15.000 đ/m²',
+        photo: 'e6ecb611e10bc770',
+        href: '/ve-sinh-nha-xuong/'
+      },
+      {
+        slug: 've-sinh-kinh-toa-nha',
+        name: 'Vệ sinh kính tòa nhà cao tầng',
+        tag: 'Trong hơn, sáng hơn',
+        description: 'Thi công đu dây mặt ngoài, giàn giáo và xe nâng người mặt dựng kính cao ốc an toàn chuẩn kỹ thuật.',
+        priceHighlight: 'Từ 12.000 – 30.000 đ/m²',
+        photo: 'c949d223bc44f1ae',
+        href: '/ve-sinh-kinh-toa-nha/'
+      }
+    ]
+  },
+  {
+    id: 'noi-that-tien-ich',
+    title: 'Nhóm Tiện ích & Chăm sóc nội thất',
+    subtitle: 'Chăm sóc chuyên sâu các bề mặt vải, nệm, sofa và thảm bằng công nghệ phun hút sinh học an toàn.',
+    badge: 'TIỆN ÍCH NỘI THẤT',
+    items: [
+      {
+        slug: 'dich-vu-giat-ghe-sofa',
+        name: 'Giặt ghế sofa & Nệm tại nhà',
+        tag: 'Êm ái mỗi ngày',
+        description: 'Chăm sóc sofa vải nỉ, da và nệm ngủ bằng công nghệ phun hút sinh học, khử khuẩn và sấy khô nhanh.',
+        priceHighlight: 'Từ 250.000 – 500.000 đ/bộ',
+        photo: '122cac8e1bd2f9d6',
+        href: '/dich-vu-giat-ghe-sofa/'
+      },
+      {
+        slug: 'dich-vu-giat-tham',
+        name: 'Giặt thảm văn phòng & Trang trí',
+        tag: 'Sạch từ bề mặt',
+        description: 'Đánh bật vết ố cà phê, bụi bẩn sâu trong sợi thảm bằng máy mâm xoay và quạt thổi công nghiệp.',
+        priceHighlight: 'Từ 15.000 – 20.000 đ/m²',
+        photo: 'e20602f023e8669e',
+        href: '/dich-vu-giat-tham/'
+      }
+    ]
+  }
+];
 ---
-<div class:list={['service-list', {compact}]}>{services.map((s)=><a class="service-card" data-category={s.category} href={'/'+s.slug+'/'}><div class="service-photo"><img src={image(s.photo)} alt={s.name} loading="lazy" decoding="async" width="768" height="640"/><span class="round-arrow" aria-hidden="true">↗</span></div><div class="service-copy"><span class="service-tag">{s.tag}</span><h3>{s.name}</h3><p>{s.description}</p></div></a>)}</div>
+
+<div class={`service-directory-wrapper ${compact ? 'is-compact' : ''}`}>
+  <!-- Category Fast Jump Nav -->
+  <nav class="service-category-nav" aria-label="Phân nhóm danh mục dịch vụ">
+    <span class="category-nav-label">Phân nhóm dịch vụ:</span>
+    <div class="category-nav-links">
+      {serviceCategoryGroups.map((group, idx) => (
+        <a href={`#${group.id}`} class="category-nav-pill">
+          <span class="pill-num">0{idx + 1}</span>
+          <span>{group.title.replace('Nhóm Dịch vụ ', '').replace('Nhóm ', '')}</span>
+        </a>
+      ))}
+    </div>
+  </nav>
+
+  <div class="service-groups-stack">
+    {serviceCategoryGroups.map((group) => (
+      <section class="service-group-block" id={group.id}>
+        <div class="group-header">
+          <span class="group-badge">{group.badge}</span>
+          <h2 class="group-title">{group.title}</h2>
+          <p class="group-subtitle">{group.subtitle}</p>
+        </div>
+
+        <div class="service-list">
+          {group.items.map((s) => (
+            <a class="service-card" href={s.href}>
+              <div class="service-photo">
+                <img
+                  src={s.photo.startsWith('tino-') ? `/images/${s.photo}.webp` : image(s.photo)}
+                  alt={s.name}
+                  loading="lazy"
+                  decoding="async"
+                  width="768"
+                  height="640"
+                />
+                <span class="round-arrow" aria-hidden="true">↗</span>
+              </div>
+              <div class="service-copy">
+                <div class="service-meta-row">
+                  <span class="service-tag">{s.tag}</span>
+                  <span class="service-price-chip">{s.priceHighlight}</span>
+                </div>
+                <h3>{s.name}</h3>
+                <p>{s.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+</div>
+
+<style>
+  .service-directory-wrapper {
+    margin-bottom: 40px;
+  }
+  .service-category-nav {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    background: #f1f7fb;
+    border: 1px solid rgba(15, 41, 66, 0.08);
+    border-radius: 12px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+  .category-nav-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--brand, #0f2942);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .category-nav-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .category-nav-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #ffffff;
+    border: 1px solid rgba(15, 41, 66, 0.12);
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--brand, #0f2942);
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  .category-nav-pill:hover {
+    background: #0872af;
+    color: #ffffff;
+    border-color: #0872af;
+  }
+  .pill-num {
+    font-size: 11px;
+    opacity: 0.7;
+    font-family: var(--display, 'Manrope', sans-serif);
+  }
+  .service-group-block {
+    margin-bottom: 60px;
+    scroll-margin-top: 100px;
+  }
+  .group-header {
+    margin-bottom: 24px;
+    border-bottom: 1px solid rgba(15, 41, 66, 0.08);
+    padding-bottom: 16px;
+  }
+  .group-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #0872af;
+    background: rgba(8, 114, 175, 0.08);
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+  .group-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--brand, #0f2942);
+    margin: 0 0 6px;
+  }
+  .group-subtitle {
+    font-size: 14.5px;
+    color: var(--muted, #475569);
+    margin: 0;
+  }
+  .service-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .service-price-chip {
+    font-size: 12px;
+    font-weight: 700;
+    color: #0872af;
+    background: rgba(8, 114, 175, 0.08);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  @media (max-width: 768px) {
+    .service-category-nav {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .group-title {
+      font-size: 20px;
+    }
+  }
+</style>

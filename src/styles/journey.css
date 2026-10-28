@@ -1,8 +1,52 @@
 /* Journey Enhancement Styles: Apple Design & Emil Kowalski Principles */
 
+/* --- 0. Universal Typography & Button Alignment --- */
+.service-explorer,
+.cost-estimator,
+.authentic-showcase,
+.contact-smart-section,
+.wow-contact-section {
+  font-family: var(--font, 'Be Vietnam Pro', sans-serif);
+}
+
+/* Guard against button text blowing up from global.css .button span { font-size: 20px } */
+.button, .button * {
+  font-family: var(--font, 'Be Vietnam Pro', sans-serif);
+}
+
+.button > span:not([aria-hidden]),
+.button-text {
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em;
+}
+
+.button [aria-hidden="true"] {
+  font-size: 18px !important;
+  line-height: 1 !important;
+  display: inline-block;
+  transition: transform 180ms var(--ease-out);
+}
+
+/* Standard Section Rhythm: 110px desktop, 65px mobile */
+.wow-contact-section {
+  padding-block: 105px 110px;
+}
+
+@media (max-width: 700px) {
+  .wow-contact-section {
+    padding-block: 65px;
+  }
+}
+
+.contact-smart-section {
+  margin-top: 0;
+}
+
 /* --- 1. Service Explorer ("Bạn cần làm sạch không gian nào?") --- */
 .service-explorer {
-  margin-top: 40px;
+  margin-top: 36px;
 }
 
 .explorer-tabs {
@@ -24,18 +68,20 @@
   color: var(--ink, #10354e);
   border: 1px solid var(--line, #d5e4ee);
   border-radius: 100px;
-  font-size: 14.5px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
   transition: all 180ms cubic-bezier(.22,1,.36,1);
   min-height: 46px;
+  touch-action: manipulation;
 }
 
 .explorer-tab .tab-number {
   font-size: 11px;
   opacity: 0.65;
-  font-family: var(--display, inherit);
+  font-family: var(--display, 'Manrope', sans-serif);
+  font-weight: 700;
 }
 
 .explorer-tab:hover {
@@ -95,34 +141,6 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.explorer-price-tag {
-  position: absolute;
-  bottom: 18px;
-  left: 18px;
-  right: 18px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  padding: 12px 18px;
-  border-radius: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-}
-
-.explorer-price-tag small {
-  font-size: 12px;
-  color: #506d82;
-  font-weight: 500;
-}
-
-.explorer-price-tag strong {
-  font-size: 15px;
-  color: #0867a0;
-  font-weight: 700;
-}
-
 .explorer-body {
   padding: 36px 36px 36px 0;
   display: flex;
@@ -132,9 +150,10 @@
 
 .explorer-kicker {
   display: inline-block;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: #0872af;
   margin-bottom: 8px;
 }
@@ -142,29 +161,56 @@
 .explorer-title {
   font-size: clamp(24px, 2.5vw, 32px);
   line-height: 1.25;
-  margin-bottom: 12px;
-  color: #10354e;
-  letter-spacing: -0.03em;
+  margin-bottom: 10px;
+  color: #082c4a;
+  letter-spacing: -0.035em;
+  font-weight: 500;
 }
 
 .explorer-desc {
   font-size: 15px;
   color: #506d82;
-  line-height: 1.6;
-  margin-bottom: 24px;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.explorer-price-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #e6f1f8;
+  border: 1px solid #d5e4ee;
+  border-radius: 100px;
+  padding: 8px 18px;
+  margin-bottom: 22px;
+  width: fit-content;
+}
+
+.price-pill-lbl {
+  font-size: 12.5px;
+  color: #506d82;
+  font-weight: 500;
+}
+
+.price-pill-val {
+  font-family: var(--display, 'Manrope', sans-serif);
+  font-size: 14px;
+  font-weight: 700;
+  color: #0867a0;
+  font-variant-numeric: tabular-nums;
 }
 
 .explorer-tasks {
   background: #f7fafc;
   border-radius: 14px;
-  padding: 20px;
-  margin-bottom: 28px;
+  padding: 20px 22px;
+  margin-bottom: 26px;
   border: 1px solid #e2edf3;
 }
 
 .tasks-heading {
   font-size: 13.5px;
-  font-weight: 700;
+  font-weight: 600;
   color: #082c4a;
   margin-bottom: 14px;
   display: flex;
@@ -174,6 +220,7 @@
 
 .tasks-heading svg {
   color: #0872af;
+  flex-shrink: 0;
 }
 
 .tasks-list {
@@ -196,8 +243,8 @@
 
 .task-check {
   color: #0872af;
-  font-weight: 800;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 13px;
   flex-shrink: 0;
   margin-top: 1px;
 }
@@ -208,10 +255,8 @@
   flex-wrap: wrap;
 }
 
-.explorer-btn-primary, .explorer-btn-secondary {
-  min-height: 48px;
-  padding: 12px 22px;
-  font-size: 13.5px;
+.explorer-actions .button {
+  min-height: 52px;
 }
 
 /* --- 2. Storytelling Showcase Enhancements --- */
@@ -219,7 +264,7 @@
   margin-top: 14px;
   padding: 12px 14px;
   background: #f5f9fc;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid #e1edf5;
   display: flex;
   flex-direction: column;
@@ -228,13 +273,13 @@
 
 .story-step-item {
   font-size: 12.5px;
-  line-height: 1.45;
+  line-height: 1.5;
   display: flex;
   gap: 6px;
 }
 
 .story-label {
-  font-weight: 700;
+  font-weight: 600;
   color: #082c4a;
   flex-shrink: 0;
 }
@@ -254,25 +299,30 @@
 
 .showcase-action-btn {
   width: 100%;
-  padding: 10px 16px;
+  min-height: 44px;
+  padding: 10px 18px;
   background: #e6f1f8;
   color: #0867a0;
-  border: 1px solid #d0e4f0;
-  border-radius: 8px;
-  font-size: 13px;
+  border: 1px solid #cce1ee;
+  border-radius: 100px;
+  font-size: 13.5px;
   font-weight: 600;
+  font-family: var(--font, 'Be Vietnam Pro', sans-serif);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   cursor: pointer;
   transition: all 180ms cubic-bezier(.22,1,.36,1);
+  touch-action: manipulation;
 }
 
 .showcase-action-btn:hover {
-  background: #0867a0;
-  color: #ffffff;
-  border-color: #0867a0;
+  background: #082c4a;
+  color: #a9e7f5;
+  border-color: #082c4a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(8, 44, 74, 0.15);
 }
 
 .showcase-action-btn:active {
@@ -289,7 +339,7 @@
 
 .story-full-item {
   padding: 14px 16px;
-  border-radius: 10px;
+  border-radius: 12px;
   background: #f7fafc;
   border-left: 3px solid #0872af;
 }
@@ -308,17 +358,17 @@
 }
 
 .story-full-badge {
-  font-size: 11.5px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   color: #082c4a;
   margin-bottom: 4px;
 }
 
 .story-full-item p {
   font-size: 13.5px;
-  line-height: 1.55;
+  line-height: 1.6;
   color: #10354e;
   margin: 0;
 }
@@ -341,6 +391,8 @@
   color: #082c4a;
   line-height: 1.3;
   margin-bottom: 12px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
 }
 
 .modal-cta-row {
@@ -359,7 +411,7 @@
 
 /* --- 3. Cost Estimator ("Ước tính chi phí minh bạch") --- */
 .cost-estimator {
-  margin-top: 50px;
+  margin-top: 40px;
   background: #ffffff;
   border: 1px solid var(--line, #d5e4ee);
   border-radius: 24px;
@@ -377,11 +429,12 @@
   display: inline-block;
   background: #e6f1f8;
   color: #0872af;
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 10.5px;
+  font-weight: 600;
   padding: 6px 14px;
   border-radius: 100px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   margin-bottom: 12px;
 }
 
@@ -389,14 +442,16 @@
   font-size: clamp(26px, 3vw, 36px);
   color: #082c4a;
   letter-spacing: -0.035em;
-  line-height: 1.2;
+  line-height: 1.25;
   margin-bottom: 10px;
+  font-weight: 500;
 }
 
 .estimator-subtitle {
   font-size: 15px;
   color: #506d82;
   margin: 0;
+  line-height: 1.6;
 }
 
 .estimator-grid {
@@ -419,8 +474,8 @@
 }
 
 .control-label {
-  font-size: 14.5px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
   color: #10354e;
 }
 
@@ -433,8 +488,8 @@
 }
 
 .control-label-row label {
-  font-size: 14.5px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
   color: #10354e;
 }
 
@@ -445,15 +500,17 @@
 }
 
 .service-chip {
-  padding: 10px 16px;
+  padding: 10px 18px;
   background: #f5f9fc;
   border: 1px solid #d5e4ee;
-  border-radius: 10px;
+  border-radius: 100px;
   font-size: 13.5px;
-  font-weight: 600;
+  font-weight: 500;
+  font-family: var(--font, 'Be Vietnam Pro', sans-serif);
   color: #10354e;
   cursor: pointer;
   transition: all 160ms cubic-bezier(.22,1,.36,1);
+  touch-action: manipulation;
 }
 
 .service-chip:hover {
@@ -466,6 +523,7 @@
   color: #ffffff;
   border-color: #0872af;
   box-shadow: 0 4px 12px rgba(8, 114, 175, 0.25);
+  font-weight: 600;
 }
 
 .qty-value-display {
@@ -474,8 +532,8 @@
   gap: 6px;
   background: #f5f9fc;
   border: 1.5px solid #0872af;
-  border-radius: 8px;
-  padding: 4px 10px;
+  border-radius: 10px;
+  padding: 4px 12px;
 }
 
 .qty-number-input {
@@ -484,6 +542,8 @@
   background: transparent;
   font-size: 17px;
   font-weight: 700;
+  font-family: var(--display, 'Manrope', sans-serif);
+  font-variant-numeric: tabular-nums;
   color: #082c4a;
   text-align: right;
   outline: none;
@@ -518,15 +578,18 @@
 }
 
 .preset-btn {
-  padding: 6px 12px;
+  padding: 6px 14px;
   background: #eef5fa;
   border: 1px solid #dce8f0;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
+  border-radius: 100px;
+  font-size: 12.5px;
+  font-weight: 500;
+  font-family: var(--display, 'Manrope', sans-serif);
+  font-variant-numeric: tabular-nums;
   color: #10354e;
   cursor: pointer;
   transition: all 140ms ease;
+  touch-action: manipulation;
 }
 
 .preset-btn:hover {
@@ -537,14 +600,15 @@
   background: #082c4a;
   color: #ffffff;
   border-color: #082c4a;
+  font-weight: 600;
 }
 
 /* Result Card */
 .estimator-result-card {
-  background: linear-gradient(145deg, #082c4a, #0d3d63);
+  background: linear-gradient(145deg, #082c4a, #0c3659);
   border-radius: 20px;
   color: #f5f9fc;
-  padding: 32px;
+  padding: 36px 32px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -572,9 +636,10 @@
 
 .result-kicker {
   display: block;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: #a9e7f5;
   margin-bottom: 8px;
 }
@@ -588,10 +653,11 @@
 }
 
 .result-amount {
-  font-size: clamp(20px, 6vw, 32px);
-  font-weight: 800;
+  font-size: clamp(22px, 3.2vw, 32px);
+  font-weight: 700;
   color: #ffffff;
-  font-family: var(--display, inherit);
+  font-family: var(--display, 'Manrope', sans-serif);
+  font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
   white-space: nowrap;
 }
@@ -631,6 +697,7 @@
   color: #ffffff;
   text-align: right;
   word-break: break-word;
+  font-weight: 500;
 }
 
 .unit-badge {
@@ -661,9 +728,10 @@
   white-space: normal !important;
   text-align: center;
   line-height: 1.35;
-  padding: 14px 18px;
+  padding: 14px 22px;
   font-size: 14px;
-  border-radius: 12px;
+  font-weight: 600;
+  border-radius: 100px;
   background: #0872af;
   color: #ffffff;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
@@ -671,10 +739,18 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+  transition: all 180ms ease;
+  touch-action: manipulation;
 }
 
 .result-cta-btn:hover {
   background: #008be0;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.result-cta-btn:active {
+  transform: scale(0.97);
 }
 
 .zalo-quick-link {
@@ -696,10 +772,6 @@
 }
 
 /* --- 4. Smart Contact Section --- */
-.contact-smart-section {
-  margin-top: 60px;
-}
-
 .contact-smart-card {
   display: grid;
   grid-template-columns: 1.15fr 1fr;
@@ -719,9 +791,10 @@
 
 .contact-kicker {
   display: inline-block;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: #0872af;
   margin-bottom: 8px;
 }
@@ -730,13 +803,14 @@
   font-size: clamp(26px, 3vw, 36px);
   color: #082c4a;
   letter-spacing: -0.035em;
-  line-height: 1.22;
+  line-height: 1.25;
   margin-bottom: 14px;
+  font-weight: 500;
 }
 
 .contact-desc {
   font-size: 15px;
-  line-height: 1.6;
+  line-height: 1.7;
   color: #506d82;
   margin-bottom: 28px;
 }
@@ -752,12 +826,14 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 16px 20px;
-  border-radius: 14px;
+  padding: 14px 20px;
+  border-radius: 16px;
   text-decoration: none;
   border: 1.5px solid #d5e4ee;
   background: #f7fafc;
   transition: all 180ms cubic-bezier(.22,1,.36,1);
+  min-height: 72px;
+  touch-action: manipulation;
 }
 
 .channel-box:hover {
@@ -809,6 +885,9 @@
 .channel-info strong {
   font-size: 17px;
   color: #082c4a;
+  font-family: var(--display, 'Manrope', sans-serif);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .channel-badge {
@@ -842,7 +921,10 @@
 
 .commit-check {
   color: #0872af;
-  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 /* Smart Form */
@@ -858,6 +940,7 @@
   color: #082c4a;
   margin-bottom: 6px;
   letter-spacing: -0.02em;
+  font-weight: 500;
 }
 
 .form-sub {
@@ -910,17 +993,29 @@
 
 .form-submit-btn {
   width: 100%;
-  min-height: 52px;
+  min-height: 54px;
   margin-top: 8px;
   background: #0872af;
-  font-size: 15px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 100px;
+  touch-action: manipulation;
+}
+
+.form-submit-btn:hover {
+  background: #082c4a;
 }
 
 .form-disclaimer {
-  font-size: 11.5px;
+  font-size: 12px;
   color: #6b8699;
   text-align: center;
-  margin: 6px 0 0;
+  margin: 8px 0 0;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .contact-success-state {
@@ -939,8 +1034,6 @@
   color: #2a9d8f;
   display: grid;
   place-items: center;
-  font-size: 26px;
-  font-weight: 800;
   margin-bottom: 16px;
 }
 
@@ -948,6 +1041,7 @@
   font-size: 22px;
   color: #082c4a;
   margin-bottom: 10px;
+  font-weight: 500;
 }
 
 .contact-success-state p {
@@ -1012,14 +1106,14 @@
     padding: 2px 6px;
   }
   .service-chip {
-    padding: 8px 12px;
+    padding: 8px 14px;
     font-size: 12.5px;
   }
   .preset-buttons {
     gap: 6px;
   }
   .preset-btn {
-    padding: 5px 9px;
+    padding: 5px 10px;
     font-size: 11.5px;
   }
   .qty-number-input {
@@ -1029,7 +1123,7 @@
   .result-cta-btn {
     font-size: 13.5px;
     padding: 12px 14px;
-    border-radius: 10px;
+    border-radius: 100px;
   }
   .form-row {
     grid-template-columns: 1fr;
@@ -1040,7 +1134,7 @@
   .explorer-actions {
     flex-direction: column;
   }
-  .explorer-btn-primary, .explorer-btn-secondary {
+  .explorer-actions .button {
     width: 100%;
     white-space: normal !important;
     text-align: center;
@@ -1051,12 +1145,188 @@
     white-space: normal !important;
     text-align: center;
     line-height: 1.35;
-    padding: 10px 12px;
+    padding: 10px 14px;
   }
   .form-submit-btn {
     white-space: normal !important;
     text-align: center;
     line-height: 1.35;
     padding: 12px 16px;
+  }
+}
+
+/* --- 6. Interior Service Gallery & About Fleet Grid Enhancement --- */
+.service-gallery {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+  gap: 20px !important;
+  margin-top: 35px !important;
+}
+
+.service-gallery button {
+  border: 0;
+  background: var(--surface, #e6f1f8);
+  padding: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(8, 44, 74, 0.06);
+  cursor: pointer;
+  transition: transform 220ms cubic-bezier(.22, 1, .36, 1), box-shadow 220ms cubic-bezier(.22, 1, .36, 1);
+  display: block;
+  position: relative;
+  width: 100%;
+}
+
+.service-gallery button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(8, 44, 74, 0.14);
+}
+
+.service-gallery button:focus-visible {
+  outline: 2px solid var(--accent, #a9e7f5);
+  outline-offset: 2px;
+}
+
+.service-gallery img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  display: block;
+  transition: transform 300ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.service-gallery button:hover img {
+  transform: scale(1.03);
+}
+
+/* About Page Fleet & Mobile Team Showcase */
+.about-fleet-section {
+  margin-top: 70px;
+  padding-top: 40px;
+  border-top: 1px solid var(--line, #d5e4ee);
+}
+
+.about-fleet-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.fleet-figure {
+  margin: 0;
+  background: #ffffff;
+  border: 1px solid var(--line, #d5e4ee);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(8, 44, 74, 0.05);
+}
+
+.fleet-figure img {
+  width: 100%;
+  height: 380px;
+  object-fit: cover;
+  display: block;
+}
+
+.fleet-figure figcaption {
+  padding: 16px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted, #506d82);
+  line-height: 1.5;
+  border-top: 1px solid var(--line, #d5e4ee);
+  background: #fff;
+}
+
+@media (max-width: 700px) {
+  .service-gallery {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    margin-top: 24px !important;
+  }
+  .service-gallery img {
+    height: 160px !important;
+  }
+  .about-fleet-section {
+    margin-top: 50px;
+    padding-top: 30px;
+  }
+  .about-fleet-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .fleet-figure img {
+    height: 260px;
+  }
+  .fleet-figure figcaption {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 440px) {
+  .service-gallery {
+    grid-template-columns: 1fr !important;
+  }
+  .service-gallery img {
+    height: 200px !important;
+  }
+}
+
+/* --- 7. Showcase Load More & Collapse Controls --- */
+.showcase-expand-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 42px;
+}
+
+.showcase-expand-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 34px;
+  background: var(--surface, #e6f1f8);
+  color: var(--primary, #082c4a);
+  border: 1px solid var(--line, #d5e4ee);
+  border-radius: 100px;
+  font-family: var(--font, 'Be Vietnam Pro', sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 220ms cubic-bezier(.22, 1, .36, 1);
+  box-shadow: 0 4px 14px rgba(8, 44, 74, 0.06);
+  min-height: 48px;
+  touch-action: manipulation;
+}
+
+.showcase-expand-btn:hover {
+  background: #082c4a;
+  color: #f5f9fc;
+  border-color: #082c4a;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(8, 44, 74, 0.18);
+}
+
+.showcase-expand-btn svg {
+  transition: transform 200ms ease;
+}
+
+.showcase-expand-btn:hover svg {
+  transform: translateY(2px);
+}
+
+.showcase-expand-btn[aria-expanded="true"]:hover svg {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 700px) {
+  .showcase-expand-wrap {
+    margin-top: 26px;
+  }
+  .showcase-expand-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 13px 20px;
   }
 }

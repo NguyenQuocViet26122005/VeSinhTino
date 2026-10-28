@@ -20,7 +20,7 @@ const SERVICES_DATA: ServiceDetail[] = [
     name: 'Vệ sinh nhà ở & Căn hộ',
     short: 'Nhà ở & Căn hộ',
     tag: 'Chăm chút tổ ấm',
-    photo: '3b21a7ec444d0b39',
+    photo: 'f3e9578413dffb6cd7a69149858785c1',
     description: 'Tổng vệ sinh nhà ở, căn hộ và không gian sinh hoạt, từ sàn nhà đến những góc nhỏ nhất.',
     intro: 'Một căn nhà sạch bắt đầu từ những chi tiết nhỏ. Tino chăm sóc không gian sống kỹ lưỡng sau sửa chữa hoặc trước khi dọn vào nhà mới.',
     tasks: [
@@ -36,7 +36,7 @@ const SERVICES_DATA: ServiceDetail[] = [
     name: 'Vệ sinh công nghiệp sau xây dựng',
     short: 'Sau xây dựng',
     tag: 'Cho mọi công trình',
-    photo: '934c3c727f9a36a0',
+    photo: 'b486da45979bde972f03edd7f9a890e5',
     description: 'Làm sạch tổng thể sau thi công, hoàn thiện phần thô trước khi đưa công trình vào vận hành.',
     intro: 'Từ bụi bê tông, sơn dính đến bột trét tường, Tino kết hợp máy hút bụi 3 motor cùng máy chà sàn công nghiệp để làm sạch toàn diện.',
     tasks: [
@@ -125,7 +125,6 @@ export const ServiceExplorer: React.FC = () => {
     const el = document.getElementById('uoc-tinh-chi-phi');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
-      // Dispatch custom event to sync CostEstimator
       window.dispatchEvent(new CustomEvent('tino:select-service', { detail: { slug } }));
     }
   };
@@ -162,10 +161,6 @@ export const ServiceExplorer: React.FC = () => {
             className="explorer-img"
           />
           <span className="explorer-badge">{current.tag}</span>
-          <div className="explorer-price-tag">
-            <small>Đơn giá tham khảo</small>
-            <strong>{current.priceHighlight}</strong>
-          </div>
         </div>
 
         <div className="explorer-body">
@@ -173,6 +168,10 @@ export const ServiceExplorer: React.FC = () => {
             <span className="explorer-kicker">DỊCH VỤ #{selectedIndex + 1} CỦA TINO</span>
             <h3 className="explorer-title">{current.name}</h3>
             <p className="explorer-desc">{current.intro}</p>
+            <div className="explorer-price-pill">
+              <span className="price-pill-lbl">Đơn giá tham khảo:</span>
+              <strong className="price-pill-val">{current.priceHighlight}</strong>
+            </div>
           </div>
 
           <div className="explorer-tasks">
@@ -193,16 +192,16 @@ export const ServiceExplorer: React.FC = () => {
           </div>
 
           <div className="explorer-actions">
-            <a href={`/${current.slug}/`} className="button explorer-btn-primary">
-              <span>Xem chi tiết dịch vụ</span>
+            <a href={`/${current.slug}/`} className="button">
+              Xem chi tiết dịch vụ
               <span aria-hidden="true">↗</span>
             </a>
             <button
               type="button"
-              className="button light explorer-btn-secondary"
+              className="button light"
               onClick={() => handleScrollToEstimator(current.slug)}
             >
-              <span>Ước tính chi phí dịch vụ này</span>
+              Ước tính chi phí dịch vụ này
               <span aria-hidden="true">↓</span>
             </button>
           </div>

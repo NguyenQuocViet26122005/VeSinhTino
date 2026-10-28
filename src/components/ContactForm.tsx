@@ -11,6 +11,7 @@ export const ContactForm: React.FC = () => {
     area: ''
   });
 
+  const [honeypot, setHoneypot] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -40,43 +41,95 @@ export const ContactForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 1. Honeypot check: silent return for bots
+    if (honeypot) {
+      setSubmitted(true);
+      return;
+    }
+
     if (!formData.phone.trim()) {
       alert('Vui lòng nhập số điện thoại hoặc Zalo để Tino tiện liên hệ hỗ trợ bạn!');
       return;
     }
 
+    // 2. Client-side rate-limit cooldown (prevents rapid-fire bot/spam clicks)
+    const now = Date.now();
+    const lastSubmit = Number(localStorage.getItem('tino_contact_timestamp') || '0');
+    if (now - lastSubmit < 25000) {
+      alert('Yêu cầu của bạn đã được ghi nhận. Vui lòng đợi trong giây lát trước khi gửi tiếp!');
+      return;
+    }
+
     setSubmitting(true);
 
-    const telegramText = `🔔 <b>CÓ YÊU CẦU BÁO GIÁ MỚI - VỆ SINH TINO</b>
+    const escapeHtml = (s: string = '') =>
+      String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
 
-👤 <b>Khách hàng:</b> ${formData.name || 'Khách hàng ẩn danh'}
-📞 <b>Số điện thoại / Zalo:</b> ${formData.phone}
-🧹 <b>Dịch vụ quan tâm:</b> ${formData.service}
-📐 <b>Diện tích / Khối lượng:</b> ${formData.area || 'Chưa cung cấp'}
-📝 <b>Ghi chú hiện trạng:</b> ${formData.notes || 'Không có'}
-
-⏰ <i>Thời gian gửi: ${new Date().toLocaleString('vi-VN')}</i>`;
-
+    // 3. First attempt: call secure serverless endpoint /api/contact (Cloudflare Pages Functions)
+    let serverSent = false;
     try {
-      await fetch('https://api.telegram.org/bot9244077221:AAGzzv0mqr10Kq4prUqz4nSiln41twpJWb4/sendMessage', {
+      const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          chat_id: '5193894351',
-          text: telegramText,
-          parse_mode: 'HTML'
+          name: formData.name,
+          phone: formData.phone,
+          service: formData.service,
+          area: formData.area,
+          notes: formData.notes,
+          honeypot
         })
       });
-    } catch (err) {
-      console.error('Lỗi gửi Telegram:', err);
-    } finally {
-      setSubmitting(false);
-      setSubmitted(true);
+      if (res.ok) {
+        serverSent = true;
+      }
+    } catch {
+      // In local dev without Cloudflare adapter, endpoint might not be active
     }
+
+    // 4. Fallback for static dev environments
+    if (!serverSent) {
+      const telegramText = `🔔 <b>CÓ YÊU CẦU BÁO GIÁ MỚI - VỆ SINH TINO</b>
+
+👤 <b>Khách hàng:</b> ${escapeHtml(formData.name) || 'Khách hàng ẩn danh'}
+📞 <b>Số điện thoại / Zalo:</b> ${escapeHtml(formData.phone)}
+🧹 <b>Dịch vụ quan tâm:</b> ${escapeHtml(formData.service)}
+📐 <b>Diện tích / Khối lượng:</b> ${escapeHtml(formData.area) || 'Chưa cung cấp'}
+📝 <b>Ghi chú hiện trạng:</b> ${escapeHtml(formData.notes) || 'Không có'}
+
+⏰ <i>Thời gian gửi: ${new Date().toLocaleString('vi-VN')}</i>`;
+
+      try {
+        await fetch('https://api.telegram.org/bot9244077221:AAGzzv0mqr10Kq4prUqz4nSiln41twpJWb4/sendMessage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: '5193894351',
+            text: telegramText,
+            parse_mode: 'HTML'
+          })
+        });
+      } catch (err) {
+        console.error('Lỗi gửi Telegram:', err);
+      }
+    }
+
+    try {
+      localStorage.setItem('tino_contact_timestamp', String(Date.now()));
+    } catch {
+      // Ignore storage errors in private browsing
+    }
+
+    setSubmitting(false);
+    setSubmitted(true);
   };
 
   return (
-    <div id="lien-he-tu-van" className="contact-smart-section">
+    <div className="contact-smart-section">
       <div className="contact-smart-card">
         <div className="contact-smart-left">
           <span className="contact-kicker">TIẾP NHẬN YÊU CẦU 24/7</span>
@@ -120,15 +173,21 @@ export const ContactForm: React.FC = () => {
 
           <div className="contact-commitments">
             <div className="commitment-item">
-              <span className="commit-check">✓</span>
+              <span className="commit-check" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
               <span>Khảo sát & tư vấn miễn phí tận nơi</span>
             </div>
             <div className="commitment-item">
-              <span className="commit-check">✓</span>
+              <span className="commit-check" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
               <span>Hóa chất sinh học an toàn sức khỏe</span>
             </div>
             <div className="commitment-item">
-              <span className="commit-check">✓</span>
+              <span className="commit-check" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
               <span>Khách hài lòng nghiệm thu mới thanh toán</span>
             </div>
           </div>
@@ -137,7 +196,9 @@ export const ContactForm: React.FC = () => {
         <div className="contact-smart-right">
           {submitted ? (
             <div className="contact-success-state">
-              <div className="success-icon" aria-hidden="true">✓</div>
+              <div className="success-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
               <h4>Đã gửi yêu cầu thành công!</h4>
               <p>
                 Thông tin của bạn đã được chuyển thẳng tới hệ thống kỹ thuật Vệ Sinh Tino. Chúng tôi sẽ gọi lại hoặc phản hồi qua Zalo trong vòng 5–10 phút!
@@ -150,22 +211,34 @@ export const ContactForm: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="button"
-                  style={{ minHeight: '44px', padding: '10px 18px', fontSize: '13.5px' }}
+                  style={{ minHeight: '46px', padding: '10px 22px', fontSize: '13.5px' }}
                 >
-                  <span>Mở Zalo gửi thêm ảnh hiện trạng</span>
-                  <span aria-hidden="true">💬</span>
+                  Mở Zalo gửi ảnh hiện trạng <span aria-hidden="true">↗</span>
                 </a>
                 <button
                   type="button"
                   className="button light reset-form-btn"
                   onClick={() => setSubmitted(false)}
                 >
-                  Gửi thêm yêu cầu khác ↺
+                  Gửi thêm yêu cầu khác
                 </button>
               </div>
             </div>
           ) : (
             <form className="contact-form" onSubmit={handleSubmit}>
+              {/* Anti-spam honeypot trap for automated bots */}
+              <div style={{ display: 'none' }} aria-hidden="true">
+                <label htmlFor="company_website_url">Bỏ trống trường này</label>
+                <input
+                  id="company_website_url"
+                  type="text"
+                  name="company_website_url"
+                  value={honeypot}
+                  onChange={e => setHoneypot(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+              </div>
               <h4 className="form-title">Để lại thông tin nhận tư vấn</h4>
               <p className="form-sub">Tino sẽ gọi lại hoặc phản hồi qua Zalo trong 5–10 phút.</p>
 
@@ -238,11 +311,15 @@ export const ContactForm: React.FC = () => {
               </div>
 
               <button type="submit" disabled={submitting} className="button form-submit-btn">
-                <span>{submitting ? 'Đang kết nối...' : 'Gửi yêu cầu khảo sát & báo giá'}</span>
+                {submitting ? 'Đang kết nối...' : 'Gửi yêu cầu khảo sát & báo giá'}
                 <span aria-hidden="true">↗</span>
               </button>
               <p className="form-disclaimer">
-                🔒 Cam kết bảo mật thông tin liên hệ. Không làm phiền sau khi tư vấn.
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" style={{ verticalAlign: '-1px', marginRight: '5px' }}>
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                Cam kết bảo mật thông tin liên hệ. Không làm phiền sau khi tư vấn.
               </p>
             </form>
           )}

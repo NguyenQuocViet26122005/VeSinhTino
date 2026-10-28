@@ -18,40 +18,124 @@ export interface ProjectItem {
 
 const PROJECTS: ProjectItem[] = [
   {
+    id: 'f3e9578413dffb6cd7a69149858785c1',
+    category: 'home',
+    categoryLabel: 'Nhà ở & Căn hộ',
+    title: 'Tổng vệ sinh nhà phố 4 tầng Nguyễn Duy Cung, Gò Vấp',
+    caption: 'Sàn đá bóng loáng phản chiếu ánh sáng tự nhiên, toàn bộ nội thất và khung cửa kính được làm sạch tinh tươm.',
+    tag: 'Bàn giao thực tế',
+    image: '/images/f3e9578413dffb6cd7a69149858785c1.webp',
+    problem: 'Nhà phố 4 tầng mới hoàn thiện xây dựng, vữa xi măng và bụi mịn bám dày đặc trên sàn đá cẩm thạch và các khung cửa kính lớn.',
+    solution: 'Đội ngũ 4 kỹ thuật viên dùng máy hút bụi 3 motor hút sạch bụi góc khuất, hóa chất trung tính bóc keo xi măng và đánh bóng bảo vệ mặt đá.',
+    result: 'Chủ nhà trực tiếp kiểm tra và nghiệm thu hài lòng từng chi tiết, không gian sáng bừng sẵn sàng đón tân gia.'
+  },
+  {
     id: 'abce569d7fb37039',
     category: 'glass',
     categoryLabel: 'Kính cao ốc',
-    title: 'Đu dây vệ sinh mặt kính cao ốc văn phòng',
-    caption: 'Đội ngũ kỹ thuật viên có chứng chỉ an toàn đu dây thi công lau kính mặt ngoài tòa nhà.',
-    tag: 'Thi công đu dây',
+    title: 'Vệ sinh kính mặt ngoài tòa nhà bằng xe nâng người',
+    caption: 'Kỹ thuật viên thao tác trong lồng xe nâng người, làm sạch các mảng kính mặt dựng trên cao an toàn, đúng quy trình.',
+    tag: 'Xe nâng người',
     image: '/images/abce569d7fb37039.webp',
-    problem: 'Kính mặt ngoài bám cặn vảy cá, bụi mịn ô nhiễm và ố nước mưa lâu năm không tiếp cận được từ bên trong.',
-    solution: 'Khảo sát điểm neo an toàn mái, đội 4 kỹ thuật viên đu dây gạt kính bằng hóa chất sinh học tẩy cặn vôi và lau khô khung nhôm.',
-    result: 'Bề mặt kính trong suốt 100%, phản chiếu bầu trời sắc nét, bàn giao đúng tiến độ 2 ngày.'
+    problem: 'Mặt kính bên ngoài tích tụ bụi bẩn, cặn khoáng từ nước mưa và các vết ố lâu ngày, gây ảnh hưởng đến độ trong và tính thẩm mỹ của tòa nhà.',
+    solution: 'Điều xe nâng chuyên dụng đưa kỹ thuật viên tiếp cận trực tiếp bề mặt kính trên cao, xử lý cẩn thận bằng hóa chất làm sạch an toàn cho ron và khung nhôm.',
+    result: 'Loại bỏ bụi bẩn và xử lý các vết ố trong phạm vi cho phép, giúp mặt kính sạch sáng hơn, cải thiện khả năng lấy sáng và diện mạo công trình.'
+  },
+  {
+    id: '0822a0e36fddb2a9dd9a1b6424f8ff49',
+    category: 'factory',
+    categoryLabel: 'Kho xưởng',
+    title: 'Vệ sinh sàn epoxy văn phòng nhà máy công nghiệp',
+    caption: 'Sàn epoxy xám bóng gương sau khi được chà rửa bằng máy liên hợp và hóa chất bảo dưỡng chuyên dụng.',
+    tag: 'Sàn epoxy gương',
+    image: '/images/0822a0e36fddb2a9dd9a1b6424f8ff49.webp',
+    problem: 'Khu vực văn phòng xưởng bám bụi mịn kim loại và vệt bánh xe đẩy cao su làm mờ đục sàn sơn epoxy.',
+    solution: 'Dùng pad mềm đánh bóng nhẹ cùng hóa chất trung tính không hại màng sơn, hút sạch ngay bằng cần gạt kép.',
+    result: 'Mặt sàn lấy lại độ bóng gương hoàn hảo, tăng độ bền và khả năng chống trầy cho xưởng.'
+  },
+  {
+    id: '606d1140fe49df7060f5a8997d8261c2',
+    category: 'home',
+    categoryLabel: 'Trường học & Trẻ em',
+    title: 'Tổng vệ sinh trường mầm non & khu vui chơi',
+    caption: 'Sàn gỗ sạch bóng, góc vui chơi và đồ dùng học tập được lau sạch và khử khuẩn bằng dung dịch sinh học an toàn, không mùi nồng gắt.',
+    tag: 'An toàn trẻ nhỏ',
+    image: '/images/606d1140fe49df7060f5a8997d8261c2.webp',
+    problem: 'Không gian lớp mầm non cần làm sạch sâu sau kỳ nghỉ lễ, vừa tẩy sạch vết bẩn vừa phải an toàn tuyệt đối cho trẻ nhỏ.',
+    solution: 'Sử dụng dung dịch sát khuẩn sinh học nguồn gốc tự nhiên, máy chà sàn pad vi sợi đánh bóng sàn gỗ và khử trùng đồ chơi.',
+    result: 'Các phòng học sáng sạch, không còn mùi ẩm mốc, sẵn sàng đón các bé trở lại trường với sự an tâm của phụ huynh.'
+  },
+  {
+    id: 'tino-danh-san-tho',
+    category: 'floor',
+    categoryLabel: 'Đánh bóng sàn',
+    title: 'Kỹ thuật viên vận hành máy mài & đánh bóng sàn',
+    caption: 'Kỹ thuật viên Tino điều khiển máy mài sàn mâm tạ công nghiệp, xử lý xước và tạo độ bóng.',
+    tag: 'Mài sàn chuyên nghiệp',
+    image: '/images/tino-danh-san-tho.webp',
+    problem: 'Sàn đá mài terrazzo tại sảnh tòa nhà bị ố mờ mất bóng do lưu lượng người đi lại đông đúc.',
+    solution: 'Mài phục hồi bằng 5 đầu số đĩa kim cương từ thô đến mịn, đánh bóng tăng cường bằng pad trắng hóa chất phủ bóng.',
+    result: 'Độ bóng đạt trên 85 GU (bóng gương), tăng khả năng chống thấm nước và chống bám bẩn lâu dài.'
+  },
+  {
+    id: '122cac8e1bd2f9d6',
+    category: 'furnishing',
+    categoryLabel: 'Sofa & Thảm',
+    title: 'Giặt phun hút chuyên sâu ghế sofa nỉ',
+    caption: 'Đầu hút tam giác công nghệ cao hút kiệt chất bẩn, dung dịch diệt khuẩn nấm mốc 99.9%.',
+    tag: 'Giặt sofa tại nhà',
+    image: '/images/122cac8e1bd2f9d6.webp',
+    problem: 'Bộ sofa nỉ màu be bị đổ nước trà và mồ hôi ố vàng, bốc mùi ẩm nhẹ khi thời tiết nồm ẩm.',
+    solution: 'Phun dung dịch sinh học chiết xuất thực vật diệt khuẩn, dùng máy hút chân không lực hút 2200W hút kiệt nước đen.',
+    result: 'Vết ố trà biến mất hoàn toàn, vải mềm mại thơm tho thoang thoảng mùi sả chanh, khô ráo sau 2 giờ.'
+  },
+  {
+    id: 'b486da45979bde972f03edd7f9a890e5',
+    category: 'home',
+    categoryLabel: 'Nhà ở & Căn hộ',
+    title: 'Thi công đồng bộ căn hộ Quang Trung, Gò Vấp',
+    caption: 'Kỹ thuật viên Tino thao tác đồng bộ: lau khung kính trên cao, hút bụi sàn đá và xử lý tủ kệ âm tường.',
+    tag: 'Phối hợp kỹ thuật',
+    image: '/images/b486da45979bde972f03edd7f9a890e5.webp',
+    problem: 'Căn hộ nhiều hạng mục nội thất gỗ công nghiệp và kính vòm cao cấp đòi hỏi thao tác cẩn trọng, tránh trầy xước.',
+    solution: 'Phân chia vị trí chuyên trách: thợ lau kính và rèm trần kết hợp thợ hút bụi rãnh trượt và tẩy sạch keo ron gạch.',
+    result: 'Bàn giao nhanh trong 5 giờ, sàn nhà sạch bóng không vết ố, chủ nhà đánh giá cao tính chuyên nghiệp.'
   },
   {
     id: 'c949d223bc44f1ae',
     category: 'glass',
     categoryLabel: 'Kính cao ốc',
-    title: 'Lau kính mặt tiền bằng xe nâng cơ giới',
-    caption: 'Kỹ thuật viên thao tác trong lồng nâng cơ giới làm sạch kính dựng showroom và khối đế.',
-    tag: 'Xe nâng cơ giới',
+    title: 'Vệ sinh kính mặt ngoài tòa nhà bằng kỹ thuật đu dây',
+    caption: 'Đội ngũ kỹ thuật viên có chứng chỉ an toàn đu dây thi công làm sạch hệ thống vách kính mặt dựng trên cao.',
+    tag: 'Thi công đu dây',
     image: '/images/c949d223bc44f1ae.webp',
-    problem: 'Khối kính mặt dựng sảnh showroom cao 18m cần thi công nhanh trong đêm để sáng hôm sau khai trương.',
-    solution: 'Điều xe nâng boom-lift cơ giới 22m, hai nhân sự thao tác đồng bộ từ trên xuống dưới, làm sạch cả kính và alu.',
-    result: 'Bàn giao lúc 5h sáng, mặt kính sáng bóng không một vệt nước, an toàn tuyệt đối cho người và thiết bị.'
+    problem: 'Hệ thống kính mặt dựng tại tòa nhà tích tụ bụi bẩn, dấu nước mưa và các vết ố do tác động của môi trường, khó tiếp cận bằng phương pháp vệ sinh thông thường.',
+    solution: 'Đội ngũ kỹ thuật viên có chứng chỉ an toàn đu dây khảo sát điểm neo mái, sử dụng hệ thống dây cáp chịu tải kép, bình phun và cần gạt kính chuyên dụng để làm sạch từng hàng kính từ trên xuống.',
+    result: 'Đội ngũ kỹ thuật tiếp cận các vị trí kính trên cao, vệ sinh theo từng khu vực và kiểm tra chất lượng bề mặt sau khi hoàn thành.'
   },
   {
     id: '3b21a7ec444d0b39',
     category: 'home',
     categoryLabel: 'Nhà ở & Căn hộ',
-    title: 'Phòng khách căn hộ chung cư sau tổng vệ sinh',
-    caption: 'Sàn gạch bóng loáng, nội thất kính và sofa được làm sạch tinh tươm trước bàn giao dọn vào.',
+    title: 'Tổng vệ sinh phòng ngủ & ban công căn hộ chung cư',
+    caption: 'Không gian phòng ngủ và ban công căn hộ được hút sạch bụi mịn, làm sạch khung kính và sàn nhà trước khi gia đình dọn vào ở.',
     tag: 'Bàn giao căn hộ',
     image: '/images/3b21a7ec444d0b39.webp',
-    problem: 'Căn hộ 85m² sau khi thi công hoàn thiện nội thất dính nhiều bụi bột trét, keo dán sàn và mùi sơn nồng.',
-    solution: 'Hút bụi công nghiệp toàn diện trần - tường - sàn, sủi keo tỉ mỉ từng viên gạch, lau sạch kính ban công và khử mùi sinh học.',
-    result: 'Chủ nhà trực tiếp nghiệm thu và nhận nhà ở ngay trong ngày, không còn chút mùi sơn hay bụi mịn.'
+    problem: 'Căn hộ sau khi thi công nội thất dính bụi bột trét thạch cao ở các gờ kệ, vết keo dán sàn và bụi bám tại khung cửa ban công.',
+    solution: 'Hút bụi công nghiệp kỹ lưỡng các khe giường tủ âm tường, sủi keo ron gạch, lau sạch kính cửa lùa ban công và khử mùi bằng dung dịch sinh học an toàn.',
+    result: 'Các bề mặt gỗ, kính và sàn gạch sạch sẽ, thông thoáng, sẵn sàng để gia chủ sắp xếp đồ dùng sinh hoạt.'
+  },
+  {
+    id: 'e6ecb611e10bc770',
+    category: 'factory',
+    categoryLabel: 'Kho xưởng',
+    title: 'Tổng vệ sinh nhà máy & kho xưởng quy mô lớn',
+    caption: 'Quy mô diện tích lớn với trần thép tiền chế, đường ống kỹ thuật và sàn bê tông công nghiệp.',
+    tag: 'Kho xưởng sản xuất',
+    image: '/images/e6ecb611e10bc770.webp',
+    problem: 'Xưởng cơ khí 1.200m² chuyển giao mặt bằng, trần bám nhiều mạng nhện và bụi xơ vải, sàn loang lổ vết dầu máy.',
+    solution: 'Dùng giàn giáo và máy thổi áp lực quét mạng nhện trần xưởng, dùng máy chà sàn liên hợp tải nặng tẩy dầu sàn bê tông.',
+    result: 'Bàn giao mặt bằng kho sạch sẽ đạt tiêu chuẩn tiếp nhận của đối tác FDI Nhật Bản.'
   },
   {
     id: 'e28b5ab0b1d848ea',
@@ -66,28 +150,40 @@ const PROJECTS: ProjectItem[] = [
     result: 'Nghiệm thu từng tầng, chủ nhà ký biên bản bàn giao và đánh giá cao sự cẩn thận ở các góc khuất cầu thang.'
   },
   {
-    id: '92a7f6090b410117',
-    category: 'home',
-    categoryLabel: 'Nhà ở & Căn hộ',
-    title: 'Cải tạo & làm sạch sâu nhà ở cũ',
-    caption: 'Tẩy ố mốc lâu năm, khử mùi ẩm mốc và phục hồi độ sáng tự nhiên cho toàn bộ không gian.',
-    tag: 'Vệ sinh nhà cũ',
-    image: '/images/92a7f6090b410117.webp',
-    problem: 'Nhà để trống hơn 6 tháng, ẩm thấp, tường phòng tắm ố vàng, ron gạch đen và tủ bếp bám dầu mỡ kết tủa.',
-    solution: 'Phun dung dịch sinh học phân hủy dầu mỡ khu bếp, chà tẩy ron gạch toilet bằng máy cầm tay chuyên dụng.',
-    result: 'Không gian sáng bừng như mới, sạch khuẩn và thông thoáng sẵn sàng cho gia đình dọn vào sinh hoạt.'
-  },
-  {
-    id: 'e6ecb611e10bc770',
+    id: 'f911a44071a765251aab844dfd730298',
     category: 'factory',
     categoryLabel: 'Kho xưởng',
-    title: 'Tổng vệ sinh nhà máy & kho xưởng quy mô lớn',
-    caption: 'Quy mô diện tích lớn với trần thép tiền chế, đường ống kỹ thuật và sàn bê tông công nghiệp.',
-    tag: 'Kho xưởng sản xuất',
-    image: '/images/e6ecb611e10bc770.webp',
-    problem: 'Xưởng cơ khí 1.200m² chuyển giao mặt bằng, trần bám nhiều mạng nhện và bụi xơ vải, sàn loang lổ vết dầu máy.',
-    solution: 'Dùng giàn giáo và máy thổi áp lực quét mạng nhện trần xưởng, dùng máy chà sàn liên hợp tải nặng tẩy dầu sàn bê tông.',
-    result: 'Bàn giao mặt bằng kho sạch sẽ đạt tiêu chuẩn tiếp nhận của đối tác FDI Nhật Bản.'
+    title: 'Vệ sinh gầm kệ kho hàng tải nặng Huỳnh Thị Hai, Quận 12',
+    caption: 'Kỹ thuật viên thao tác máy hút ướt công suất lớn làm sạch tận chân trụ pallet và gầm kệ hàng.',
+    tag: 'Kho logistics',
+    image: '/images/f911a44071a765251aab844dfd730298.webp',
+    problem: 'Kho lưu trữ hàng bốc dỡ liên tục tích tụ bụi bẩn ở các khe hẹp dưới chân kệ sắt chịu tải nặng.',
+    solution: 'Trang bị đầu hút dẹp góc hẹp và ống dẫn nối dài 5m, len lỏi làm sạch từng rãnh trụ kho.',
+    result: 'Toàn bộ 800m² mặt sàn kho thông thoáng, đạt chuẩn kiểm định an toàn hàng hóa.'
+  },
+  {
+    id: 'c2f625c607452a14',
+    category: 'floor',
+    categoryLabel: 'Đánh bóng sàn',
+    title: 'Bề mặt sàn đá sau khi hoàn thiện',
+    caption: 'Độ bóng gương phản chiếu sắc nét, đường ron được làm sạch tinh tế và phủ bóng bảo vệ.',
+    tag: 'Sạch bóng gương',
+    image: '/images/c2f625c607452a14.webp',
+    problem: 'Sàn gạch men bóng bị dính vệt sơn và lớp màng keo xây dựng làm mờ xỉn, lau nước thường không sạch.',
+    solution: 'Dùng máy chà sàn đơn kết hợp pad đỏ và hóa chất bóc keo chuyên dụng, hút khô ngay bằng cần gạt cao su.',
+    result: 'Sàn gạch sáng bóng, loại bỏ màng keo xây dựng và vệt ố mờ, phản chiếu ánh đèn rõ nét.'
+  },
+  {
+    id: '0dffb2a53aec534128d29cd9bf60aea5',
+    category: 'home',
+    categoryLabel: 'Nhà ở & Căn hộ',
+    title: 'Phục hồi không gian bếp cũ ố dầu mỡ Tôn Đản, Quận 4',
+    caption: 'Xử lý triệt để mảng dầu mỡ cháy kết tủa và muội khói lâu năm trên tường gạch, mặt đá bếp.',
+    tag: 'Phục hồi sâu',
+    image: '/images/0dffb2a53aec534128d29cd9bf60aea5.webp',
+    problem: 'Căn bếp lâu năm bám muội khói đen, dầu mỡ cô đặc trên mặt bếp và ron tường ố vàng khó tẩy bằng xà phòng thông thường.',
+    solution: 'Ủ dung dịch sinh học phân hủy dầu mỡ chuyên dụng, kết hợp bàn chải nhiệt và máy hút chân không.',
+    result: 'Mặt đá và tường gạch sáng bóng trở lại, bay sạch mùi khét ẩm, an tâm sử dụng hàng ngày.'
   },
   {
     id: '1dbcc214c91f18f3',
@@ -114,40 +210,16 @@ const PROJECTS: ProjectItem[] = [
     result: 'Thu gom hơn 150kg bụi mịn chỉ trong 3 giờ, làm sạch triệt để không để bụi tái phân tán vào không khí.'
   },
   {
-    id: 'tino-danh-san-tho',
-    category: 'floor',
-    categoryLabel: 'Đánh bóng sàn',
-    title: 'Kỹ thuật viên vận hành máy mài & đánh bóng sàn',
-    caption: 'Kỹ thuật viên Tino điều khiển máy mài sàn mâm tạ công nghiệp, xử lý xước và tạo độ bóng.',
-    tag: 'Mài sàn chuyên nghiệp',
-    image: '/images/tino-danh-san-tho.webp',
-    problem: 'Sàn đá mài terrazzo tại sảnh tòa nhà bị ố mờ mất bóng do lưu lượng người đi lại đông đúc.',
-    solution: 'Mài phục hồi bằng 5 đầu số đĩa kim cương từ thô đến mịn, đánh bóng tăng cường bằng pad trắng hóa chất phủ bóng.',
-    result: 'Độ bóng đạt trên 85 GU (bóng gương), tăng khả năng chống thấm nước và chống bám bẩn lâu dài.'
-  },
-  {
-    id: 'c2f625c607452a14',
-    category: 'floor',
-    categoryLabel: 'Đánh bóng sàn',
-    title: 'Bề mặt sàn đá sau khi hoàn thiện',
-    caption: 'Độ bóng gương phản chiếu sắc nét, đường ron được làm sạch tinh tế và phủ bóng bảo vệ.',
-    tag: 'Sạch bóng gương',
-    image: '/images/c2f625c607452a14.webp',
-    problem: 'Sàn gạch men bóng bị dính vệt sơn và lớp màng keo xây dựng làm mờ xỉn, lau nước thường không sạch.',
-    solution: 'Dùng máy chà sàn đơn kết hợp pad đỏ và hóa chất bóc keo chuyên dụng, hút khô ngay bằng cần gạt cao su.',
-    result: 'Sàn gạch sáng bóng như mới lát, phản chiếu ánh đèn trần hoàn hảo, không còn một vết xước dăm.'
-  },
-  {
-    id: '122cac8e1bd2f9d6',
-    category: 'furnishing',
-    categoryLabel: 'Sofa & Thảm',
-    title: 'Giặt phun hút chuyên sâu ghế sofa nỉ',
-    caption: 'Đầu hút tam giác công nghệ cao hút kiệt chất bẩn, dung dịch diệt khuẩn nấm mốc 99.9%.',
-    tag: 'Giặt sofa tại nhà',
-    image: '/images/122cac8e1bd2f9d6.webp',
-    problem: 'Bộ sofa nỉ màu be bị đổ nước trà và mồ hôi ố vàng, bốc mùi ẩm nhẹ khi thời tiết nồm ẩm.',
-    solution: 'Phun dung dịch sinh học chiết xuất thực vật diệt khuẩn, dùng máy hút chân không lực hút 2200W hút kiệt nước đen.',
-    result: 'Vết ố trà biến mất hoàn toàn, vải mềm mại thơm tho thoang thoảng mùi sả chanh, khô ráo sau 2 giờ.'
+    id: '92a7f6090b410117',
+    category: 'home',
+    categoryLabel: 'Nhà ở & Căn hộ',
+    title: 'Cải tạo & làm sạch sâu nhà ở cũ',
+    caption: 'Tẩy ố mốc lâu năm, khử mùi ẩm mốc và phục hồi độ sáng tự nhiên cho toàn bộ không gian.',
+    tag: 'Vệ sinh nhà cũ',
+    image: '/images/92a7f6090b410117.webp',
+    problem: 'Nhà để trống hơn 6 tháng, ẩm thấp, tường phòng tắm ố vàng, ron gạch đen và tủ bếp bám dầu mỡ kết tủa.',
+    solution: 'Phun dung dịch sinh học phân hủy dầu mỡ khu bếp, chà tẩy ron gạch toilet bằng máy cầm tay chuyên dụng.',
+    result: 'Không gian sạch sẽ, thông thoáng, khử sạch mùi ẩm và các vết ố mốc lâu ngày, sẵn sàng cho gia đình dọn vào sinh hoạt.'
   },
   {
     id: 'tino-tham-may-giat',
@@ -159,12 +231,12 @@ const PROJECTS: ProjectItem[] = [
     image: '/images/tino-tham-may-giat.webp',
     problem: 'Thảm văn phòng công ty 200m² tích tụ bụi đất cả năm, nhiều vết đổ cà phê tại khu vực pantry.',
     solution: 'Giặt vào chiều thứ 7: dùng máy mâm cước mềm chà sạch từng mét vuông, kết hợp quạt sấy 3 cấp tốc độ.',
-    result: 'Sáng thứ 2 nhân viên đi làm thấy thảm sạch tinh, thơm mát, khô ráo 100% không ảnh hưởng giờ làm việc.'
+    result: 'Sáng thứ 2 nhân viên đi làm thấy thảm sạch sẽ, thơm mát, khô ráo hoàn toàn không ảnh hưởng giờ làm việc.'
   }
 ];
 
 const TABS = [
-  { key: 'all', label: 'Tất cả công trình (12)' },
+  { key: 'all', label: `Tất cả công trình (${PROJECTS.length})` },
   { key: 'home', label: 'Nhà ở & Căn hộ' },
   { key: 'glass', label: 'Kính cao ốc' },
   { key: 'factory', label: 'Kho xưởng' },
@@ -174,14 +246,27 @@ const TABS = [
 
 type TabKey = typeof TABS[number]['key'];
 
+const INITIAL_COUNT = 6;
+
 export const AuthenticShowcase: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabKey>('all');
   const [activePhoto, setActivePhoto] = useState<ProjectItem | null>(null);
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+
+  const handleTabChange = (key: TabKey) => {
+    setActiveTab(key);
+    setIsExpanded(false);
+  };
 
   const filtered = useMemo(() => {
     if (activeTab === 'all') return PROJECTS;
     return PROJECTS.filter(p => p.category === activeTab);
   }, [activeTab]);
+
+  const displayed = useMemo(() => {
+    if (isExpanded) return filtered;
+    return filtered.slice(0, INITIAL_COUNT);
+  }, [filtered, isExpanded]);
 
   const openModal = (item: ProjectItem) => {
     setActivePhoto(item);
@@ -234,16 +319,16 @@ export const AuthenticShowcase: React.FC = () => {
             role="tab"
             aria-selected={activeTab === tab.key}
             className={`showcase-tab ${activeTab === tab.key ? 'is-active' : ''}`}
-            onClick={() => setActiveTab(tab.key)}
+            onClick={() => handleTabChange(tab.key)}
           >
             <span>{tab.label}</span>
           </button>
         ))}
       </div>
 
-      {/* Grid of Projects with Storytelling Layout */}
+      {/* Grid of Projects with Storytelling Layout (compact with load more) */}
       <div className="showcase-grid">
-        {filtered.map(item => (
+        {displayed.map(item => (
           <article key={item.id} className="showcase-card">
             <div
               className="showcase-media"
@@ -314,7 +399,7 @@ export const AuthenticShowcase: React.FC = () => {
                   className="showcase-action-btn"
                   onClick={() => handleRequestSimilar(item)}
                 >
-                  <span>Tôi cần vệ sinh như công trình này</span>
+                  Tôi cần vệ sinh như công trình này
                   <span aria-hidden="true">↗</span>
                 </button>
               </div>
@@ -322,6 +407,42 @@ export const AuthenticShowcase: React.FC = () => {
           </article>
         ))}
       </div>
+
+      {/* Expand / Collapse Load More Controls */}
+      {filtered.length > INITIAL_COUNT && (
+        <div className="showcase-expand-wrap">
+          <button
+            type="button"
+            className="showcase-expand-btn"
+            onClick={() => {
+              if (isExpanded) {
+                setIsExpanded(false);
+                const section = document.getElementById('cong-trinh');
+                if (section) section.scrollIntoView({ behavior: 'smooth' });
+              } else {
+                setIsExpanded(true);
+              }
+            }}
+            aria-expanded={isExpanded}
+          >
+            {isExpanded ? (
+              <>
+                <span>Thu gọn danh sách</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                  <path d="M18 15l-6-6-6 6" />
+                </svg>
+              </>
+            ) : (
+              <>
+                <span>Xem thêm {filtered.length - INITIAL_COUNT} công trình khác</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </>
+            )}
+          </button>
+        </div>
+      )}
 
       {/* Story Lightbox Modal */}
       {activePhoto && (
@@ -377,7 +498,7 @@ export const AuthenticShowcase: React.FC = () => {
                   className="button modal-contact-btn"
                   onClick={() => handleRequestSimilar(activePhoto)}
                 >
-                  <span>Tôi cần vệ sinh như công trình này</span>
+                  Tôi cần vệ sinh như công trình này
                   <span aria-hidden="true">↗</span>
                 </button>
                 <a
@@ -388,8 +509,8 @@ export const AuthenticShowcase: React.FC = () => {
                   rel="noopener noreferrer"
                   className="button light modal-zalo-btn"
                 >
-                  <span>Nhắn Zalo kèm ảnh</span>
-                  <span aria-hidden="true">💬</span>
+                  Nhắn Zalo kèm ảnh
+                  <span aria-hidden="true">↗</span>
                 </a>
               </div>
             </div>

@@ -268,7 +268,7 @@ export const CostEstimator: React.FC = () => {
                 className="button result-cta-btn"
                 onClick={handleTransferToContact}
               >
-                <span>Nhận báo giá chi tiết cho mức này</span>
+                Nhận báo giá chi tiết cho mức này
                 <span aria-hidden="true">↗</span>
               </button>
               <a
@@ -279,8 +279,7 @@ export const CostEstimator: React.FC = () => {
                 rel="noopener noreferrer"
                 className="zalo-quick-link"
               >
-                <span>Gửi ảnh qua Zalo để có giá chuẩn ngay</span>
-                <span aria-hidden="true">→</span>
+                Gửi ảnh qua Zalo để có giá chuẩn ngay <span aria-hidden="true">→</span>
               </a>
             </div>
           </div>

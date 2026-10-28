@@ -33,6 +33,7 @@ export const ContactForm: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [copied, setCopied] = useState(false);
 
   // Listen for prefill events from CostEstimator or AuthenticShowcase
   useEffect(() => {
@@ -77,21 +78,36 @@ export const ContactForm: React.FC = () => {
     return () => window.removeEventListener('tino:prefill-contact', handlePrefill);
   }, []);
 
-  const buildZaloUrl = () => {
+  const getFormattedMessage = () => {
     const lines = [
       `Chào Tino, tôi cần tư vấn & báo giá dịch vụ vệ sinh:`,
       `• Khách hàng: ${formData.name.trim() || 'Khách hàng'}`,
       `• Số điện thoại / Zalo: ${formData.phone.trim()}`,
-      `• Dịch vụ: ${formData.service}`,
+      `• Dịch vụ quan tâm: ${formData.service}`,
       formData.area.trim() ? `• Khối lượng / Diện tích: ${formData.area.trim()}` : null,
       formData.notes.trim() ? `• Ghi chú / Địa chỉ: ${formData.notes.trim()}` : null,
       `Nhờ Tino tư vấn và hỗ trợ sớm giúp tôi nhé!`
     ].filter(Boolean);
 
-    return `https://zalo.me/0925649666?text=${encodeURIComponent(lines.join('\n'))}`;
+    return lines.join('\n');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const copyToClipboard = async (text?: string) => {
+    const content = text || getFormattedMessage();
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(content);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 3500);
+        return true;
+      }
+    } catch {
+      // Fallback
+    }
+    return false;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
 
@@ -120,11 +136,12 @@ export const ContactForm: React.FC = () => {
       // Ignore local storage error
     }
 
-    const zaloUrl = buildZaloUrl();
+    // Auto-copy message to clipboard so user can simply paste into Zalo!
+    await copyToClipboard(getFormattedMessage());
 
     // Direct open Zalo in a new tab / native app
     try {
-      window.open(zaloUrl, '_blank', 'noopener,noreferrer');
+      window.open('https://zalo.me/0925649666', '_blank', 'noopener,noreferrer');
     } catch {
       // If browser blocks popup, user can tap the prominent Zalo button on the success screen
     }
@@ -204,46 +221,62 @@ export const ContactForm: React.FC = () => {
               <div className="success-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
-              <h4>Yêu cầu đã chuyển tới Zalo!</h4>
-              <p>
-                Tino đã tạo sẵn nội dung yêu cầu của bạn. Ứng dụng Zalo sẽ tự động mở để bạn gửi thông tin & hình ảnh hiện trạng thực tế.
-              </p>
+              <h4>Đã tạo yêu cầu & sẵn sàng gửi Zalo!</h4>
 
-              {/* Summary of submitted details */}
-              <div className="success-summary-box">
-                <div className="summary-row">
-                  <span className="summary-label">Khách hàng:</span>
-                  <strong>{formData.name.trim() || 'Khách hàng'} ({formData.phone.trim()})</strong>
+              {/* Zalo Auto-copy notice & 3-step guide */}
+              <div className="zalo-notice-box">
+                <div className="zalo-notice-badge">
+                  <span className="notice-icon" aria-hidden="true">📋</span>
+                  <span>{copied ? '✓ ĐÃ TỰ ĐỘNG SAO CHÉP NỘI DUNG' : 'ĐÃ TỰ ĐỘNG SAO CHÉP NỘI DUNG'}</span>
                 </div>
-                <div className="summary-row">
-                  <span className="summary-label">Dịch vụ:</span>
-                  <span>{formData.service}</span>
+                <p>
+                  Do chính sách bảo mật của Zalo không hỗ trợ tự điền chữ vào khung chat, <strong>Tino đã tự động sao chép sẵn tin nhắn yêu cầu</strong> vào thiết bị của bạn.
+                </p>
+                <div className="zalo-mini-steps">
+                  <div className="mini-step">
+                    <span className="mini-num">1</span>
+                    <span>Mở Zalo</span>
+                  </div>
+                  <div className="mini-arrow" aria-hidden="true">→</div>
+                  <div className="mini-step">
+                    <span className="mini-num">2</span>
+                    <span>Chọn <strong>Dán (Paste)</strong></span>
+                  </div>
+                  <div className="mini-arrow" aria-hidden="true">→</div>
+                  <div className="mini-step">
+                    <span className="mini-num">3</span>
+                    <span>Bấm <strong>Gửi</strong> kèm ảnh</span>
+                  </div>
                 </div>
-                {formData.area.trim() && (
-                  <div className="summary-row">
-                    <span className="summary-label">Diện tích / Khối lượng:</span>
-                    <span>{formData.area.trim()}</span>
-                  </div>
-                )}
-                {formData.notes.trim() && (
-                  <div className="summary-row">
-                    <span className="summary-label">Ghi chú / Địa chỉ:</span>
-                    <span>{formData.notes.trim()}</span>
-                  </div>
-                )}
+              </div>
+
+              {/* Message preview box with 1-click copy button */}
+              <div className="zalo-msg-preview-card">
+                <div className="preview-card-header">
+                  <span className="preview-title">Nội dung tin nhắn:</span>
+                  <button
+                    type="button"
+                    className={`copy-code-btn ${copied ? 'is-copied' : ''}`}
+                    onClick={() => copyToClipboard(getFormattedMessage())}
+                  >
+                    {copied ? '✓ Đã sao chép' : '📋 Sao chép lại'}
+                  </button>
+                </div>
+                <pre className="zalo-msg-pre">{getFormattedMessage()}</pre>
               </div>
 
               <div className="success-actions">
                 <a
-                  href={buildZaloUrl()}
+                  href="https://zalo.me/0925649666"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="button success-zalo-btn"
+                  onClick={() => copyToClipboard(getFormattedMessage())}
                 >
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                   </svg>
-                  Mở Zalo gửi ảnh & nhận báo giá (0925 649 666) ↗
+                  Mở Zalo 0925 649 666 (Dán & Gửi ngay) ↗
                 </a>
 
                 <div className="success-secondary-row">

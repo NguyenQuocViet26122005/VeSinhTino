@@ -1328,10 +1328,13 @@
 .showcase-modal-box {
   background: var(--paper);
   border-radius: 18px;
-  max-width: 900px;
+  max-width: 860px;
   width: 100%;
   max-height: 90vh;
-  overflow: hidden;
+  max-height: 90dvh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
@@ -1347,11 +1350,13 @@
   position: absolute;
   top: 16px;
   right: 16px;
-  z-index: 10;
+  z-index: 20;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(8, 44, 74, 0.8);
+  background: rgba(8, 44, 74, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: var(--lime);
   border: 0;
   font-size: 20px;
@@ -1359,6 +1364,7 @@
   display: grid;
   place-items: center;
   transition: all 200ms var(--ease-out);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 @media (hover: hover) and (pointer: fine) {
   .showcase-modal-close:hover {
@@ -1373,17 +1379,19 @@
 
 .showcase-modal-image-wrap {
   width: 100%;
-  background: #000000;
-  display: grid;
-  place-items: center;
-  max-height: 65vh;
+  flex-shrink: 0;
+  height: 380px;
+  max-height: 50vh;
+  background: #082c4a;
+  position: relative;
   overflow: hidden;
+  display: block;
 }
 
 .showcase-modal-img {
-  max-width: 100%;
-  max-height: 65vh;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: block;
 }
 
@@ -1528,26 +1536,50 @@
   .showcase-expand-wrap {
     display: none;
   }
-  .showcase-modal-close {
-    top: 12px;
-    right: 12px;
-    width: 44px;
-    height: 44px;
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .showcase-modal-overlay {
+    padding: 10px;
   }
   .showcase-modal-box {
     max-height: 92vh;
     max-height: 92dvh;
+    border-radius: 16px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
   }
+  .showcase-modal-image-wrap {
+    height: 250px;
+    min-height: 230px;
+    flex-shrink: 0;
+  }
+  .showcase-modal-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .showcase-modal-close {
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(8, 44, 74, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    z-index: 20;
+  }
   .showcase-modal-info {
-    padding: 18px 20px;
+    padding: 16px 16px 20px;
   }
   .showcase-modal-info h3 {
-    font-size: 19px;
+    font-size: 18px;
+    line-height: 1.35;
   }
 }
 

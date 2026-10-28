@@ -572,12 +572,20 @@ export const AuthenticShowcase: React.FC = () => {
                   <span aria-hidden="true">↗</span>
                 </button>
                 <a
-                  href={`https://zalo.me/0925649666?text=${encodeURIComponent(
-                    `Chào Tino, tôi xem công trình "${activePhoto.title}" và muốn được khảo sát, báo giá tương tự cho công trình của tôi!`
-                  )}`}
+                  href="https://zalo.me/0925649666"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="button light modal-zalo-btn"
+                  onClick={async () => {
+                    const msg = `Chào Tino, tôi xem công trình "${activePhoto.title}" và muốn được khảo sát, báo giá tương tự cho công trình của tôi!`;
+                    try {
+                      if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(msg);
+                      }
+                    } catch {
+                      // Ignore
+                    }
+                  }}
                 >
                   Nhắn Zalo kèm ảnh
                   <span aria-hidden="true">↗</span>

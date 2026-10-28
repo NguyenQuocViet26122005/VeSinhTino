@@ -17,23 +17,23 @@ export interface ServiceDetail {
 const SERVICES_DATA: ServiceDetail[] = [
   {
     slug: 've-sinh-nha-o',
-    name: 'Vệ sinh nhà ở & Căn hộ',
-    short: 'Nhà ở & Căn hộ',
-    tag: 'Chăm chút tổ ấm',
+    name: 'Tổng vệ sinh chung cư trọn gói',
+    short: 'Chung cư trọn gói',
+    tag: 'Tiết kiệm & Chuẩn chỉ',
     photo: 'f3e9578413dffb6cd7a69149858785c1',
-    description: 'Tổng vệ sinh nhà ở, căn hộ và không gian sinh hoạt, từ sàn nhà đến những góc nhỏ nhất.',
-    intro: 'Một căn nhà sạch bắt đầu từ những chi tiết nhỏ. Tino chăm sóc không gian sống kỹ lưỡng sau sửa chữa hoặc trước khi dọn vào nhà mới.',
+    description: 'Dịch vụ trọn gói cho căn hộ chung cư 1PN, 2PN, 3PN với đầy đủ thiết bị chuyên dụng và hóa chất an toàn.',
+    intro: 'Tổng vệ sinh chung cư trọn gói 50m² từ 1tr6. Tino làm sạch chi tiết từng phòng ngủ, phòng khách, ban công, bếp và nhà tắm trước khi dọn vào ở.',
     tasks: [
-      'Hút bụi trần, quét mạng nhện, lau cửa sổ & khung kính',
-      'Vệ sinh phòng khách, phòng ngủ, ban công và lan can',
-      'Tẩy sạch dầu mỡ khu bếp, bồn rửa và tủ kệ bếp',
-      'Khử khuẩn, chà sạch tường gạch và thiết bị phòng tắm'
+      'Hút bụi trần thạch cao, lau khe cửa kính và ban công',
+      'Tẩy sạch dầu mỡ khu bếp, bồn rửa và tủ kệ âm tường',
+      'Khử khuẩn, chà sạch tường gạch và thiết bị phòng tắm',
+      'Lau sàn gạch/sàn gỗ bằng dung dịch bảo dưỡng an toàn'
     ],
-    priceHighlight: 'Từ 10.000 – 20.000 đ/m²'
+    priceHighlight: '50m² từ 1.600.000 đ'
   },
   {
     slug: 'dich-vu-ve-sinh-cong-nghiep',
-    name: 'Vệ sinh công nghiệp sau xây dựng',
+    name: 'Tổng vệ sinh nhà sau xây dựng',
     short: 'Sau xây dựng',
     tag: 'Cho mọi công trình',
     photo: 'b486da45979bde972f03edd7f9a890e5',
@@ -45,7 +45,7 @@ const SERVICES_DATA: ServiceDetail[] = [
       'Đánh bóng sàn gạch, sàn đá bằng máy mâm xoay',
       'Nghiệm thu chi tiết từng phòng theo danh mục kiểm tra'
     ],
-    priceHighlight: 'Từ 10.000 – 20.000 đ/m²'
+    priceHighlight: 'Từ 12.000 – 20.000 đ/m²'
   },
   {
     slug: 've-sinh-nha-xuong',
@@ -122,13 +122,14 @@ export const ServiceExplorer: React.FC = () => {
   };
 
   const handleScrollToEstimator = (slug: string) => {
+    const targetSlug = slug === 've-sinh-nha-o' ? 've-sinh-chung-cu' : slug;
     if (typeof window !== 'undefined') {
-      (window as unknown as { __tino_pending_service?: string }).__tino_pending_service = slug;
+      (window as unknown as { __tino_pending_service?: string }).__tino_pending_service = targetSlug;
     }
     const el = document.getElementById('uoc-tinh-chi-phi');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
-      window.dispatchEvent(new CustomEvent('tino:select-service', { detail: { slug } }));
+      window.dispatchEvent(new CustomEvent('tino:select-service', { detail: { slug: targetSlug } }));
     }
   };
 

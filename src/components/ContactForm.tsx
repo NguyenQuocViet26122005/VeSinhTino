@@ -3,24 +3,27 @@
 import React, { useState, useEffect } from 'react';
 
 const SERVICE_ID_TO_NAME: Record<string, string> = {
-  've-sinh-nha-o': 'Vệ sinh nhà ở & Căn hộ',
-  'dich-vu-ve-sinh-cong-nghiep': 'Vệ sinh công nghiệp sau xây dựng',
+  've-sinh-chung-cu': 'Tổng vệ sinh chung cư trọn gói',
+  'dich-vu-ve-sinh-cong-nghiep': 'Tổng vệ sinh nhà sau xây dựng',
+  've-sinh-nha-sau-xay': 'Tổng vệ sinh nhà sau xây dựng',
+  've-sinh-nha-o': 'Tổng vệ sinh chung cư trọn gói',
+  've-sinh-nha-cu': 'Vệ sinh nhà ở & Nhà cũ',
   've-sinh-nha-xuong': 'Vệ sinh kho & Nhà xưởng',
   've-sinh-kinh-toa-nha': 'Vệ sinh kính tòa nhà cao tầng',
   'dich-vu-giat-ghe-sofa': 'Giặt ghế sofa & Nệm tại nhà',
   'dich-vu-giat-tham': 'Giặt thảm văn phòng',
-  home: 'Vệ sinh nhà ở & Căn hộ',
+  home: 'Tổng vệ sinh chung cư trọn gói',
   factory: 'Vệ sinh kho & Nhà xưởng',
   glass: 'Vệ sinh kính tòa nhà cao tầng',
   furnishing: 'Giặt ghế sofa & Nệm tại nhà',
-  floor: 'Vệ sinh công nghiệp sau xây dựng'
+  floor: 'Tổng vệ sinh nhà sau xây dựng'
 };
 
 export const ContactForm: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    service: 'Vệ sinh nhà ở & Căn hộ',
+    service: 'Tổng vệ sinh chung cư trọn gói',
     notes: '',
     area: ''
   });
@@ -325,8 +328,9 @@ export const ContactForm: React.FC = () => {
                     onChange={e => setFormData({ ...formData, service: e.target.value })}
                     className="form-select"
                   >
-                    <option value="Vệ sinh nhà ở & Căn hộ">Vệ sinh nhà ở & Căn hộ</option>
-                    <option value="Vệ sinh công nghiệp sau xây dựng">Vệ sinh công nghiệp sau xây dựng</option>
+                    <option value="Tổng vệ sinh chung cư trọn gói">Tổng vệ sinh chung cư trọn gói</option>
+                    <option value="Tổng vệ sinh nhà sau xây dựng">Tổng vệ sinh nhà sau xây dựng</option>
+                    <option value="Vệ sinh nhà ở & Nhà cũ">Vệ sinh nhà ở & Nhà cũ</option>
                     <option value="Vệ sinh kho & Nhà xưởng">Vệ sinh kho & Nhà xưởng</option>
                     <option value="Vệ sinh kính tòa nhà cao tầng">Vệ sinh kính tòa nhà cao tầng</option>
                     <option value="Giặt ghế sofa & Nệm tại nhà">Giặt ghế sofa & Nệm tại nhà</option>
@@ -339,7 +343,7 @@ export const ContactForm: React.FC = () => {
                   <input
                     id="user-area"
                     type="text"
-                    placeholder="VD: 85m² hoặc 1 bộ"
+                    placeholder="VD: 50m² hoặc 1 bộ"
                     value={formData.area}
                     onChange={e => setFormData({ ...formData, area: e.target.value })}
                     className="form-input"
@@ -352,7 +356,7 @@ export const ContactForm: React.FC = () => {
                 <textarea
                   id="user-notes"
                   rows={2}
-                  placeholder="VD: Nhà mới sửa xong nhiều bụi xi măng, cần làm vào sáng thứ 7..."
+                  placeholder="VD: Chung cư 2 phòng ngủ 65m², mới sửa xong cần dọn vào ở..."
                   value={formData.notes}
                   onChange={e => setFormData({ ...formData, notes: e.target.value })}
                   className="form-textarea"

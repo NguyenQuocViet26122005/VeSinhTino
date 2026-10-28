@@ -15,8 +15,51 @@ export interface EstimatorService {
 
 const SERVICES: EstimatorService[] = [
   {
+    id: 've-sinh-chung-cu',
+    name: 'Tổng vệ sinh chung cư trọn gói',
+    unit: 'm²',
+    defaultQty: 50,
+    minQty: 40,
+    maxQty: 250,
+    presets: [50, 65, 75, 90, 120],
+    calculate: (qty) => {
+      if (qty <= 50) {
+        return {
+          min: 1600000,
+          max: 2000000,
+          unitRate: 'Trọn gói 50m² từ 1.600.000 đ',
+          note: 'Tổng vệ sinh chung cư trọn gói 50m² từ 1tr6. Hút bụi, lau kính, làm sạch khu bếp, toilet và sàn toàn diện.'
+        };
+      }
+      const extra = qty - 50;
+      const min = 1600000 + extra * 20000;
+      const max = 2000000 + extra * 25000;
+      return {
+        min,
+        max,
+        unitRate: 'Gói 50m² từ 1.600.000 đ (+20k–25k/m² phát sinh)',
+        note: `Tổng vệ sinh căn hộ chung cư trọn gói ${qty}m² (gói chuẩn 50m² kèm diện tích vượt).`
+      };
+    }
+  },
+  {
+    id: 'dich-vu-ve-sinh-cong-nghiep',
+    name: 'Tổng vệ sinh nhà sau xây dựng',
+    unit: 'm²',
+    defaultQty: 100,
+    minQty: 30,
+    maxQty: 800,
+    presets: [50, 80, 100, 150, 250],
+    calculate: (qty) => ({
+      min: qty * 12000,
+      max: qty * 20000,
+      unitRate: '12.000 – 20.000 đ/m²',
+      note: 'Áp dụng cho nhà phố, biệt thự hoặc công trình sau xây dựng/sửa chữa: thu gom rác thô, sủi sơn xi măng và đánh sàn.'
+    })
+  },
+  {
     id: 've-sinh-nha-o',
-    name: 'Vệ sinh nhà ở & Căn hộ',
+    name: 'Vệ sinh nhà ở & Nhà cũ',
     unit: 'm²',
     defaultQty: 80,
     minQty: 30,
@@ -26,22 +69,7 @@ const SERVICES: EstimatorService[] = [
       min: qty * 10000,
       max: qty * 20000,
       unitRate: '10.000 – 20.000 đ/m²',
-      note: 'Áp dụng cho căn hộ, nhà phố sau xây dựng hoặc tổng vệ sinh định kỳ.'
-    })
-  },
-  {
-    id: 'dich-vu-ve-sinh-cong-nghiep',
-    name: 'Vệ sinh công nghiệp sau xây dựng',
-    unit: 'm²',
-    defaultQty: 100,
-    minQty: 30,
-    maxQty: 800,
-    presets: [50, 100, 150, 250, 400],
-    calculate: (qty) => ({
-      min: qty * 10000,
-      max: qty * 20000,
-      unitRate: '10.000 – 20.000 đ/m²',
-      note: 'Bao gồm hút bụi mịn, sủi keo sơn, xi măng và làm sạch sâu sau xây dựng.'
+      note: 'Áp dụng cho nhà phố, nhà ở định kỳ hoặc dọn vào nhà cũ.'
     })
   },
   {
@@ -129,14 +157,15 @@ function formatVND(amount: number): string {
 }
 
 export const CostEstimator: React.FC = () => {
-  const [selectedServiceId, setSelectedServiceId] = useState('ve-sinh-nha-o');
+  const [selectedServiceId, setSelectedServiceId] = useState('ve-sinh-chung-cu');
   const service = SERVICES.find(s => s.id === selectedServiceId) || SERVICES[0];
   const [quantity, setQuantity] = useState(service.defaultQty);
 
   // Listen for external sync from ServiceExplorer or pending trigger
   useEffect(() => {
     const applyServiceSlug = (slug: string) => {
-      const found = SERVICES.find(s => s.id === slug);
+      const targetId = slug === 've-sinh-nha-o' ? 've-sinh-chung-cu' : slug;
+      const found = SERVICES.find(s => s.id === targetId || s.id === slug);
       if (found) {
         setSelectedServiceId(found.id);
         setQuantity(found.defaultQty);

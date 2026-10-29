@@ -45,6 +45,8 @@ Chỉ hai Chat ID cấu hình được truy cập, chỉ chat riêng. Webhook y�
 
 Build Production trên Vercel tự đăng ký webhook bằng token và mã webhook đã lưu trong biến môi trường của máy chủ. Không cần nhập lại token vào máy cá nhân. Script chỉ chạy khi `VERCEL=1` và `VERCEL_ENV=production`; local và Preview không kết nối Telegram. Script chỉ gọi Telegram, không gửi phép thử xác thực trực tiếp tới website và không gửi tin thử. Nếu bot đã có webhook khác URL, build dừng thay vì ghi đè. Việc đăng ký lại cùng URL giữ nguyên các update đang chờ. Build xác nhận đăng ký URL; việc trả báo cáo thật vẫn cần thử lệnh từ hai tài khoản được phép và kiểm tra dữ liệu GA4.
 
+Địa chỉ nhận lệnh là `https://ve-sinh-tino.vercel.app/api/traffic-report`, thuộc cùng dự án Vercel và dùng cùng các biến Production. Địa chỉ này tách callback của bot khỏi việc cập nhật DNS tên miền riêng; website và số liệu vẫn là vesinhtino.com. Script chỉ cho phép chuyển giữa callback hiện tại của dự án này và callback cũ `https://vesinhtino.com/api/traffic-report`; webhook bên ngoài vẫn không bị ghi đè.
+
 Biến Production cần có:
 
 - `PUBLIC_GA_MEASUREMENT_ID`: công khai, `G-...`, dùng lúc build.
@@ -62,7 +64,7 @@ Dùng `getWebhookInfo` để kiểm tra webhook hiện tại. Nếu URL trống,
 
 ```json
 {
-  "url": "https://vesinhtino.com/api/traffic-report",
+  "url": "https://ve-sinh-tino.vercel.app/api/traffic-report",
   "secret_token": "<giá trị TELEGRAM_WEBHOOK_SECRET đã lưu>",
   "allowed_updates": ["message"],
   "drop_pending_updates": false

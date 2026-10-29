@@ -7,7 +7,7 @@ const env = {
   TELEGRAM_WEBHOOK_SECRET: 'fixture_only_webhook_secret_32_characters',
   TELEGRAM_CHAT_ID: '111', TELEGRAM_REPORT_CHAT_ID_2: '222'
 };
-const url = 'https://vesinhtino.com/api/traffic-report';
+const url = 'https://ve-sinh-tino.vercel.app/api/traffic-report';
 const never = async () => assert.fail('No request should be made.');
 
 test('never connects from local, preview or other hosting environments', async () => {
@@ -25,7 +25,7 @@ test('requires valid secrets and both distinct private recipients', async () => 
 });
 
 test('registers only with Telegram, preserves pending updates and verifies the result', async () => {
-  for (const existing of ['', url]) {
+  for (const existing of ['', url, 'https://vesinhtino.com/api/traffic-report']) {
     const calls = [];
     let set = false;
     const result = await configureTelegramWebhook(env, async (target, options) => {
@@ -65,7 +65,7 @@ test('refuses to replace another webhook', async () => {
 test('provider failures never reveal token or webhook secret', async () => {
   for (const send of [
     async () => { throw new Error(env.TELEGRAM_BOT_TOKEN + env.TELEGRAM_WEBHOOK_SECRET); },
-    async () => Response.json({ ok: false, description: env.TELEGRAM_BOT_TOKEN }, { status: 401 }),
+    async () => Response.json({ ok: false, description: env.TELEGRAM_BOT_TOKEN + ' ' + env.TELEGRAM_WEBHOOK_SECRET + ' https://example.invalid/' + encodeURIComponent(env.TELEGRAM_BOT_TOKEN) }, { status: 401 }),
     async () => new Response('invalid JSON')
   ]) {
     await assert.rejects(configureTelegramWebhook(env, send), error => {
@@ -74,6 +74,17 @@ test('provider failures never reveal token or webhook secret', async () => {
       return /not confirmed/.test(error.message);
     });
   }
+});
+
+test('exposes a bounded safe provider reason without logging request URLs', async () => {
+  await assert.rejects(configureTelegramWebhook(env, async () => Response.json({
+    ok: false, description: 'Bad Request: bad webhook: failed to resolve host\n' + 'x'.repeat(500)
+  }, { status: 400 })), error => {
+    assert.match(error.message, /HTTP 400.*failed to resolve host/);
+    assert.doesNotMatch(error.message, /[\r\n]/);
+    assert.ok(error.message.length < 400);
+    return true;
+  });
 });
 
 test('does not claim success when Telegram fails to retain the URL', async () => {

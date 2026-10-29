@@ -15,7 +15,8 @@ function Register-TinoTrafficWebhook {
         }
         $webhookSecret = $secretMatch.Groups[1].Value
         $secretMatch = $null
-        $webhookUrl = 'https://vesinhtino.com/api/traffic-report'
+        $webhookUrl = 'https://ve-sinh-tino.vercel.app/api/traffic-report'
+        $ownWebhookUrls = @($webhookUrl, 'https://vesinhtino.com/api/traffic-report')
         $secureToken = Read-Host 'Paste the existing Tino bot token, then press Enter (hidden)' -AsSecureString
         $telegramBotToken = ([System.Net.NetworkCredential]::new('', $secureToken)).Password.Trim()
         if ($telegramBotToken -notmatch '^[0-9]{6,20}:[A-Za-z0-9_-]{30,}$') {
@@ -27,7 +28,7 @@ function Register-TinoTrafficWebhook {
         Write-Host ('Bot: @' + $bot.result.username)
         $hook = Invoke-RestMethod -Method Post -Uri ('https://api.telegram.org/bot' + $telegramBotToken + '/getWebhookInfo') -Body '{}' -ContentType 'application/json' -TimeoutSec 20 -MaximumRedirection 0 -ErrorAction Stop
         if ($hook.ok -ne $true) { throw 'Unable to inspect webhook.' }
-        if ($hook.result.url -and $hook.result.url -cne $webhookUrl) {
+        if ($hook.result.url -and $ownWebhookUrls -cnotcontains $hook.result.url) {
             Write-Host 'Another webhook is active. Nothing was changed. Ask for setup guidance.'
             return
         }

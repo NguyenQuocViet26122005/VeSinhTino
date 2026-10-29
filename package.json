@@ -8,13 +8,13 @@
   },
   "scripts": {
     "dev": "astro dev --host 127.0.0.1",
-    "build": "astro build && node scripts/check-public-secrets.mjs",
+    "build": "astro build && node scripts/check-public-secrets.mjs && node scripts/configure-telegram-webhook.mjs",
     "preview": "astro preview --host 127.0.0.1",
     "check": "astro check",
     "verify": "node scripts/verify.mjs",
     "design:lint": "designmd lint DESIGN.md",
     "test:contact": "node --test scripts/contact.test.mjs scripts/contact-runtime.test.mjs",
-    "test:traffic": "node --test scripts/traffic-report.test.mjs",
+    "test:traffic": "node --test scripts/traffic-report.test.mjs scripts/telegram-webhook.test.mjs",
     "verify:secrets": "node scripts/check-public-secrets.mjs"
   },
   "dependencies": {

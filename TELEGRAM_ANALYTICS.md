@@ -43,6 +43,8 @@ Chỉ hai Chat ID cấu hình được truy cập, chỉ chat riêng. Webhook y�
 
 ## 4. Bật webhook sau khi triển khai
 
+Build Production trên Vercel tự đăng ký webhook bằng token và mã webhook đã lưu trong biến môi trường của máy chủ. Không cần nhập lại token vào máy cá nhân. Script chỉ chạy khi `VERCEL=1` và `VERCEL_ENV=production`; local và Preview không kết nối Telegram. Script chỉ gọi Telegram, không gửi phép thử xác thực trực tiếp tới website và không gửi tin thử. Nếu bot đã có webhook khác URL, build dừng thay vì ghi đè. Việc đăng ký lại cùng URL giữ nguyên các update đang chờ. Build xác nhận đăng ký URL; việc trả báo cáo thật vẫn cần thử lệnh từ hai tài khoản được phép và kiểm tra dữ liệu GA4.
+
 Biến Production cần có:
 
 - `PUBLIC_GA_MEASUREMENT_ID`: công khai, `G-...`, dùng lúc build.
@@ -54,7 +56,7 @@ Biến Production cần có:
 - `TELEGRAM_REPORT_CHAT_ID_2`: tài khoản quản lý thứ hai.
 - `TELEGRAM_WEBHOOK_SECRET`: Secret ngẫu nhiên 32–256 ký tự, chỉ chữ/số/`_`/`-`.
 
-Sau khi nhập đủ biến, build và triển khai. Với PowerShell 7 (`pwsh`), chạy `pwsh -NoProfile -File .\scripts\telegram-webhook-setup.ps1` tại thư mục dự án. Công cụ đọc mã webhook từ `.env` local, kiểm tra endpoint thật bằng một update rỗng (không gửi tin), yêu cầu nhập token bot ẩn, kiểm tra webhook hiện tại, rồi hỏi xác nhận đúng username trước khi đăng ký. Công cụ không thay webhook khác URL, không ghi token vào file và không gửi tin thử. Phải tự nhập token ở Terminal, không dán token vào chat. Việc kiểm tra/mô phỏng local chưa chứng minh webhook đã đăng ký thật.
+Sau khi nhập đủ biến, build và triển khai. Với PowerShell 7 (`pwsh`), chạy `pwsh -NoProfile -File .\scripts\telegram-webhook-setup.ps1` tại thư mục dự án. Công cụ đọc mã webhook từ `.env` local, yêu cầu nhập token bot ẩn, kiểm tra webhook hiện tại, rồi hỏi xác nhận đúng username trước khi đăng ký trực tiếp với Telegram. Khi đăng ký, Telegram nhận mã webhook và sau đó gửi kèm mã này khi chuyển lệnh tới website. Công cụ **không thực hiện phép thử gửi mã trực tiếp tới website**. Công cụ không thay webhook khác URL, không ghi token vào file và không gửi tin thử. Phải tự nhập token ở Terminal, không dán token vào chat. Việc kiểm tra/mô phỏng local chưa chứng minh webhook đã đăng ký thật.
 
 Dùng `getWebhookInfo` để kiểm tra webhook hiện tại. Nếu URL trống, đăng ký `setWebhook` của bot với JSON:
 

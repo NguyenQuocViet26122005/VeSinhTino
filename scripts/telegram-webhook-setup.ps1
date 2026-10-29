@@ -1,5 +1,6 @@
 # Register the command webhook after deployment. No token is printed or saved.
 # An unrelated existing webhook is never replaced. No test messages are sent.
+# Only Telegram is contacted; no authenticated website probe is performed.
 
 function Register-TinoTrafficWebhook {
     param([string] $EnvironmentPath = (Join-Path $PSScriptRoot '..\.env'))
@@ -15,12 +16,6 @@ function Register-TinoTrafficWebhook {
         $webhookSecret = $secretMatch.Groups[1].Value
         $secretMatch = $null
         $webhookUrl = 'https://vesinhtino.com/api/traffic-report'
-        # An authenticated empty update is ignored; it sends no Telegram message.
-        $probe = Invoke-RestMethod -Method Post -Uri $webhookUrl -Headers @{ 'X-Telegram-Bot-Api-Secret-Token' = $webhookSecret } -Body '{"update_id":0}' -ContentType 'application/json' -TimeoutSec 20 -MaximumRedirection 0 -ErrorAction Stop
-        if ($probe.ok -ne $true -or $probe.ignored -ne $true) {
-            Write-Host 'The deployed reporting endpoint is not ready. Nothing was changed.'
-            return
-        }
         $secureToken = Read-Host 'Paste the existing Tino bot token, then press Enter (hidden)' -AsSecureString
         $telegramBotToken = ([System.Net.NetworkCredential]::new('', $secureToken)).Password.Trim()
         if ($telegramBotToken -notmatch '^[0-9]{6,20}:[A-Za-z0-9_-]{30,}$') {
@@ -36,7 +31,8 @@ function Register-TinoTrafficWebhook {
             Write-Host 'Another webhook is active. Nothing was changed. Ask for setup guidance.'
             return
         }
-        $confirmation = Read-Host 'Check the bot username above. Type YES to register the report webhook'
+        Write-Host 'Registration sends the local webhook secret to Telegram. Telegram will include it when delivering commands to your website.'
+        $confirmation = Read-Host 'Check the bot username above. Type YES to register; any other input cancels'
         if ($confirmation -cne 'YES') { Write-Host 'Cancelled. Nothing was changed.'; return }
         $payload = @{ url = $webhookUrl; secret_token = $webhookSecret; allowed_updates = @('message'); drop_pending_updates = $false } | ConvertTo-Json -Compress
         $registered = Invoke-RestMethod -Method Post -Uri ('https://api.telegram.org/bot' + $telegramBotToken + '/setWebhook') -Body $payload -ContentType 'application/json' -TimeoutSec 20 -MaximumRedirection 0 -ErrorAction Stop

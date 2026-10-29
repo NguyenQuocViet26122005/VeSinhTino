@@ -1,4 +1,6 @@
 // Server-only. Reports are requested by allowed users through a Telegram webhook.
+import { analyticsHints, AnalyticsReadError } from './analytics-errors.mjs';
+export { AnalyticsReadError } from './analytics-errors.mjs';
 export interface TrafficEnv {
   TELEGRAM_WEBHOOK_SECRET?: string;
   GA4_PROPERTY_ID?: string;
@@ -122,9 +124,12 @@ export async function handleTrafficReport(request: Request, env: TrafficEnv, rea
       try {
         const periods = reportPeriods(now, command);
         text = reportMessage(periods, await readTraffic(periods, env));
-      } catch {
+      } catch (error) {
         // Provider errors can contain credentials. Never log or return their raw messages.
         text = 'Chưa lấy được số liệu Google Analytics. Vui lòng thử lại sau; chưa thể xác nhận số lượt truy cập.';
+        if (error instanceof AnalyticsReadError) {
+          text += `\nMã kiểm tra: ${error.code}\n${analyticsHints[error.code]}`;
+        }
       }
     }
   }

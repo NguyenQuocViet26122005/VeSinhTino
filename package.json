@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "astro dev --host 127.0.0.1",
-    "build": "astro build && node scripts/check-public-secrets.mjs && node scripts/configure-telegram-webhook.mjs",
+    "build": "astro build && node scripts/check-public-secrets.mjs && node scripts/configure-telegram-webhook.mjs && node scripts/check-analytics-connection.mjs",
     "preview": "astro preview --host 127.0.0.1",
     "check": "astro check",
     "verify": "node scripts/verify.mjs",
@@ -36,6 +36,7 @@
     "@fontsource/be-vietnam-pro": "^5.2.0",
     "@fontsource/manrope": "^5.2.0",
     "@google/design.md": "^0.4.0",
+    "@types/node": "^24.19.2",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@types/three": "^0.181.0",

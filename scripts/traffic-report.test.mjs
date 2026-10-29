@@ -1,16 +1,19 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { handleTrafficReport, reportPeriods } from '../server/traffic-report.ts';
-import { readTraffic } from '../server/analytics-data.ts';
+import { handleTrafficReport, reportPeriods, AnalyticsReadError } from '../server/traffic-report.ts';
+import { readTraffic, normalizeAnalyticsKey } from '../server/analytics-data.ts';
+import { generateKeyPairSync } from 'node:crypto';
 import { JWT } from 'google-auth-library';
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import ts from 'typescript';
+import { checkAnalyticsConnection } from './check-analytics-connection.mjs';
 
+const fixtureKey = generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey.export({ type: 'pkcs8', format: 'pem' });
 const env = {
   TELEGRAM_WEBHOOK_SECRET: 'test_only_webhook_secret_32_characters', GA4_PROPERTY_ID: '123456',
-  GA4_CLIENT_EMAIL: 'test@example.invalid', GA4_PRIVATE_KEY: 'test-only',
+  GA4_CLIENT_EMAIL: 'test@example.invalid', GA4_PRIVATE_KEY: fixtureKey,
   TELEGRAM_BOT_TOKEN: 'dummy-token', TELEGRAM_CHAT_ID: '111', TELEGRAM_REPORT_CHAT_ID_2: '222'
 };
 const update = (text = '/baocao', id = 111) => ({ message: { text, chat: { id, type: 'private' }, from: { id } } });
@@ -169,13 +172,64 @@ test('rejects GA timezone mismatch', async t => {
   t.mock.method(globalThis, 'fetch', async () => Response.json({ reports: Array.from({ length: 4 }, () => ({
     metadata: { timeZone: 'America/Los_Angeles' }, metricHeaders: [], rows: []
   })) }));
-  await assert.rejects(readTraffic(reportPeriods(now), env), /timezone/);
+  await assert.rejects(readTraffic(reportPeriods(now), env), error => error.code === 'GA4_TIMEZONE');
+});
+
+test('accepts PEM, escaped newlines, JSON strings and matching downloaded key JSON', () => {
+  for (const value of [fixtureKey, fixtureKey.replaceAll('\n', '\\n'), JSON.stringify(fixtureKey),
+    '"private_key": ' + JSON.stringify(fixtureKey) + ',',
+    JSON.stringify({ private_key: fixtureKey, client_email: env.GA4_CLIENT_EMAIL })]) {
+    assert.equal(normalizeAnalyticsKey(value, env.GA4_CLIENT_EMAIL), fixtureKey.trim());
+  }
+  for (const value of ['key-id-only', '"unfinished', JSON.stringify({ private_key: fixtureKey, client_email: 'other@example.invalid' })]) {
+    assert.throws(() => normalizeAnalyticsKey(value, env.GA4_CLIENT_EMAIL), error => error.code === 'GA4_KEY');
+  }
+});
+
+test('authorized owners get only predefined safe diagnostics, without false counts', async () => {
+  for (const code of ['GA4_KEY', 'GA4_AUTH', 'GA4_ACCESS', 'GA4_API_DISABLED', 'GA4_TIMEZONE', 'GA4_NETWORK']) {
+    const response = await handleTrafficReport(request(), env, async () => { throw new AnalyticsReadError(code); }, async (_url, options) => {
+      const text = JSON.parse(options.body).text;
+      assert.ok(text.includes(code));
+      assert.doesNotMatch(text, /Người truy cập:|test-access-token/);
+      assert.equal(text.includes(fixtureKey), false);
+      return Response.json({ ok: true });
+    });
+    assert.equal(response.status, 200);
+  }
+});
+
+test('distinguishes Google auth, access, disabled API and network failures safely', async t => {
+  const auth = t.mock.method(JWT.prototype, 'getAccessToken', async () => ({ token: 'test-access-token' }));
+  const provider = t.mock.method(globalThis, 'fetch', async () => Response.json({ error: {} }, { status: 403 }));
+  await assert.rejects(readTraffic(reportPeriods(now), env), error => error.code === 'GA4_ACCESS');
+  provider.mock.mockImplementation(async () => Response.json({ error: { details: [{ reason: 'SERVICE_DISABLED' }] } }, { status: 403 }));
+  await assert.rejects(readTraffic(reportPeriods(now), env), error => error.code === 'GA4_API_DISABLED');
+  provider.mock.mockImplementation(async () => { throw new Error('test-access-token'); });
+  await assert.rejects(readTraffic(reportPeriods(now), env), error => error.code === 'GA4_NETWORK');
+  auth.mock.mockImplementation(async () => { throw { response: { status: 400, data: { error: 'invalid_grant' } }, message: fixtureKey }; });
+  await assert.rejects(readTraffic(reportPeriods(now), env), error => error.code === 'GA4_AUTH' && !error.message.includes(fixtureKey));
+});
+
+test('production GA4 diagnostic is read-only, skips previews and returns no secret or metrics', async () => {
+  assert.deepEqual(await checkAnalyticsConnection({ ...env, VERCEL: '1', VERCEL_ENV: 'preview' }, never), { skipped: true });
+  const production = { ...env, VERCEL: '1', VERCEL_ENV: 'production' };
+  assert.deepEqual(await checkAnalyticsConnection(production, async periods => {
+    assert.equal(periods.length, 1);
+    assert.match(periods[0].start, /^\d{4}-\d{2}-\d{2}$/);
+    return [sample];
+  }), { ok: true });
+  assert.deepEqual(await checkAnalyticsConnection(production, async () => { throw new AnalyticsReadError('GA4_TIMEZONE'); }), { ok: false, code: 'GA4_TIMEZONE' });
+  const unknown = await checkAnalyticsConnection(production, async () => { throw new Error(fixtureKey); });
+  assert.deepEqual(unknown, { ok: false, code: 'GA4_RESPONSE' });
+  assert.equal(JSON.stringify(unknown).includes(fixtureKey), false);
 });
 
 test('emitted Vercel entry loads with explicit ESM extensions', async () => {
   const root = path.resolve('qa', `traffic-runtime-${Date.now()}`);
   fs.mkdirSync(path.join(root, 'api'), { recursive: true });
   fs.mkdirSync(path.join(root, 'server'), { recursive: true });
+  fs.copyFileSync('server/analytics-errors.mjs', path.join(root, 'server/analytics-errors.mjs'));
   fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ type: 'module' }));
   for (const name of ['api/traffic-report', 'server/traffic-report', 'server/analytics-data']) {
     const { outputText } = ts.transpileModule(fs.readFileSync(`${name}.ts`, 'utf8'), {

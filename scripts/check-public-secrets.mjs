@@ -7,7 +7,7 @@ function scan(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const file = path.join(dir, entry.name);
     if (entry.isDirectory()) scan(file);
-    else if (/\.(?:ts|tsx|js|mjs|cjs|astro|html|json|map|md|ya?ml)$/.test(file)) {
+    else if (/\.(?:ts|tsx|js|mjs|cjs|ps1|astro|html|json|map|md|ya?ml)$/.test(file)) {
       const text = fs.readFileSync(file, 'utf8');
       if (/\b\d{6,12}:[A-Za-z0-9_-]{30,}\b/.test(text) ||
         /-----BEGIN (?:RSA |EC )?PRIVATE KEY-----[\s\S]{80,}?-----END (?:RSA |EC )?PRIVATE KEY-----/.test(text)) findings.push(file);

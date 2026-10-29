@@ -2,14 +2,14 @@
 
 ## Trạng thái
 
-Form gửi POST /api/contact cùng tên miền. Máy chủ gọi Telegram và chỉ trả ok: true khi Telegram trả HTTP thành công cùng ok: true. Khi thiếu cấu hình, mất mạng hoặc Telegram báo lỗi, form giữ thông tin và hiển thị hướng liên hệ trực tiếp. Không có token trong src/ hoặc bản build tĩnh.
+Form gửi POST /api/contact cùng tên miền. Máy chủ gửi cùng nội dung tới hai tài khoản riêng và chỉ trả ok: true khi Telegram xác nhận thành công cho cả hai. Khi thiếu cấu hình, mất mạng hoặc Telegram báo lỗi, form giữ thông tin và hiển thị hướng liên hệ trực tiếp. Không có token trong src/ hoặc bản build tĩnh.
 
 ## Việc chủ bot cần làm ngay
 
 1. Mở đúng @BotFather trên Telegram, dùng /revoke và chọn bot cũ để thu hồi token đã lộ. Làm theo hướng dẫn BotFather để lấy token mới.
-2. Trong dashboard hosting, thêm hai biến môi trường **phía máy chủ**: TELEGRAM_BOT_TOKEN (token mới) và TELEGRAM_CHAT_ID (ID người/nhóm nhận hiện có). Không dùng tiền tố PUBLIC_, không đưa token vào Git hoặc tin nhắn chat.
+2. Trong dashboard hosting, cấu hình ba biến **phía máy chủ**: TELEGRAM_BOT_TOKEN (token mới), TELEGRAM_CHAT_ID (ID tài khoản riêng thứ nhất) và TELEGRAM_REPORT_CHAT_ID_2 (ID tài khoản riêng thứ hai). Hai ID phải là số dương và khác nhau. Không dùng tiền tố PUBLIC_, không đưa token vào Git hoặc tin nhắn chat.
 3. Với Vercel: entry point api/contact.ts. Đặt biến cho đúng môi trường Production/Preview và redeploy. Với Cloudflare Pages: entry point functions/api/contact.ts; đặt secrets trong Pages Settings và redeploy.
-4. Bot phải được người nhận Start hoặc được thêm vào nhóm có quyền gửi tin.
+4. Cả hai tài khoản phải bấm Start trong bot và không chặn bot.
 5. Sau triển khai, chủ bot gửi một yêu cầu thử và đối chiếu tin nhận trong Telegram. Chưa có bước này thì chưa xác nhận kết nối production.
 
 ## Lưu ý triển khai
@@ -18,7 +18,7 @@ Form gửi POST /api/contact cùng tên miền. Máy chủ gọi Telegram và ch
 - Thiếu endpoint/biến môi trường sẽ hiện lỗi thay vì báo thành công giả.
 - Có thể sao chép .env.example thành file môi trường cục bộ. File chứa secrets đã được Git ignore; tuyệt đối không commit token mới.
 - Token cũ vẫn có thể nằm trong lịch sử Git và các deployment cũ. Xóa khỏi code không thay thế việc thu hồi. Sau khi cập nhật hosting cần bỏ các deployment cũ có bundle chứa token nếu nền tảng cho phép.
-- Thay đổi này xử lý việc giữ bí mật token và xác nhận giao nhận. Giới hạn tần suất/WAF chống spam là công việc tiếp theo.
+- Có giới hạn tần suất và số yêu cầu đồng thời trong từng instance. Cấu hình WAF/giới hạn phân tán trên hosting vẫn cần kiểm tra riêng.
 - Không tự gửi lại khi timeout: trạng thái có thể chưa xác nhận, hãy kiểm tra Telegram để tránh tin trùng.
 
 Tài liệu: https://core.telegram.org/bots/tutorial#obtain-your-bot-token và https://vercel.com/docs/functions/runtimes/node-js

@@ -11,6 +11,7 @@ import { ClientRouter } from 'astro:transitions';
 import '../styles/finish.css';
 import '../styles/journey.css';
 import FloatingContact from '../components/FloatingContact';
+import Analytics from '../components/Analytics.astro';
 import { Image } from 'astro:assets';
 import brandLogo from '../../public/images/09ac88fe21b3b5da.webp';
 
@@ -63,6 +64,7 @@ function isNavActive(url: string, path: string): boolean {
     <title>{title} | Vệ Sinh Tino</title>
     <!-- Astro ClientRouter for instant SPA navigation without page reloads -->
     <ClientRouter />
+    <Analytics />
   </head>
   <body class:list={{ 'home-page': home, 'inner-page': !home }}>
     <a class="skip-link" href="#main">Đến nội dung chính</a>

@@ -4,23 +4,63 @@ import { handleContact, createContactGate } from '../server/contact.ts';
 import fs from 'node:fs';
 
 // Dummy values only; no real Telegram traffic.
-const env = { TELEGRAM_BOT_TOKEN: 'dummy-token', TELEGRAM_CHAT_ID: 'dummy-chat' };
+const env = { TELEGRAM_BOT_TOKEN: 'dummy-token', TELEGRAM_CHAT_ID: '111', TELEGRAM_REPORT_CHAT_ID_2: '222' };
 const input = { name: '<b>Khách thử</b>', phone: '0900000000', notes: 'Nội dung thử' };
 const request = (body = input, headers = {}) => new Request('https://tino.test/api/contact', {
   method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(body)
 });
 test('only acknowledges a confirmed Telegram success', async () => {
+  const deliveries = [];
   const response = await handleContact(request(), env, async (url, options) => {
     assert.equal(url, 'https://api.telegram.org/botdummy-token/sendMessage');
     const sent = JSON.parse(options.body);
-    assert.equal(sent.chat_id, 'dummy-chat');
+    deliveries.push(sent);
     assert.ok(sent.text.includes(input.name));
     assert.equal(sent.parse_mode, undefined); // User text is plain text, never Telegram markup.
     return Response.json({ ok: true });
   });
   assert.equal(response.status, 200);
+  assert.deepEqual(deliveries.map(delivery => delivery.chat_id).sort(), ['111', '222']);
+  assert.equal(deliveries[0].text, deliveries[1].text);
   assert.deepEqual(await response.json(), { ok: true });
   assert.equal(response.headers.get('cache-control'), 'no-store');
+});
+test('attempts the other recipient even when either account rejects or throws', async () => {
+  for (const failedId of ['111', '222']) {
+    for (const networkFailure of [false, true]) {
+      const recipients = [];
+      const response = await handleContact(request(), env, async (_url, options) => {
+        const { chat_id } = JSON.parse(options.body);
+        recipients.push(chat_id);
+        if (chat_id === failedId) {
+          if (networkFailure) throw new Error('dummy-token');
+          return Response.json({ ok: false }, { status: 403 });
+        }
+        return Response.json({ ok: true });
+      });
+      assert.deepEqual(recipients.sort(), ['111', '222']);
+      assert.equal(response.status, networkFailure ? 504 : 502);
+      const body = await response.text();
+      assert.equal(JSON.parse(body).ok, false);
+      assert.equal(body.includes('dummy-token'), false);
+    }
+  }
+});
+test('both deliveries start before either completes', async () => {
+  let firstStarted;
+  const started = new Promise(resolve => { firstStarted = resolve; });
+  let finish;
+  let count = 0;
+  const gate = new Promise(resolve => { finish = resolve; });
+  const pending = handleContact(request(), env, async () => {
+    count++;
+    if (count === 2) firstStarted();
+    await gate;
+    return Response.json({ ok: true });
+  });
+  await started;
+  finish();
+  assert.equal((await pending).status, 200);
 });
 for (const [name, status, body] of [
   ['HTTP failure', 500, { ok: true }],
@@ -57,6 +97,17 @@ test('upstream timeout aborts sending and never acknowledges success', async (t)
 test('missing configuration makes no outgoing request', async () => {
   const response = await handleContact(request(), {}, async () => { assert.fail('must not send'); });
   assert.equal(response.status, 503);
+});
+test('requires two distinct positive private Chat IDs before sending', async () => {
+  for (const patch of [
+    { TELEGRAM_REPORT_CHAT_ID_2: undefined }, { TELEGRAM_REPORT_CHAT_ID_2: '' },
+    { TELEGRAM_REPORT_CHAT_ID_2: '111' }, { TELEGRAM_REPORT_CHAT_ID_2: '-222' },
+    { TELEGRAM_REPORT_CHAT_ID_2: '0' }, { TELEGRAM_REPORT_CHAT_ID_2: 'abc' },
+    { TELEGRAM_CHAT_ID: '-111' }, { TELEGRAM_CHAT_ID: '0' }
+  ]) {
+    const response = await handleContact(request(), { ...env, ...patch }, async () => assert.fail('must not send'));
+    assert.equal(response.status, 503);
+  }
 });
 for (const body of [null, [], { phone: {} }, { phone: '01234567890' }, { ...input, notes: 'a'.repeat(1501) }, { ...input, honeypot: 'spam' }]) {
   test('rejects malformed input: ' + JSON.stringify(body).slice(0, 55), async () => {

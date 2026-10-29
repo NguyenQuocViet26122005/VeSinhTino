@@ -2,6 +2,7 @@
 export interface ContactEnv {
   TELEGRAM_BOT_TOKEN?: string;
   TELEGRAM_CHAT_ID?: string;
+  TELEGRAM_REPORT_CHAT_ID_2?: string;
 }
 const json = (status: number, body: { ok: boolean; error?: string }) =>
   Response.json(body, { status, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
@@ -88,8 +89,9 @@ export async function handleContact(request: Request, env: ContactEnv, send: typ
     return json(400, { ok: false, error: 'Vui lòng kiểm tra số điện thoại (10 chữ số hoặc dạng +84).' });
   }
   const token = env.TELEGRAM_BOT_TOKEN?.trim();
-  const chatId = env.TELEGRAM_CHAT_ID?.trim();
-  if (!token || !chatId) {
+  // The same two private accounts receive leads and may request traffic reports.
+  const chatIds = [env.TELEGRAM_CHAT_ID?.trim(), env.TELEGRAM_REPORT_CHAT_ID_2?.trim()];
+  if (!token || chatIds.some(id => !id || !/^[1-9]\d{0,19}$/.test(id)) || chatIds[0] === chatIds[1]) {
     return json(503, { ok: false, error: 'Form tạm thời chưa sẵn sàng. Vui lòng gọi Hotline hoặc nhắn Zalo bên dưới.' });
   }
   const release = acquireContact(clientKey?.slice(0, 64));
@@ -106,12 +108,20 @@ export async function handleContact(request: Request, env: ContactEnv, send: typ
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 8000);
   try {
-    const response = await send(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: chatId, text: message }), signal: controller.signal
-    });
-    const result = await response.json().catch(() => null) as { ok?: boolean } | null;
-    if (!response.ok || result?.ok !== true) {
+    // Attempt both independently: one blocked account must not prevent delivery
+    // to the other. Share the timeout so two recipients do not double latency.
+    const deliveries = await Promise.allSettled(chatIds.map(async chatId => {
+      const response = await send(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chatId, text: message }), signal: controller.signal
+      });
+      const result = await response.json().catch(() => null) as { ok?: boolean } | null;
+      return response.ok && result?.ok === true;
+    }));
+    if (deliveries.some(delivery => delivery.status === 'rejected')) {
+      return json(504, { ok: false, error: 'Chưa xác nhận được việc gửi yêu cầu. Vui lòng liên hệ Hotline / Zalo để kiểm tra.' });
+    }
+    if (deliveries.some(delivery => delivery.status === 'fulfilled' && !delivery.value)) {
       return json(502, { ok: false, error: 'Chưa gửi được yêu cầu đến Tino. Vui lòng thử lại hoặc liên hệ Hotline / Zalo.' });
     }
     return json(200, { ok: true });

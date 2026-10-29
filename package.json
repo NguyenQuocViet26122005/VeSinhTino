@@ -14,6 +14,7 @@
     "verify": "node scripts/verify.mjs",
     "design:lint": "designmd lint DESIGN.md",
     "test:contact": "node --test scripts/contact.test.mjs scripts/contact-runtime.test.mjs",
+    "test:traffic": "node --test scripts/traffic-report.test.mjs",
     "verify:secrets": "node scripts/check-public-secrets.mjs"
   },
   "dependencies": {
@@ -23,6 +24,7 @@
     "@react-three/fiber": "^9.4.0",
     "astro": "^7.4.4",
     "chartist": "^2.2.0",
+    "google-auth-library": "^11.3.2",
     "gsap": "^3.14.0",
     "morphicons": "^2.0.2",
     "react": "^19.2.0",

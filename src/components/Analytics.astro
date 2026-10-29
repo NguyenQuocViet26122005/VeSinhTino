@@ -1,0 +1,63 @@
+---
+// Only the public measurement ID is embedded. Reporting credentials stay server-only.
+const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID?.trim();
+const enabled = import.meta.env.PROD && /^G-[A-Z0-9]+$/.test(measurementId || '');
+---
+{enabled && <meta name="tino-ga-id" content={measurementId} />}
+<script>
+  type AnalyticsWindow = Window & {
+    dataLayer?: unknown[];
+    gtag?: (...args: unknown[]) => void;
+  };
+  const analyticsWindow = window as AnalyticsWindow;
+  let initialized = false;
+  let previousPage = '';
+
+  // Keep campaign attribution for the existing Ads landing page, without sending
+  // arbitrary URL parameters (which can contain contact details) or fragments.
+  function pageLocation(value: string, campaign = false): string {
+    const url = new URL(value);
+    const clean = new URL(url.origin + url.pathname);
+    if (campaign) {
+      for (const key of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_id', 'utm_term', 'utm_content',
+        'gclid', 'dclid', 'gbraid', 'wbraid', 'gclsrc', 'gad_source', 'gad_campaignid']) {
+        const item = url.searchParams.get(key);
+        if (item) clean.searchParams.set(key, item.slice(0, 512));
+      }
+    }
+    return clean.href;
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    const id = document.querySelector<HTMLMetaElement>('meta[name="tino-ga-id"]')?.content;
+    if (!id || !['vesinhtino.com', 'www.vesinhtino.com'].includes(location.hostname)) return;
+    const page = pageLocation(location.href, true);
+    let referrer = previousPage;
+    if (!referrer && document.referrer) {
+      try { referrer = pageLocation(document.referrer); } catch { /* no referrer */ }
+    }
+    if (!initialized) {
+      analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
+      if (!analyticsWindow.gtag) {
+        analyticsWindow.gtag = function () { analyticsWindow.dataLayer!.push(arguments); };
+        analyticsWindow.gtag('js', new Date());
+      }
+      analyticsWindow.gtag('config', id, {
+        send_page_view: false, allow_google_signals: false,
+        page_location: page, page_referrer: referrer
+      });
+      if (!document.querySelector('script[src^="https://www.googletagmanager.com/gtag/js"]')) {
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`;
+        document.head.append(script);
+      }
+      initialized = true;
+    }
+    // Route this manual event only to this Analytics stream, not other Ads tags.
+    analyticsWindow.gtag!('event', 'page_view', {
+      send_to: id, page_location: page, page_title: document.title, page_referrer: referrer
+    });
+    previousPage = pageLocation(location.href);
+  });
+</script>

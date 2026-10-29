@@ -1,9 +1,11 @@
 // Server-only. Reports are requested by allowed users through a Telegram webhook.
 import { analyticsHints, AnalyticsReadError } from './analytics-errors.mjs';
+import { botCommands } from './telegram-commands.mjs';
 export { AnalyticsReadError } from './analytics-errors.mjs';
 export interface TrafficEnv {
   TELEGRAM_WEBHOOK_SECRET?: string;
   GA4_PROPERTY_ID?: string;
+  GA4_STREAM_ID?: string;
   GA4_CLIENT_EMAIL?: string;
   GA4_PRIVATE_KEY?: string;
   TELEGRAM_BOT_TOKEN?: string;
@@ -13,6 +15,8 @@ export interface TrafficEnv {
 export interface ReportPeriod { label: string; start: string; end: string }
 export interface TrafficStats { users: number; sessions: number; views: number; empty?: boolean; pages: { path: string; views: number }[] }
 export type ReadTraffic = (periods: ReportPeriod[], env: TrafficEnv) => Promise<TrafficStats[]>;
+export interface RealtimeStats { users: number; views: number; empty?: boolean }
+export type ReadRealtime = (env: TrafficEnv) => Promise<RealtimeStats>;
 
 export function reportPeriods(now: Date, command = 'baocao'): ReportPeriod[] {
   const parts = new Intl.DateTimeFormat('en-CA', {
@@ -52,9 +56,22 @@ function reportMessage(periods: ReportPeriod[], stats: TrafficStats[]): string {
   'Số liệu chưa phải thời gian thực, có thể cập nhật lại trong 24–48 giờ và thiếu lượt dùng trình chặn theo dõi.'].join('\n');
 }
 
-const help = ['LỆNH XEM TRUY CẬP TINO', '/homnay — Số liệu hôm nay (có độ trễ)',
-  '/homqua — Số liệu hôm qua', '/thang — Tháng này đến hiện tại',
-  '/thangtruoc — Tổng kết tháng trước', '/baocao — Hôm nay và tháng này',
+function realtimeMessage(stats: RealtimeStats, now: Date): string {
+  if (![stats.users, stats.views].every(value => Number.isSafeInteger(value) && value >= 0)) throw new AnalyticsReadError('GA4_RESPONSE');
+  const number = (value: number) => new Intl.NumberFormat('vi-VN').format(value);
+  const requestedAt = new Intl.DateTimeFormat('vi-VN', {
+    timeZone: 'Asia/Ho_Chi_Minh', dateStyle: 'short', timeStyle: 'medium'
+  }).format(now);
+  return ['BÁO CÁO THỜI GIAN THỰC — VỆ SINH TINO', 'vesinhtino.com', '', '30 PHÚT GẦN NHẤT',
+    ...(stats.empty ? ['GA4 chưa ghi nhận hoạt động trong khoảng thời gian này.']
+      : [`Người hoạt động (30 phút): ${number(stats.users)}`, `Lượt xem trang (30 phút): ${number(stats.views)}`]),
+    '', `Lúc yêu cầu: ${requestedAt} (giờ Việt Nam)`,
+    'Nguồn: Google Analytics 4 Realtime. Đếm người hoạt động trong 30 phút gần nhất; một người có thể tạo nhiều lượt xem.',
+    'Số liệu có thể chậm vài phút và thiếu lượt dùng trình chặn theo dõi.'].join('\n');
+}
+
+const help = ['LỆNH XEM TRUY CẬP TINO', ...botCommands.filter(item => !['start', 'help'].includes(item.command))
+  .map(item => `/${item.command} — ${item.description}`),
   'Bot chỉ trả báo cáo khi bạn gõ lệnh.'].join('\n');
 const json = (status: number, body: Record<string, unknown>) => Response.json(body, {
   status, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' }
@@ -90,7 +107,7 @@ interface TelegramUpdate {
 }
 
 export async function handleTrafficReport(request: Request, env: TrafficEnv, readTraffic: ReadTraffic,
-  send: typeof fetch = fetch, now = new Date()): Promise<Response> {
+  send: typeof fetch = fetch, now = new Date(), readRealtime?: ReadRealtime): Promise<Response> {
   if (request.method !== 'POST') return json(405, { ok: false });
   const secret = env.TELEGRAM_WEBHOOK_SECRET?.trim();
   if (!secret || !/^[A-Za-z0-9_-]{32,256}$/.test(secret) || request.headers.get('x-telegram-bot-api-secret-token') !== secret) {
@@ -113,7 +130,7 @@ export async function handleTrafficReport(request: Request, env: TrafficEnv, rea
     return json(200, { ok: true, ignored: true });
   }
   const command = typeof message.text === 'string'
-    ? /^\/(baocao|homnay|homqua|thang|thangtruoc|start|help)(?:@[A-Za-z0-9_]+)?\s*$/i.exec(message.text)?.[1].toLowerCase() : undefined;
+    ? /^\/(baocao|homnay|homqua|thang|thangtruoc|tructiep|start|help)(?:@[A-Za-z0-9_]+)?\s*$/i.exec(message.text)?.[1].toLowerCase() : undefined;
   if (!command) return json(200, { ok: true, ignored: true });
   if (!env.TELEGRAM_BOT_TOKEN?.trim() || allowed.some(id => !id || !/^[1-9]\d{0,19}$/.test(id)) || allowed[0] === allowed[1]) {
     return json(503, { ok: false, error: 'Reporting configuration incomplete.' });
@@ -124,11 +141,18 @@ export async function handleTrafficReport(request: Request, env: TrafficEnv, rea
       text = 'Báo cáo truy cập chưa kết nối Google Analytics. Vui lòng hoàn tất cấu hình GA4.';
     } else {
       try {
-        const periods = reportPeriods(now, command);
-        text = reportMessage(periods, await readTraffic(periods, env));
+        if (command === 'tructiep') {
+          if (!readRealtime) throw new AnalyticsReadError('GA4_RESPONSE');
+          text = realtimeMessage(await readRealtime(env), now);
+        } else {
+          const periods = reportPeriods(now, command);
+          text = reportMessage(periods, await readTraffic(periods, env));
+        }
       } catch (error) {
         // Provider errors can contain credentials. Never log or return their raw messages.
-        text = 'Chưa lấy được số liệu Google Analytics. Vui lòng thử lại sau; chưa thể xác nhận số lượt truy cập.';
+        text = command === 'tructiep'
+          ? 'Chưa lấy được báo cáo thời gian thực của Google Analytics. Vui lòng thử lại sau; chưa thể xác nhận số lượt truy cập.'
+          : 'Chưa lấy được số liệu Google Analytics. Vui lòng thử lại sau; chưa thể xác nhận số lượt truy cập.';
         if (error instanceof AnalyticsReadError) {
           text += `\nMã kiểm tra: ${error.code}\n${analyticsHints[error.code]}`;
         }

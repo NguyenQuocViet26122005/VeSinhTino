@@ -6,6 +6,7 @@ Form chỉ xác nhận thành công khi Telegram xác nhận gửi thành công 
 
 ## Lệnh
 
+- `/tructiep`: người hoạt động và lượt xem trang của luồng Web trong 30 phút gần nhất, từ GA4 Realtime. Chỉ gọi khi người quản lý yêu cầu; không tự gửi theo lịch. Số người này là người có hoạt động trong cửa sổ 30 phút, có thể cập nhật chậm vài phút. Có giờ yêu cầu theo Việt Nam; không hiển thị như số người đang online chính xác lúc đó.
 - `/homnay`: người dùng, phiên, lượt xem và top 5 trang của hôm nay.
 - `/homqua`: cùng số liệu cho hôm qua.
 - `/thang`: từ ngày 1 tháng này đến hiện tại.
@@ -13,7 +14,9 @@ Form chỉ xác nhận thành công khi Telegram xác nhận gửi thành công 
 - `/baocao`: hôm nay và tháng này trong một tin.
 - `/start`, `/help`: hướng dẫn các lệnh.
 
-Số liệu theo Google Analytics 4, múi giờ Việt Nam; không phải số trực tuyến tức thời. GA4 có thể xử lý/cập nhật trong 24–48 giờ, trình chặn theo dõi có thể làm thiếu lượt. Chỉ có dữ liệu từ lúc gắn GA4. Người dùng theo tháng được truy vấn cho cả khoảng thời gian, không cộng số người từng ngày.
+Số liệu ngày/tháng theo Google Analytics 4, múi giờ Việt Nam; không phải số trực tuyến tức thời. GA4 có thể xử lý/cập nhật trong 24–48 giờ, trình chặn theo dõi có thể làm thiếu lượt. Chỉ có dữ liệu từ lúc gắn GA4. Người dùng theo tháng được truy vấn cho cả khoảng thời gian, không cộng số người từng ngày. Realtime dùng `activeUsers`, `screenPageViews` từ `runRealtimeReport`, lọc theo `streamId` vì API này không hỗ trợ `hostName`. Với tài sản đã xác nhận `394527770`, luồng mặc định là `5764157990`; có thể đặt `GA4_STREAM_ID` server-only để chọn luồng khác. Thiếu ID luồng ở tài sản khác sẽ từ chối thay vì trộn số liệu các luồng.
+
+Build Production đăng ký và đọc lại danh sách lệnh (gồm `/tructiep`) bằng `setMyCommands`/`getMyCommands`, giới hạn riêng trong chat của hai tài khoản được phép. Đây chỉ là menu gợi ý khi gõ `/`, không cấp quyền đọc dữ liệu và không gửi tin nhắn. `/start` và `/help` dùng chung danh sách lệnh. Local/Preview bỏ qua đăng ký.
 
 Chỉ hai Chat ID cấu hình được truy cập, chỉ chat riêng. Webhook yêu cầu secret token từ Telegram, giới hạn body 32 KiB; bỏ qua nhóm, tài khoản khác, tin nhắn sửa, file và nội dung không phải lệnh hỗ trợ. Không có dữ liệu Analytics sẽ báo chưa kết nối/lỗi lấy dữ liệu, không dựng số 0. Telegram có thể gửi lại update khi lỗi; hiện chưa dùng kho chống trùng nên một lệnh có thể được trả lời lại khi Telegram retry.
 

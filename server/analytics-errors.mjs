@@ -1,6 +1,7 @@
 // Only predefined diagnostics may reach logs or the two authorized bot users.
 export const analyticsHints = Object.freeze({
   GA4_KEY: 'Khóa GA4_PRIVATE_KEY chưa đúng định dạng. Kiểm tra giá trị private_key trong file JSON.',
+  GA4_STREAM: 'Kiểm tra GA4_STREAM_ID: cần ID luồng Web đúng với tài sản GA4 của website.',
   GA4_AUTH: 'Google chưa chấp nhận tài khoản dịch vụ. Kiểm tra khóa còn hiệu lực và khớp GA4_CLIENT_EMAIL.',
   GA4_ACCESS: 'Tài khoản dịch vụ chưa đọc được tài sản GA4. Kiểm tra quyền Người xem và GA4_PROPERTY_ID.',
   GA4_API_DISABLED: 'Google Analytics Data API chưa được bật cho dự án của tài khoản dịch vụ.',

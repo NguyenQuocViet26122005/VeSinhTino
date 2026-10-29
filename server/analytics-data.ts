@@ -1,6 +1,6 @@
 import { JWT } from 'google-auth-library';
 import { createPrivateKey } from 'node:crypto';
-import type { ReadTraffic, TrafficStats } from './traffic-report.js';
+import type { ReadTraffic, ReadRealtime, TrafficEnv, TrafficStats } from './traffic-report.js';
 import { AnalyticsReadError } from './analytics-errors.mjs';
 
 interface Report {
@@ -31,7 +31,7 @@ export function normalizeAnalyticsKey(value: string, expectedEmail: string): str
   } catch { throw new AnalyticsReadError('GA4_KEY'); }
 }
 
-export const readTraffic: ReadTraffic = async (periods, env) => {
+async function requestReport(method: 'batchRunReports' | 'runRealtimeReport', body: unknown, env: TrafficEnv): Promise<unknown> {
   const client = new JWT({
     email: env.GA4_CLIENT_EMAIL!.trim(), key: normalizeAnalyticsKey(env.GA4_PRIVATE_KEY!, env.GA4_CLIENT_EMAIL!.trim()),
     scopes: ['https://www.googleapis.com/auth/analytics.readonly'],
@@ -44,6 +44,22 @@ export const readTraffic: ReadTraffic = async (periods, env) => {
     throw new AnalyticsReadError(status === 400 || status === 401 || status === 403 ? 'GA4_AUTH' : 'GA4_NETWORK');
   }
   if (!token) throw new AnalyticsReadError('GA4_AUTH');
+  let response: Response;
+  try {
+    response = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${env.GA4_PROPERTY_ID}:${method}`, {
+      method: 'POST', redirect: 'error', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body), signal: AbortSignal.timeout(15000)
+    });
+  } catch { throw new AnalyticsReadError('GA4_NETWORK'); }
+  if (!response.ok) {
+    const error = await response.json().catch(() => null) as { error?: { details?: { reason?: string }[] } } | null;
+    if (error?.error?.details?.some(detail => detail.reason === 'SERVICE_DISABLED')) throw new AnalyticsReadError('GA4_API_DISABLED');
+    throw new AnalyticsReadError(response.status === 401 ? 'GA4_AUTH' : response.status === 403 || response.status === 404 ? 'GA4_ACCESS' : 'GA4_NETWORK');
+  }
+  try { return await response.json(); } catch { throw new AnalyticsReadError('GA4_RESPONSE'); }
+}
+
+export const readTraffic: ReadTraffic = async (periods, env) => {
   const requests = periods.flatMap(period => {
     const common = {
       dateRanges: [{ startDate: period.start, endDate: period.end }],
@@ -55,21 +71,8 @@ export const readTraffic: ReadTraffic = async (periods, env) => {
         orderBys: [{ metric: { metricName: 'screenPageViews' }, desc: true }], limit: '5' }
     ];
   });
-  let response: Response;
-  try {
-    response = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${env.GA4_PROPERTY_ID}:batchRunReports`, {
-      method: 'POST', redirect: 'error', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ requests }), signal: AbortSignal.timeout(15000)
-    });
-  } catch { throw new AnalyticsReadError('GA4_NETWORK'); }
-  if (!response.ok) {
-    const error = await response.json().catch(() => null) as { error?: { details?: { reason?: string }[] } } | null;
-    if (error?.error?.details?.some(detail => detail.reason === 'SERVICE_DISABLED')) throw new AnalyticsReadError('GA4_API_DISABLED');
-    throw new AnalyticsReadError(response.status === 401 ? 'GA4_AUTH' : response.status === 403 || response.status === 404 ? 'GA4_ACCESS' : 'GA4_NETWORK');
-  }
-  let data: { reports?: Report[] };
-  try { data = await response.json(); } catch { throw new AnalyticsReadError('GA4_RESPONSE'); }
-  if (data.reports?.length !== requests.length) throw new AnalyticsReadError('GA4_RESPONSE');
+  const data = await requestReport('batchRunReports', { requests }, env) as { reports?: Report[] } | null;
+  if (!Array.isArray(data?.reports) || data.reports.length !== requests.length) throw new AnalyticsReadError('GA4_RESPONSE');
   const metrics = (report: Report, names: string[]) => {
     if (!['Asia/Ho_Chi_Minh', 'Asia/Saigon'].includes(report.metadata?.timeZone || '')) throw new AnalyticsReadError('GA4_TIMEZONE');
     if (report.rowCount !== undefined && (!Number.isSafeInteger(report.rowCount) || report.rowCount < 0
@@ -102,4 +105,30 @@ export const readTraffic: ReadTraffic = async (periods, env) => {
       return { path: row.dimensionValues[0].value, views };
     }) };
   });
+};
+
+export const readRealtime: ReadRealtime = async env => {
+  // Use the verified website stream; Realtime does not support hostName filters.
+  const stream = env.GA4_STREAM_ID?.trim() || (env.GA4_PROPERTY_ID === '394527770' ? '5764157990' : '');
+  if (!/^[1-9]\d{0,19}$/.test(stream)) throw new AnalyticsReadError('GA4_STREAM');
+  const report = await requestReport('runRealtimeReport', {
+    metrics: [{ name: 'activeUsers' }, { name: 'screenPageViews' }],
+    dimensionFilter: { filter: { fieldName: 'streamId', stringFilter: { matchType: 'EXACT', value: stream } } },
+    minuteRanges: [{ startMinutesAgo: 29, endMinutesAgo: 0 }]
+  }, env) as Report | null;
+  if (!report || Array.isArray(report) || typeof report !== 'object') throw new AnalyticsReadError('GA4_RESPONSE');
+  const omittedOrEmpty = (value: unknown) => value === undefined || (Array.isArray(value) && value.length === 0);
+  if (report.kind === 'analyticsData#runRealtimeReport' && omittedOrEmpty(report.metricHeaders) && omittedOrEmpty(report.rows)
+    && (report.rowCount === undefined || report.rowCount === 0)
+    && [report.totals, report.maximums, report.minimums].every(omittedOrEmpty)) return { users: 0, views: 0, empty: true };
+  if (!Array.isArray(report.metricHeaders)) throw new AnalyticsReadError('GA4_RESPONSE');
+  if (report.metricHeaders?.map(header => header.name).join(',') !== 'activeUsers,screenPageViews') throw new AnalyticsReadError('GA4_RESPONSE');
+  if (report.rows !== undefined && !Array.isArray(report.rows)) throw new AnalyticsReadError('GA4_RESPONSE');
+  if ((report.rows?.length || 0) > 1 || (report.rowCount !== undefined && report.rowCount !== (report.rows?.length || 0))) throw new AnalyticsReadError('GA4_RESPONSE');
+  if (!report.rows?.length) return { users: 0, views: 0, empty: true };
+  const values = report.rows[0].metricValues;
+  if (values?.length !== 2 || values.some(value => typeof value?.value !== 'string' || !/^\d+$/.test(value.value))) throw new AnalyticsReadError('GA4_RESPONSE');
+  const [users, views] = values.map(value => Number(value.value));
+  if (![users, views].every(value => Number.isSafeInteger(value) && value >= 0)) throw new AnalyticsReadError('GA4_RESPONSE');
+  return { users, views, empty: false };
 };

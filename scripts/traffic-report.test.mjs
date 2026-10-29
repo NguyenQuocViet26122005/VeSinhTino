@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { handleTrafficReport, reportPeriods, AnalyticsReadError } from '../server/traffic-report.ts';
-import { readTraffic, normalizeAnalyticsKey } from '../server/analytics-data.ts';
+import { readTraffic, readRealtime, normalizeAnalyticsKey } from '../server/analytics-data.ts';
 import { generateKeyPairSync } from 'node:crypto';
 import { JWT } from 'google-auth-library';
 import fs from 'node:fs';
@@ -13,6 +13,7 @@ import { checkAnalyticsConnection } from './check-analytics-connection.mjs';
 const fixtureKey = generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey.export({ type: 'pkcs8', format: 'pem' });
 const env = {
   TELEGRAM_WEBHOOK_SECRET: 'test_only_webhook_secret_32_characters', GA4_PROPERTY_ID: '123456',
+  GA4_STREAM_ID: '654321',
   GA4_CLIENT_EMAIL: 'test@example.invalid', GA4_PRIVATE_KEY: fixtureKey,
   TELEGRAM_BOT_TOKEN: 'dummy-token', TELEGRAM_CHAT_ID: '111', TELEGRAM_REPORT_CHAT_ID_2: '222'
 };
@@ -249,11 +250,89 @@ test('production GA4 diagnostic is read-only, skips previews and returns no secr
   assert.equal(JSON.stringify(unknown).includes(fixtureKey), false);
 });
 
-test('emitted Vercel entry loads with explicit ESM extensions', async () => {
+test('realtime is private to either allowed caller and never reads delayed reports', async () => {
+  for (const id of [111, 222]) {
+    let reads = 0, sends = 0;
+    const result = await handleTrafficReport(request(update('/tructiep@tino_bot', id)), env, never, async (_url, options) => {
+      const body = JSON.parse(options.body);
+      assert.equal(body.chat_id, String(id));
+      assert.match(body.text, /30 PHÚT GẦN NHẤT/);
+      assert.match(body.text, /Người hoạt động \(30 phút\): 2/);
+      assert.match(body.text, /Lượt xem trang \(30 phút\): 38/);
+      assert.doesNotMatch(body.text, /24–48 giờ|Phiên truy cập:/);
+      sends++;
+      return Response.json({ ok: true });
+    }, now, async config => { assert.equal(config, env); reads++; return { users: 2, views: 38 }; });
+    assert.equal(result.status, 200);
+    assert.equal(reads, 1);
+    assert.equal(sends, 1);
+  }
+  for (const body of [update('/tructiep', 333), { message: { ...update('/tructiep').message, chat: { id: 111, type: 'group' } } }]) {
+    assert.equal((await (await handleTrafficReport(request(body), env, never, never, now, never)).json()).ignored, true);
+  }
+  assert.equal((await handleTrafficReport(request(update('/tructiep'), 'wrong'), env, never, never, now, never)).status, 401);
+});
+
+test('realtime empty data and failures are distinct and never fabricate zero counts', async () => {
+  for (const [reader, expected] of [
+    [async () => ({ users: 0, views: 0, empty: true }), /chưa ghi nhận hoạt động/],
+    [async () => { throw new AnalyticsReadError('GA4_NETWORK'); }, /GA4_NETWORK/],
+    [async () => ({ users: -1, views: 2 }), /GA4_RESPONSE/],
+    [async () => { throw new Error(fixtureKey); }, /Chưa lấy được báo cáo thời gian thực/]
+  ]) {
+    await handleTrafficReport(request(update('/tructiep')), env, never, async (_url, options) => {
+      const text = JSON.parse(options.body).text;
+      assert.match(text, expected);
+      assert.doesNotMatch(text, /Người hoạt động \(30 phút\): 0|Lượt xem trang \(30 phút\): 0/);
+      assert.equal(text.includes(fixtureKey), false);
+      return Response.json({ ok: true });
+    }, now, reader);
+  }
+});
+
+test('realtime requests a 30-minute aggregate for the verified web stream with read-only access', async t => {
+  t.mock.method(JWT.prototype, 'getAccessToken', async function () {
+    assert.deepEqual(this.scopes, ['https://www.googleapis.com/auth/analytics.readonly']);
+    return { token: 'test-access-token' };
+  });
+  const provider = t.mock.method(globalThis, 'fetch', async (url, options) => {
+    assert.equal(url, 'https://analyticsdata.googleapis.com/v1beta/properties/123456:runRealtimeReport');
+    assert.equal(options.redirect, 'error');
+    const body = JSON.parse(options.body);
+    assert.deepEqual(body.metrics, [{ name: 'activeUsers' }, { name: 'screenPageViews' }]);
+    assert.deepEqual(body.minuteRanges, [{ startMinutesAgo: 29, endMinutesAgo: 0 }]);
+    assert.equal(body.dimensionFilter.filter.fieldName, 'streamId');
+    assert.equal(body.dimensionFilter.filter.stringFilter.value, env.GA4_STREAM_ID);
+    assert.equal(body.dimensions, undefined);
+    assert.equal(body.dateRanges, undefined);
+    return Response.json({ metricHeaders: body.metrics, rows: [{ metricValues: [{ value: '2' }, { value: '38' }] }], rowCount: 1 });
+  });
+  assert.deepEqual(await readRealtime(env), { users: 2, views: 38, empty: false });
+  provider.mock.mockImplementation(async () => Response.json({ kind: 'analyticsData#runRealtimeReport' }));
+  assert.deepEqual(await readRealtime(env), { users: 0, views: 0, empty: true });
+  await assert.rejects(readRealtime({ ...env, GA4_STREAM_ID: '' }), error => error.code === 'GA4_STREAM');
+});
+
+test('realtime rejects provider failures and incomplete or invalid counts', async t => {
+  t.mock.method(JWT.prototype, 'getAccessToken', async () => ({ token: 'test-access-token' }));
+  const headers = [{ name: 'activeUsers' }, { name: 'screenPageViews' }];
+  const provider = t.mock.method(globalThis, 'fetch', async () => Response.json({}, { status: 403 }));
+  await assert.rejects(readRealtime(env), error => error.code === 'GA4_ACCESS');
+  for (const body of [null, {}, [], { metricHeaders: [] },
+    { kind: 'analyticsData#runRealtimeReport', rowCount: 2 },
+    { metricHeaders: headers, rows: [{ metricValues: [{ value: '-1' }, { value: '2' }] }] },
+    { metricHeaders: headers, rows: [{ metricValues: [{ value: '2' }] }] },
+    { metricHeaders: headers, rows: [], rowCount: 1 }]) {
+    provider.mock.mockImplementation(async () => Response.json(body));
+    await assert.rejects(readRealtime(env), error => error.code === 'GA4_RESPONSE');
+  }
+});
+
+test('emitted Vercel entry loads with explicit ESM extensions and wires the realtime reader', async t => {
   const root = path.resolve('qa', `traffic-runtime-${Date.now()}`);
   fs.mkdirSync(path.join(root, 'api'), { recursive: true });
   fs.mkdirSync(path.join(root, 'server'), { recursive: true });
-  fs.copyFileSync('server/analytics-errors.mjs', path.join(root, 'server/analytics-errors.mjs'));
+  for (const name of ['analytics-errors.mjs', 'telegram-commands.mjs']) fs.copyFileSync('server/' + name, path.join(root, 'server', name));
   fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ type: 'module' }));
   for (const name of ['api/traffic-report', 'server/traffic-report', 'server/analytics-data']) {
     const { outputText } = ts.transpileModule(fs.readFileSync(`${name}.ts`, 'utf8'), {
@@ -263,4 +342,26 @@ test('emitted Vercel entry loads with explicit ESM extensions', async () => {
   }
   const { default: entry } = await import(pathToFileURL(path.join(root, 'api/traffic-report.js')).href);
   assert.equal((await entry.fetch(new Request('https://tino.test/api/traffic-report'))).status, 405);
+  const original = Object.fromEntries(Object.keys(env).map(name => [name, process.env[name]]));
+  try {
+    Object.assign(process.env, env);
+    t.mock.method(JWT.prototype, 'getAccessToken', async () => ({ token: 'test-access-token' }));
+    let replies = 0;
+    t.mock.method(globalThis, 'fetch', async (url, options) => {
+      if (url.startsWith('https://analyticsdata.googleapis.com/')) return Response.json({
+        metricHeaders: [{ name: 'activeUsers' }, { name: 'screenPageViews' }],
+        rows: [{ metricValues: [{ value: '1' }, { value: '9' }] }], rowCount: 1
+      });
+      assert.ok(url.startsWith('https://api.telegram.org/'));
+      assert.match(JSON.parse(options.body).text, /Lượt xem trang \(30 phút\): 9/);
+      replies++;
+      return Response.json({ ok: true });
+    });
+    assert.equal((await entry.fetch(request(update('/tructiep')))).status, 200);
+    assert.equal(replies, 1);
+  } finally {
+    for (const [name, value] of Object.entries(original)) {
+      if (value === undefined) delete process.env[name]; else process.env[name] = value;
+    }
+  }
 });

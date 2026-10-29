@@ -212,18 +212,6 @@ function initMain() {
       const heroMedia = document.querySelector<HTMLElement>('.inner-page .service-hero > img, .inner-page .about-teaser > img');
       if (heroMedia) {
         heroTl.from(heroMedia, { scale: 0.95, y: 22, opacity: 0, duration: 0.85, ease: 'power2.out', clearProps: 'transform,opacity' }, '-=0.5');
-
-        // Subtle parallax scrub on scroll
-        gsap.to(heroMedia, {
-          yPercent: 4,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: heroMedia,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 0.8
-          }
-        });
       }
 
       const articleImg = document.querySelector<HTMLElement>('.inner-page .article-layout > img');
@@ -393,6 +381,22 @@ function initMain() {
     }
 
     document.fonts.ready.then(() => ScrollTrigger.refresh());
+  });
+
+  mm.add('(prefers-reduced-motion: no-preference) and (min-width: 701px)', () => {
+    const heroMedia = document.querySelector<HTMLElement>('.inner-page .service-hero > img, .inner-page .about-teaser > img');
+    if (!heroMedia) return;
+
+    gsap.to(heroMedia, {
+      yPercent: 4,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: heroMedia,
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 0.8
+      }
+    });
   });
 
   window.addEventListener('pagehide', () => mm.revert(), { once: true });

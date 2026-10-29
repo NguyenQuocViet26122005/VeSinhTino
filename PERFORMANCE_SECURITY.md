@@ -26,6 +26,21 @@ chuyển trang, reduced motion và lỗi JavaScript. Ảnh và kết quả nằm
 CPU throttle không mô phỏng GPU, RAM hoặc mạng của mọi điện thoại yếu; cần kiểm
 tra thêm trên thiết bị thật trước khi khẳng định tốc độ khung hình.
 
+Đợt tối ưu mobile tiếp theo gửi CSS cùng HTML để tránh hai lượt tải CSS chặn
+hiển thị. Đổi lại, HTML của mỗi route lớn hơn và CSS không còn được cache riêng
+giữa các trang. Kiểm tra cả tải đầu và chuyển route khi thay đổi cấu hình này.
+PostCSS ưu tiên subset tiếng Việt trên các dải Unicode bị trùng với latin-ext;
+giữ nguyên file font, các độ đậm và subset latin-ext cho nội dung cần chúng.
+Chân trang không dùng `content-visibility: auto`: chiều cao tạm 500 px làm sai
+nền của các dòng cuối trên mobile khi đánh giá tương phản ngoài màn hình.
+
+Các script `local-audit-server.cjs`, `footer-audit.cjs`, `mobile-interactions.cjs`
+chỉ kiểm tra localhost. Công cụ Lighthouse 13.5.0 và axe-core 4.13.0 được cài
+riêng trong `.cache/mobile-tools`, không phải dependency ứng dụng. Dùng
+`footer-audit.cjs --expect-pass` sau build để kiểm tra lỗi chân trang; kết quả
+và trace thao tác chạm nằm trong `qa/`. Không so điểm Lighthouse local trực tiếp
+với PageSpeed chạy trên hạ tầng Google.
+
 ## Giới hạn và cấu hình khi đưa lên Vercel
 
 - `vercel.json` khai báo các header chống nhúng iframe, MIME sniffing, hạn chế

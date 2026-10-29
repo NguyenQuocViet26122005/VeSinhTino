@@ -216,8 +216,8 @@ html{-webkit-text-size-adjust:100%}button,a,summary{touch-action:manipulation}bu
   padding-top: 15px;
 }
 
-/* Performance: Off-screen Rendering Acceleration */
-.faq-section, .footer, .related-section, .article-journal {
+/* Defer long sections, but keep the footer's real height/background for mobile reading. */
+.faq-section, .related-section, .article-journal {
   content-visibility: auto;
   contain-intrinsic-size: auto 500px;
 }

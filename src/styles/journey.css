@@ -322,7 +322,7 @@
   justify-content: center;
   gap: 8px;
   cursor: pointer;
-  transition: all 180ms cubic-bezier(.22,1,.36,1);
+  transition: background-color 180ms cubic-bezier(.22,1,.36,1), color 180ms cubic-bezier(.22,1,.36,1), border-color 180ms cubic-bezier(.22,1,.36,1), transform 180ms cubic-bezier(.22,1,.36,1), box-shadow 180ms cubic-bezier(.22,1,.36,1);
   touch-action: manipulation;
 }
 
@@ -520,7 +520,7 @@
   font-family: var(--font, 'Be Vietnam Pro', sans-serif);
   color: #10354e;
   cursor: pointer;
-  transition: all 160ms cubic-bezier(.22,1,.36,1);
+  transition: background-color 160ms cubic-bezier(.22,1,.36,1), color 160ms cubic-bezier(.22,1,.36,1), border-color 160ms cubic-bezier(.22,1,.36,1), transform 160ms cubic-bezier(.22,1,.36,1);
   touch-action: manipulation;
 }
 
@@ -578,7 +578,7 @@
   height: 24px;
   cursor: pointer;
   margin-top: 6px;
-  touch-action: pan-x;
+  touch-action: auto;
 }
 
 .preset-buttons {
@@ -606,7 +606,7 @@
   font-variant-numeric: tabular-nums;
   color: #10354e;
   cursor: pointer;
-  transition: all 140ms ease;
+  transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease, transform 140ms ease;
   touch-action: manipulation;
 }
 
@@ -764,7 +764,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all 180ms ease;
+  transition: background-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
   touch-action: manipulation;
 }
 
@@ -860,7 +860,7 @@
   text-decoration: none;
   border: 1.5px solid #d5e4ee;
   background: #f7fafc;
-  transition: all 180ms cubic-bezier(.22,1,.36,1);
+  transition: transform 180ms cubic-bezier(.22,1,.36,1), box-shadow 180ms cubic-bezier(.22,1,.36,1);
   min-height: 72px;
   touch-action: manipulation;
 }
@@ -1546,7 +1546,7 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 220ms cubic-bezier(.22, 1, .36, 1);
+  transition: background-color 220ms cubic-bezier(.22,1,.36,1), color 220ms cubic-bezier(.22,1,.36,1), border-color 220ms cubic-bezier(.22,1,.36,1), transform 220ms cubic-bezier(.22,1,.36,1), box-shadow 220ms cubic-bezier(.22,1,.36,1);
   box-shadow: 0 4px 14px rgba(8, 44, 74, 0.06);
   min-height: 48px;
   touch-action: manipulation;

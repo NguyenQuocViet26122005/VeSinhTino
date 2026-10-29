@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "astro dev --host 127.0.0.1",
     "build": "astro build && node scripts/check-public-secrets.mjs",
@@ -14,11 +17,11 @@
     "verify:secrets": "node scripts/check-public-secrets.mjs"
   },
   "dependencies": {
-    "@astrojs/react": "^4.4.0",
+    "@astrojs/react": "^7.1.2",
     "@gsap/react": "^2.1.2",
     "@lucasmarkes/hairline": "^0.5.1",
     "@react-three/fiber": "^9.4.0",
-    "astro": "^5.16.0",
+    "astro": "^7.4.4",
     "chartist": "^2.2.0",
     "gsap": "^3.14.0",
     "morphicons": "^2.0.2",
@@ -34,7 +37,7 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@types/three": "^0.181.0",
-    "sharp": "^0.34.0",
+    "sharp": "^0.35.5",
     "typescript": "^5.9.3"
   }
 }

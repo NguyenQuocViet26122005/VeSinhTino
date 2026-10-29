@@ -1,5 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import heroPhoto from '../../public/images/3b21a7ec444d0b39.webp';
 import PriceTable from '../components/PriceTable.astro';
 import QuestionFigure from '../components/QuestionFigure';
 import AuthenticShowcase from '../components/AuthenticShowcase';
@@ -7,7 +9,7 @@ import TrustCards from '../components/TrustCards';
 import ServiceExplorer from '../components/ServiceExplorer';
 import CostEstimator from '../components/CostEstimator';
 import ContactForm from '../components/ContactForm';
-import { image, commonPrices, apartmentPrices, contact, steps, faqs } from '../data/site';
+import { commonPrices, apartmentPrices, contact, steps, faqs } from '../data/site';
 import '../styles/wow.css';
 ---
 
@@ -42,9 +44,13 @@ import '../styles/wow.css';
       <div class="world-orbit" aria-hidden="true"></div>
       <div class="window-perspective">
         <div class="window-scene">
-          <img
+          <Image
             class="window-photo"
-            src={image('3b21a7ec444d0b39')}
+            src={heroPhoto}
+            widths={[480, 768, 1200, 1582]}
+            sizes="(max-width: 700px) calc(100vw - 64px), (max-width: 1000px) 56vw, 620px"
+            format="webp"
+            quality={82}
             alt="Căn hộ từ thư viện ảnh thực tế của Tino"
             width="768"
             height="1024"

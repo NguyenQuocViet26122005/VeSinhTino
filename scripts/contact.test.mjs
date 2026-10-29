@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { handleContact } from '../server/contact.ts';
+import { handleContact, createContactGate } from '../server/contact.ts';
 import fs from 'node:fs';
 
 // Dummy values only; no real Telegram traffic.
@@ -76,4 +76,42 @@ test('browser source never calls Telegram or treats local storage as delivery', 
   const source = fs.readFileSync('src/components/ContactForm.tsx', 'utf8');
   assert.ok(source.includes("fetch('/api/contact'"));
   assert.equal(/api\.telegram\.org|botToken|no-cors|tino_leads/.test(source), false);
+});
+
+test('requires the exact JSON media type and rejects cross-site browser requests', async () => {
+  assert.equal((await handleContact(request(input, { 'content-type': 'application/json-malformed' }), env)).status, 415);
+  assert.equal((await handleContact(request(input, { 'sec-fetch-site': 'cross-site' }), env)).status, 403);
+  assert.equal((await handleContact(request(input, { 'content-length': '9000' }), env)).status, 413);
+});
+
+test('local protection caps a sender at five per minute and expires the window', () => {
+  let now = 0;
+  const acquire = createContactGate(() => now);
+  for (let i = 0; i < 5; i++) { const release = acquire('dummy-client'); assert.ok(release); release(); }
+  assert.equal(acquire('dummy-client'), null);
+  now = 60_001;
+  const release = acquire('dummy-client'); assert.ok(release); release();
+});
+
+test('local protection bounds concurrent work and release is idempotent', () => {
+  const acquire = createContactGate();
+  const releases = Array.from({ length: 4 }, () => acquire());
+  assert.equal(acquire(), null);
+  releases[0](); releases[0]();
+  const release = acquire(); assert.ok(release);
+  assert.equal(acquire(), null);
+  release(); releases.slice(1).forEach(finish => finish());
+});
+
+test('a slow body is cancelled rather than keeping the function open', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  let cancelled = false;
+  const stream = new ReadableStream({ cancel() { cancelled = true; } });
+  const incoming = new Request('https://tino.test/api/contact', {
+    method: 'POST', headers: { 'content-type': 'application/json' }, body: stream, duplex: 'half'
+  });
+  const pending = handleContact(incoming, env, async () => assert.fail('must not send'));
+  t.mock.timers.tick(5000);
+  assert.equal((await pending).status, 408);
+  assert.equal(cancelled, true);
 });

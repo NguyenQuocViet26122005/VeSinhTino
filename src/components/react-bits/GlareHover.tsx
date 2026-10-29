@@ -116,6 +116,12 @@ const GlareHover = ({
     let raf = 0;
     let last = 0;
     let timer = 0;
+    let pausedAt: number | null = null;
+    const pause = () => {
+      if (pausedAt === null) pausedAt = performance.now();
+      cancelAnimationFrame(raf); raf = 0;
+      window.clearTimeout(timer);
+    };
 
     const bands = () => [bandRef.current, rimRef.current].filter((band): band is HTMLSpanElement => Boolean(band));
 
@@ -146,6 +152,8 @@ const GlareHover = ({
     };
 
     const frame = (now: number) => {
+      raf = 0;
+      if (!state.visible || document.hidden) { pause(); return; }
       const dt = Math.min(0.05, (now - last) / 1000 || 0);
       last = now;
       let moving = false;
@@ -175,7 +183,11 @@ const GlareHover = ({
     };
 
     const wake = () => {
-      if (raf) return;
+      if (raf || !state.visible || document.hidden) return;
+      if (pausedAt !== null) {
+        if (state.sweep) state.sweep.start += performance.now() - Math.max(pausedAt, state.sweep.start);
+        pausedAt = null;
+      }
       last = performance.now();
       raf = requestAnimationFrame(frame);
     };
@@ -241,7 +253,7 @@ const GlareHover = ({
 
     const schedule = () => {
       window.clearTimeout(timer);
-      if (mode !== 'loop' || reduced) return;
+      if (mode !== 'loop' || reduced || !state.visible || document.hidden) return;
       timer = window.setTimeout(
         () => {
           if (state.visible && !document.hidden) sweep(1);
@@ -263,6 +275,8 @@ const GlareHover = ({
     const visibilityObserver = new IntersectionObserver(
       ([entry]) => {
         state.visible = entry.isIntersecting;
+        if (!state.visible) pause();
+        else if (!document.hidden) { wake(); schedule(); }
         if (entry.isIntersecting && settingsRef.current.intro && !introRef.current) {
           introRef.current = true;
           sweep(1);
@@ -271,6 +285,11 @@ const GlareHover = ({
       { threshold: 0.4 }
     );
     visibilityObserver.observe(root);
+    const onVisibility = () => {
+      if (document.hidden) pause();
+      else if (state.visible) { wake(); schedule(); }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
 
     state.presence = mode === 'follow' ? 0 : 1;
     state.presenceTarget = state.presence;
@@ -284,6 +303,7 @@ const GlareHover = ({
       window.clearTimeout(timer);
       resizeObserver.disconnect();
       visibilityObserver.disconnect();
+      document.removeEventListener('visibilitychange', onVisibility);
       root.removeEventListener('pointerenter', onEnter);
       root.removeEventListener('pointermove', onMove);
       root.removeEventListener('pointerleave', onLeave);

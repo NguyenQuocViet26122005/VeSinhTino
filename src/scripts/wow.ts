@@ -27,16 +27,26 @@ function initWow() {
   let dragging = false;
   const touch = document.querySelector<HTMLElement>('.glass-touch');
   const status = document.querySelector<HTMLElement>('#wipe-status');
+  const daylight = document.querySelector<HTMLElement>('.daylight-field');
   let completed = false;
+  let lastWipe = -1;
+  let lastReadout = -1;
 
   function wipe(value: number) {
     const v = Math.min(100, Math.max(0, value));
+    if (v === lastWipe) return;
+    lastWipe = v;
     if (haze) haze.style.clipPath = 'inset(0 0 0 ' + v + '%)';
     if (squeegee) squeegee.style.transform = 'translateX(' + v + '%)';
-    if (readout) readout.textContent = Math.round(v) + '%';
-    if (slider) slider.value = String(Math.round(v));
-    touch?.setAttribute('aria-valuenow', String(Math.round(v)));
-    root?.style.setProperty('--clean', String(v / 100));
+    const rounded = Math.round(v);
+    if (rounded !== lastReadout) {
+      lastReadout = rounded;
+      if (readout) readout.textContent = rounded + '%';
+      if (slider) slider.value = String(rounded);
+      touch?.setAttribute('aria-valuenow', String(rounded));
+    }
+    // Keep the same daylight effect without invalidating inherited styles for the entire hero.
+    if (daylight) daylight.style.opacity = String(.4 + v / 100 * .6);
     const next = v >= 97;
     root?.classList.toggle('is-clean', next);
     if (next !== completed) {
@@ -171,6 +181,8 @@ function initWow() {
       if (!world || !pane) return;
 
       let cachedRect: DOMRect | null = null;
+      let tiltFrame = 0;
+      let latestPoint = { x: 0, y: 0 };
       const getRect = () => {
         if (!cachedRect) cachedRect = world.getBoundingClientRect();
         return cachedRect;
@@ -178,19 +190,24 @@ function initWow() {
 
       const move = (e: PointerEvent) => {
         if (dragging) return;
-        const r = getRect();
-        const x = (e.clientX - r.left) / r.width - 0.5;
-        const y = (e.clientY - r.top) / r.height - 0.5;
-        gsap.to(pane, {
-          rotationY: -12 + x * 8,
-          rotationX: -y * 5,
-          rotationZ: -6,
-          x: x * 8,
-          y: y * 6,
-          opacity: 1,
-          duration: 0.55,
-          ease: 'power2.out',
-          overwrite: 'auto'
+        latestPoint = { x: e.clientX, y: e.clientY };
+        if (tiltFrame) return;
+        tiltFrame = requestAnimationFrame(() => {
+          tiltFrame = 0;
+          const r = getRect();
+          const x = (latestPoint.x - r.left) / r.width - 0.5;
+          const y = (latestPoint.y - r.top) / r.height - 0.5;
+          gsap.to(pane, {
+            rotationY: -12 + x * 8,
+            rotationX: -y * 5,
+            rotationZ: -6,
+            x: x * 8,
+            y: y * 6,
+            opacity: 1,
+            duration: 0.55,
+            ease: 'power2.out',
+            overwrite: 'auto'
+          });
         });
       };
 
@@ -200,6 +217,7 @@ function initWow() {
       };
 
       const leave = () => {
+        cancelAnimationFrame(tiltFrame); tiltFrame = 0;
         cachedRect = null;
         gsap.to(pane, {
           rotationY: -12,
@@ -217,7 +235,13 @@ function initWow() {
       world.addEventListener('pointerenter', enter, { passive: true });
       world.addEventListener('pointermove', move, { passive: true });
       world.addEventListener('pointerleave', leave);
+      const invalidateRect = () => { cachedRect = null; };
+      window.addEventListener('scroll', invalidateRect, { passive: true });
+      window.addEventListener('resize', invalidateRect, { passive: true });
       return () => {
+        cancelAnimationFrame(tiltFrame);
+        window.removeEventListener('scroll', invalidateRect);
+        window.removeEventListener('resize', invalidateRect);
         world.removeEventListener('pointerenter', enter);
         world.removeEventListener('pointermove', move);
         world.removeEventListener('pointerleave', leave);

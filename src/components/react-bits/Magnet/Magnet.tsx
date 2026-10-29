@@ -51,6 +51,7 @@ type Entry = {
   reduce: boolean;
   wake: () => void;
   active: boolean;
+  rect: DOMRect | null;
 };
 
 const DEFAULT_SPRING = { stiffness: 170, damping: 16, mass: 1 };
@@ -63,6 +64,14 @@ const smoothstep = (edge0: number, edge1: number, value: number) => {
 const registry = new Set<Entry>();
 const field: { pointer: Point | null; owner: Entry | null } = { pointer: null, owner: null };
 let detach: (() => void) | null = null;
+let arbitrationFrame = 0;
+const queueArbitration = () => {
+  if (!arbitrationFrame && !document.hidden) arbitrationFrame = requestAnimationFrame(() => {
+    arbitrationFrame = 0;
+    arbitrate();
+  });
+};
+const entryRect = (entry: Entry) => entry.rect ??= entry.wrapper.getBoundingClientRect();
 
 const reach = (rect: DOMRect, pointer: Point) => {
   const dx = pointer.x - (rect.left + rect.width / 2);
@@ -79,7 +88,7 @@ const arbitrate = () => {
     const s = entry.settings.current;
     let near: { dx: number; dy: number; outside: number } | null = null;
     if (field.pointer && !s.disabled && !entry.reduce) {
-      near = reach(entry.wrapper.getBoundingClientRect(), field.pointer);
+      near = reach(entryRect(entry), field.pointer);
       if (near.outside > s.padding) near = null;
     }
     if (!s.exclusive) {
@@ -104,19 +113,32 @@ const attach = () => {
   const onPointerMove = (event: PointerEvent) => {
     if (event.pointerType === 'touch') return;
     field.pointer = { x: event.clientX, y: event.clientY };
-    arbitrate();
+    queueArbitration();
   };
   const onLeave = () => {
     field.pointer = null;
-    arbitrate();
+    queueArbitration();
+  };
+  const onGeometryChange = () => {
+    for (const entry of registry) entry.rect = null;
+    queueArbitration();
+  };
+  const onVisibility = () => {
+    if (document.hidden) { cancelAnimationFrame(arbitrationFrame); arbitrationFrame = 0; field.pointer = null; }
+    else onGeometryChange();
   };
   window.addEventListener('pointermove', onPointerMove, { passive: true });
-  window.addEventListener('scroll', arbitrate, { passive: true, capture: true });
+  window.addEventListener('scroll', onGeometryChange, { passive: true, capture: true });
+  window.addEventListener('resize', onGeometryChange, { passive: true });
+  document.addEventListener('visibilitychange', onVisibility);
   document.documentElement.addEventListener('pointerleave', onLeave);
   window.addEventListener('blur', onLeave);
   return () => {
     window.removeEventListener('pointermove', onPointerMove);
-    window.removeEventListener('scroll', arbitrate, { capture: true });
+    window.removeEventListener('scroll', onGeometryChange, { capture: true });
+    window.removeEventListener('resize', onGeometryChange);
+    document.removeEventListener('visibilitychange', onVisibility);
+    cancelAnimationFrame(arbitrationFrame); arbitrationFrame = 0;
     document.documentElement.removeEventListener('pointerleave', onLeave);
     window.removeEventListener('blur', onLeave);
   };
@@ -189,7 +211,7 @@ const Magnet = ({
       const target: Motion = { x: 0, y: 0, tiltX: 0, tiltY: 0, scale: 1 };
       if (s.disabled || reduce || !field.pointer) return { target, engaged: false };
       if (s.exclusive && field.owner !== entry) return { target, engaged: false };
-      const rect = wrapper.getBoundingClientRect();
+      const rect = entryRect(entry);
       const { dx, dy, outside } = reach(rect, field.pointer);
       if (outside > s.padding) return { target, engaged: false };
       const pull = s.padding > 0 ? 1 - smoothstep(s.padding * 0.5, s.padding, outside) : 1;
@@ -222,6 +244,7 @@ const Magnet = ({
 
     const frame = (now: number) => {
       raf = 0;
+      if (document.hidden) { last = 0; return; }
       const dt = last ? Math.min((now - last) / 1000, 1 / 30) : 1 / 60;
       last = now;
       const { target, engaged } = measure();
@@ -247,19 +270,22 @@ const Magnet = ({
     };
 
     function wake() {
-      if (!raf) raf = requestAnimationFrame(frame);
+      if (!raf && !document.hidden) raf = requestAnimationFrame(frame);
     }
 
-    const entry: Entry = { wrapper, settings: settingsRef, reduce, wake, active: false };
+    const entry: Entry = { wrapper, settings: settingsRef, reduce, wake, active: false, rect: null };
+    const resizeObserver = new ResizeObserver(() => { entry.rect = null; queueArbitration(); });
+    resizeObserver.observe(wrapper);
     registry.add(entry);
     if (!detach) detach = attach();
     wakeRef.current = () => {
-      arbitrate();
+      queueArbitration();
       wake();
     };
 
     return () => {
       cancelAnimationFrame(raf);
+      resizeObserver.disconnect();
       wakeRef.current = null;
       registry.delete(entry);
       if (field.owner === entry) field.owner = null;

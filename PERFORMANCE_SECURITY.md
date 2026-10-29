@@ -1,0 +1,52 @@
+# Hiệu năng và vận hành an toàn
+
+## Giữ hiệu ứng
+
+Không thêm chế độ tự bỏ hiệu ứng trên máy yếu. Giữ hiệu ứng lau kính, nghiêng ảnh,
+ánh sáng theo con trỏ, nút hút và chuyển động khi cuộn. Vẫn tôn trọng lựa chọn
+`prefers-reduced-motion` theo DESIGN.md.
+
+- Gộp sự kiện con trỏ theo từng khung hình; lưu kích thước phần tử và đo lại khi
+  cuộn/đổi kích thước thay vì đo trong mỗi khung hình của lò xo.
+- Tạm dừng vòng lặp ngoài vùng nhìn hoặc khi tab ẩn; tiếp tục khi nhìn thấy.
+- Hiệu ứng lau kính chỉ cập nhật giá trị thay đổi, không cập nhật biến CSS kế thừa
+  trên cả cây DOM trong mỗi khung hình.
+- Ảnh chính vẫn dùng cùng ảnh và watermark; Astro tạo các kích thước WebP phù hợp.
+
+## Kiểm tra trước triển khai
+
+Yêu cầu Node 24.x. Chạy `npm run check`, `npm run build`, `npm run verify`,
+`npm run test:contact`, `npm run design:lint`.
+
+`scripts/performance-browser.cjs` dùng Playwright (biến `TINO_PLAYWRIGHT` là đường
+dẫn module khi không cài trong dự án) và Chrome trên Windows. Nó phục vụ `dist`
+trên localhost, chặn mạng ngoài, kiểm tra kích thước 1440/390/320 px với CPU
+throttle 4 lần, thao tác lau kính bằng chuột/bàn phím, spotlight, magnet,
+chuyển trang, reduced motion và lỗi JavaScript. Ảnh và kết quả nằm trong `qa/`.
+CPU throttle không mô phỏng GPU, RAM hoặc mạng của mọi điện thoại yếu; cần kiểm
+tra thêm trên thiết bị thật trước khi khẳng định tốc độ khung hình.
+
+## Giới hạn và cấu hình khi đưa lên Vercel
+
+- `vercel.json` khai báo các header chống nhúng iframe, MIME sniffing, hạn chế
+  quyền trình duyệt, CSP cơ bản và cache ảnh. CSP này chưa phải danh sách cho phép
+  script nghiêm ngặt. Vercel áp dụng cấu hình khi có deployment mới.
+- Form giới hạn body 8 KB, thời gian đọc 5 giây, gọi Telegram tối đa 8 giây;
+  chỉ nhận JSON, kiểm tra origin/Fetch Metadata và dữ liệu đầu vào. Không ghi token
+  hoặc dữ liệu khách hàng vào log kiểm tra.
+- Bộ giới hạn trong bộ nhớ chỉ áp dụng trong từng instance đang chạy: tối đa 5
+  lần gửi hợp lệ/IP/phút và 4 lần gọi Telegram đồng thời/instance. Giới hạn này
+  không thay thế bộ giới hạn phân tán hay Firewall.
+- Trong Vercel Firewall, cấu hình thêm quy tắc cho POST `/api/contact`, nhóm theo
+  IP và giới hạn gửi ở biên mạng. Kiểm tra gói/tính phí và cách phản hồi của rule
+  trước khi bật; xác nhận khách thật gửi form bình thường. Không bật rule rộng
+  chặn cả website hoặc ảnh/JS. Chỉ chặn theo IP có thể ảnh hưởng người cùng mạng.
+- Không thử tải lớn hoặc gửi Telegram thật bằng bộ kiểm tra tự động. Kiểm thử
+  form hiện dùng provider giả lập. Chưa xác nhận cấu hình WAF của tài khoản.
+- `npm audit --omit=dev` kiểm tra advisory đã biết cho dependency production;
+  kết quả sạch không chứng minh website không còn lỗ hổng. Công cụ lint tài liệu
+  trong devDependencies cần được theo dõi riêng khi upstream cập nhật.
+
+Không có cấu hình nào bảo đảm website không thể bị đánh sập. Cần kết hợp
+giới hạn tại Firewall, theo dõi sử dụng/chi phí, cập nhật dependency và bảo vệ
+tài khoản quản trị. Bản code này không thay đổi DNS hoặc xóa website cũ.

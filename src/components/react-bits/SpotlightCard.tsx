@@ -133,13 +133,15 @@ const SpotlightCard = ({
     if (!root || !light || !noise || !edge) return undefined;
 
     const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
-    const state = { x: 0, y: 0, presence: 0, flare: 0, time: Math.random() * 60, pressed: false, visible: true };
+    const state = { x: 0, y: 0, presence: 0, flare: 0, time: Math.random() * 60, pressed: false, visible: false };
     const pointer = { x: 0, y: 0, active: false };
     const drawn = { light: '', edge: '', noise: '' };
     let focus: Element | null = null;
     let raf = 0;
     let last = 0;
     let alive = true;
+    let cachedRect: DOMRect | null = null;
+    const getRect = () => cachedRect ??= root.getBoundingClientRect();
 
     const gradient = (s: Settings, size: number, x: number, y: number, stops: string) => {
       if (s.shape === 'beam') {
@@ -175,11 +177,11 @@ const SpotlightCard = ({
 
     const tick = (now: number) => {
       raf = 0;
-      if (!alive) return;
+      if (!alive || !state.visible || document.hidden) return;
       const s = settingsRef.current;
       const dt = Math.min(0.05, Math.max(0.001, (now - last) / 1000));
       last = now;
-      const rect = root.getBoundingClientRect();
+      const rect = getRect();
       let tx = state.x;
       let ty = state.y;
       let target = 0;
@@ -202,6 +204,8 @@ const SpotlightCard = ({
         ty += (rect.height * (0.5 + 0.3 * Math.sin(state.time * 0.61 + 1.3)) - ty) * (drift / 0.6);
         target = 0.6;
       }
+      // Invisible light needs no gradient work; entering it still starts at the pointer.
+      if (target === 0 && state.presence === 0 && state.flare === 0 && !state.pressed) return;
       if (state.presence < 0.02 && target > 0 && !s.ambient) {
         state.x = tx;
         state.y = ty;
@@ -222,7 +226,7 @@ const SpotlightCard = ({
     };
 
     const wake = () => {
-      if (raf || !alive) return;
+      if (raf || !alive || !state.visible || document.hidden) return;
       last = performance.now();
       raf = requestAnimationFrame(tick);
     };
@@ -232,6 +236,7 @@ const SpotlightCard = ({
       pointer.x = event.clientX;
       pointer.y = event.clientY;
       pointer.active = true;
+      if (!state.visible) return;
       if (state.presence > 0 || settingsRef.current.proximity > 0 || root.contains(event.target as Node | null)) wake();
     };
     const onOut = (event: PointerEvent) => {
@@ -263,12 +268,19 @@ const SpotlightCard = ({
       wake();
     };
     const onScroll = () => {
+      cachedRect = null;
       if (pointer.active || state.presence > 0) wake();
     };
 
+    const pause = () => { cancelAnimationFrame(raf); raf = 0; };
+    const onVisibility = () => { if (document.hidden) pause(); else { cachedRect = null; wake(); } };
+    const resizeObserver = new ResizeObserver(() => { cachedRect = null; wake(); });
+    resizeObserver.observe(root);
+
     const observer = new IntersectionObserver(entries => {
       state.visible = entries.some(entry => entry.isIntersecting);
-      if (state.visible) wake();
+      cachedRect = null;
+      if (state.visible) wake(); else pause();
     });
     observer.observe(root);
     window.addEventListener('pointermove', onMove, { passive: true });
@@ -276,6 +288,8 @@ const SpotlightCard = ({
     window.addEventListener('pointercancel', onUp, { passive: true });
     window.addEventListener('scroll', onScroll, { capture: true, passive: true });
     document.addEventListener('pointerout', onOut, { passive: true });
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('resize', onScroll, { passive: true });
     root.addEventListener('pointerdown', onDown, { passive: true });
     root.addEventListener('focusin', onFocusIn);
     root.addEventListener('focusout', onFocusOut);
@@ -285,11 +299,14 @@ const SpotlightCard = ({
       alive = false;
       cancelAnimationFrame(raf);
       observer.disconnect();
+      resizeObserver.disconnect();
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
       window.removeEventListener('pointercancel', onUp);
       window.removeEventListener('scroll', onScroll, { capture: true });
       document.removeEventListener('pointerout', onOut);
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('resize', onScroll);
       root.removeEventListener('pointerdown', onDown);
       root.removeEventListener('focusin', onFocusIn);
       root.removeEventListener('focusout', onFocusOut);

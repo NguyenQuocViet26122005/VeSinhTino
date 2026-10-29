@@ -11,7 +11,7 @@ export interface TrafficEnv {
   TELEGRAM_REPORT_CHAT_ID_2?: string;
 }
 export interface ReportPeriod { label: string; start: string; end: string }
-export interface TrafficStats { users: number; sessions: number; views: number; pages: { path: string; views: number }[] }
+export interface TrafficStats { users: number; sessions: number; views: number; empty?: boolean; pages: { path: string; views: number }[] }
 export type ReadTraffic = (periods: ReportPeriod[], env: TrafficEnv) => Promise<TrafficStats[]>;
 
 export function reportPeriods(now: Date, command = 'baocao'): ReportPeriod[] {
@@ -42,6 +42,8 @@ function reportMessage(periods: ReportPeriod[], stats: TrafficStats[]): string {
     if (![result.users, result.sessions, result.views, ...result.pages.map(page => page.views)].every(n => Number.isFinite(n) && n >= 0)) {
       throw new Error('invalid metrics');
     }
+    if (result.empty) return [period.label, `${period.start} → ${period.end}`,
+      'GA4 chưa có dữ liệu cho khoảng thời gian này. Số liệu có thể đang được xử lý.', ''];
     return [period.label, `${period.start} → ${period.end}`,
       `Người truy cập: ${number(result.users)}`, `Phiên truy cập: ${number(result.sessions)}`,
       `Lượt xem trang: ${number(result.views)}`, 'Trang được xem nhiều:',

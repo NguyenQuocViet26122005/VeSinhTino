@@ -7,6 +7,11 @@ interface Report {
   metricHeaders?: { name: string }[];
   rows?: { dimensionValues?: { value: string }[]; metricValues?: { value: string }[] }[];
   metadata?: { timeZone?: string };
+  kind?: string;
+  rowCount?: number;
+  totals?: unknown[];
+  maximums?: unknown[];
+  minimums?: unknown[];
 }
 
 export function normalizeAnalyticsKey(value: string, expectedEmail: string): string {
@@ -67,6 +72,14 @@ export const readTraffic: ReadTraffic = async (periods, env) => {
   if (data.reports?.length !== requests.length) throw new AnalyticsReadError('GA4_RESPONSE');
   const metrics = (report: Report, names: string[]) => {
     if (!['Asia/Ho_Chi_Minh', 'Asia/Saigon'].includes(report.metadata?.timeZone || '')) throw new AnalyticsReadError('GA4_TIMEZONE');
+    if (report.rowCount !== undefined && (!Number.isSafeInteger(report.rowCount) || report.rowCount < 0
+      || (report.rowCount > 0 && !report.rows?.length))) throw new AnalyticsReadError('GA4_RESPONSE');
+    // Google omits metricHeaders for an empty dimensionless report. Only
+    // accept the documented report kind with no rows, count or aggregates.
+    const omittedOrEmpty = (value: unknown) => value === undefined || (Array.isArray(value) && value.length === 0);
+    if (report.kind === 'analyticsData#runReport' && omittedOrEmpty(report.metricHeaders) && omittedOrEmpty(report.rows)
+      && (report.rowCount === undefined || report.rowCount === 0)
+      && [report.totals, report.maximums, report.minimums].every(omittedOrEmpty)) return names.map(() => 0);
     if (report.metricHeaders?.map(header => header.name).join(',') !== names.join(',')) throw new AnalyticsReadError('GA4_RESPONSE');
     return names.map((_, index) => {
       const value = report.rows?.[0]?.metricValues?.[index]?.value;
@@ -80,7 +93,9 @@ export const readTraffic: ReadTraffic = async (periods, env) => {
     const summary = data.reports![index * 2], pages = data.reports![index * 2 + 1];
     const [users, sessions, views] = metrics(summary, ['totalUsers', 'sessions', 'screenPageViews']);
     metrics(pages, ['screenPageViews']);
-    return { users, sessions, views, pages: (pages.rows || []).map(row => {
+    const empty = !summary.rows?.length;
+    if (empty && pages.rows?.length) throw new AnalyticsReadError('GA4_RESPONSE');
+    return { users, sessions, views, empty, pages: (pages.rows || []).map(row => {
       if (!row.dimensionValues?.[0]?.value || row.metricValues?.[0]?.value === undefined) throw new AnalyticsReadError('GA4_RESPONSE');
       const views = Number(row.metricValues[0].value);
       if (!Number.isSafeInteger(views) || views < 0) throw new AnalyticsReadError('GA4_RESPONSE');

@@ -79,6 +79,8 @@ Sau cấu hình, ở Google Analytics Realtime kiểm tra tải trang và chuy�
 
 Sau khi dựng bản Production, `check-analytics-connection.mjs` kiểm tra kết nối Google theo quyền chỉ đọc. Kết quả chỉ ghi trạng thái hoặc mã lỗi cố định (khóa, xác thực, quyền, API chưa bật, múi giờ, mạng, cấu trúc phản hồi), không ghi số liệu, OAuth token hay khóa và không gửi tin Telegram. Lỗi kiểm tra GA4 không ngăn website triển khai. Bot cũng chỉ trả những chẩn đoán cố định này cho hai Chat ID được phép; không đưa nguyên lỗi của Google vào tin nhắn.
 
+Báo cáo GA4 rỗng hợp lệ có thể không chứa `metricHeaders` ở phần tổng hợp không có chiều dữ liệu. Chỉ chấp nhận trường hợp đúng `kind: analyticsData#runReport`, múi giờ Việt Nam, không có dòng dữ liệu, tổng hợp hoặc rowCount dương; báo cáo tổng hợp và báo cáo trang phải nhất quán. Bot hiển thị “GA4 chưa có dữ liệu” thay vì tự suy ra lượng khách thực tế bằng 0. Khi Google trả dữ liệu, các chỉ số tiếp tục được kiểm tra và hiển thị như bình thường.
+
 `npm run test:traffic`, `npm run test:contact`, `npm run check`, `npm run build`, `npm run verify`. Tests dùng dữ liệu giả, không gửi Telegram thật.
 
 Nguồn: https://developers.google.com/analytics/devguides/reporting/data/v1/quickstart · https://developers.google.com/analytics/devguides/collection/ga4/views · https://core.telegram.org/bots/api#setwebhook

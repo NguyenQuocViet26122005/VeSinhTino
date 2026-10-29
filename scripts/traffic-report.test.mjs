@@ -175,6 +175,30 @@ test('rejects GA timezone mismatch', async t => {
   await assert.rejects(readTraffic(reportPeriods(now), env), error => error.code === 'GA4_TIMEZONE');
 });
 
+test('accepts Google empty dimensionless reports without presenting invented zero counts', async t => {
+  t.mock.method(JWT.prototype, 'getAccessToken', async () => ({ token: 'test-access-token' }));
+  const emptySummary = { kind: 'analyticsData#runReport', metadata: { currencyCode: 'VND', timeZone: 'Asia/Ho_Chi_Minh' } };
+  const emptyPages = { ...emptySummary, dimensionHeaders: [{ name: 'pagePath' }], metricHeaders: [{ name: 'screenPageViews' }] };
+  const provider = t.mock.method(globalThis, 'fetch', async () => Response.json({ reports: [emptySummary, emptyPages] }));
+  const stats = await readTraffic(reportPeriods(now, 'homnay'), env);
+  assert.equal(stats[0].empty, true);
+  await handleTrafficReport(request(update('/homnay')), env, async () => stats, async (_url, options) => {
+    const text = JSON.parse(options.body).text;
+    assert.match(text, /GA4 chưa có dữ liệu/);
+    assert.doesNotMatch(text, /Người truy cập:|Phiên truy cập:|Lượt xem trang:|GA4_RESPONSE/);
+    return Response.json({ ok: true });
+  });
+  for (const malformed of [{ ...emptySummary, kind: 'unknown' }, { ...emptySummary, rowCount: 1 },
+    { ...emptySummary, rows: [{ metricValues: [{ value: '1' }] }] }, { ...emptySummary, totals: [{}] }]) {
+    provider.mock.mockImplementation(async () => Response.json({ reports: [malformed, emptyPages] }));
+    await assert.rejects(readTraffic(reportPeriods(now, 'homnay'), env), error => error.code === 'GA4_RESPONSE');
+  }
+  provider.mock.mockImplementation(async () => Response.json({ reports: [emptySummary, {
+    ...emptyPages, rows: [{ dimensionValues: [{ value: '/' }], metricValues: [{ value: '5' }] }]
+  }] }));
+  await assert.rejects(readTraffic(reportPeriods(now, 'homnay'), env), error => error.code === 'GA4_RESPONSE');
+});
+
 test('accepts PEM, escaped newlines, JSON strings and matching downloaded key JSON', () => {
   for (const value of [fixtureKey, fixtureKey.replaceAll('\n', '\\n'), JSON.stringify(fixtureKey),
     '"private_key": ' + JSON.stringify(fixtureKey) + ',',

@@ -4,6 +4,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const http = require('node:http');
 const assert = require('node:assert/strict');
+const luminance = color => color.match(/[\d.]+/g).slice(0, 3).map(Number).map(v => v / 255)
+  .map(v => v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4)
+  .reduce((sum, v, i) => sum + v * [.2126, .7152, .0722][i], 0);
 
 (async () => {
   const root = path.resolve('dist');
@@ -47,9 +50,13 @@ const assert = require('node:assert/strict');
       await page.evaluate(() => window.scrollTo(0, 0));
       await page.waitForTimeout(200);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
-      const photo = await page.locator('.window-photo').evaluate(img => ({ source: img.currentSrc, width: img.naturalWidth, loaded: img.complete && img.naturalWidth > 0 }));
+      const photo = await page.locator('.window-photo').evaluate(img => ({ source: img.currentSrc, width: img.naturalWidth, loaded: img.complete && img.naturalWidth > 0, loading: img.loading, priority: img.fetchPriority }));
       assert.equal(photo.loaded, true);
       assert.ok(photo.source.includes('/_astro/'));
+      assert.equal(photo.loading, 'eager');
+      assert.equal(photo.priority, 'high');
+      const logo = await page.locator('.brand > img').evaluate(img => img.currentSrc);
+      assert.ok(logo.includes('/_astro/'));
       await page.screenshot({ path: `qa/performance-home-${width}.png` });
       const glass = page.locator('.glass-touch');
       await glass.press('End');
@@ -89,8 +96,45 @@ const assert = require('node:assert/strict');
         await glare.hover();
         await page.waitForTimeout(220);
         assert.notEqual(await band.evaluate(el => el.style.transform), before);
+        await page.locator('.showcase-media').first().click();
+        assert.ok((await page.locator('.showcase-modal-img').getAttribute('src')).startsWith('/images/'));
+        await page.getByRole('button', { name: 'Đóng hộp thoại', exact: true }).click();
         results.push({ spotlightEffect: true, magnetEffect: true, glareEffect: true, spotlightGeometryReadsDuringHover: reads });
       }
+      const preview = page.locator('.explorer-img');
+      await preview.scrollIntoViewIfNeeded();
+      await page.waitForFunction(() => {
+        const island = document.querySelector('.explorer-img')?.closest('astro-island');
+        return island && !island.hasAttribute('ssr');
+      });
+      await page.getByRole('tab', { name: /Chung cư trọn gói/ }).click();
+      assert.ok((await preview.getAttribute('src')).includes('/_astro/ve-sinh-chung-cu.'));
+      assert.ok((await preview.getAttribute('srcset')).includes('480w'));
+      const gallery = page.locator('.showcase-img').first();
+      await gallery.scrollIntoViewIfNeeded();
+      await page.waitForTimeout(700);
+      const images = await gallery.evaluate(img => ({ source: img.currentSrc, candidates: img.srcset, loaded: img.complete && img.naturalWidth > 0 }));
+      assert.equal(images.loaded, true);
+      assert.ok(images.source.includes('/_astro/'));
+      assert.ok(images.candidates.includes('480w'));
+      await page.screenshot({ path: `qa/performance-gallery-${width}.png` });
+      await page.locator('.showcase-tabs').getByRole('tab', { name: 'Kính cao ốc', exact: true }).click();
+      assert.equal(await page.locator('.showcase-img').count(), 2);
+      assert.ok((await page.locator('.showcase-img').first().getAttribute('srcset')).includes('480w'));
+      await page.locator('.footer-bottom').scrollIntoViewIfNeeded();
+      const contrastStyles = await page.evaluate(() => ['.explorer-tab:not(.is-active) .tab-number', '.form-disclaimer', '.faq-section .text-link', '.footer-bottom > span', '.footer-bottom > a'].map(selector => {
+        const el = document.querySelector(selector), style = getComputedStyle(el);
+        let ancestor = el, background = style.backgroundColor;
+        while (ancestor && background === 'rgba(0, 0, 0, 0)') { ancestor = ancestor.parentElement; if (ancestor) background = getComputedStyle(ancestor).backgroundColor; }
+        return { selector, color: style.color, background, opacity: style.opacity };
+      }));
+      for (const style of contrastStyles) {
+        const a = luminance(style.color), b = luminance(style.background);
+        style.ratio = (Math.max(a, b) + .05) / (Math.min(a, b) + .05);
+        assert.ok(style.ratio >= 4.5, `${style.selector}: ${style.ratio}`);
+        assert.equal(style.opacity, '1');
+      }
+      await page.screenshot({ path: `qa/performance-footer-${width}.png` });
       await page.goto(base + '/gioi-thieu/');
       await page.locator('.about-teaser').scrollIntoViewIfNeeded();
       await page.waitForTimeout(1800);
@@ -106,7 +150,20 @@ const assert = require('node:assert/strict');
         await page.locator('.glass-touch').press('End');
         assert.equal(await page.locator('.glass-touch').getAttribute('aria-valuenow'), '100');
       }
-      results.push({ width, cpuSlowdown: 4, photo, wipe, ...layout });
+      results.push({ width, cpuSlowdown: 4, photo, wipe, images, contrastStyles, ...layout });
+    }
+    for (const dpr of [1.75, 3]) {
+      const mobileContext = await browser.newContext({ viewport: { width: 412, height: 915 }, deviceScaleFactor: dpr });
+      await mobileContext.route('**/*', route => route.request().url().startsWith(base) ? route.continue() : route.abort());
+      const mobile = await mobileContext.newPage();
+      mobile.on('pageerror', error => errors.push(error.message));
+      await mobile.goto(base + '/');
+      await mobile.locator('.window-photo').evaluate(img => img.decode());
+      const hero = await mobile.locator('.window-photo').evaluate(img => ({ source: img.currentSrc, renderedWidth: img.clientWidth, loaded: img.complete }));
+      assert.ok(hero.source.includes('/_astro/'));
+      const bytes = fs.statSync(path.resolve(root, '.' + new URL(hero.source).pathname)).size;
+      results.push({ dpr, hero: { ...hero, bytes } });
+      await mobileContext.close();
     }
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto(base + '/');

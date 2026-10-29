@@ -12,6 +12,8 @@ import { ClientRouter } from 'astro:transitions';
 import '../styles/finish.css';
 import '../styles/journey.css';
 import FloatingContact from '../components/FloatingContact';
+import { Image } from 'astro:assets';
+import brandLogo from '../../public/images/09ac88fe21b3b5da.webp';
 
 interface Props {
   title: string;
@@ -77,7 +79,7 @@ function isNavActive(url: string, path: string): boolean {
     <header class="header">
       <div class="container nav-inner">
         <a class="brand" href="/" aria-label="Vệ Sinh Tino - Trang chủ">
-          <img src={image('09ac88fe21b3b5da')} alt="Vệ Sinh Tino" width="90" height="72" decoding="async"/>
+          <Image src={brandLogo} alt="Vệ Sinh Tino" widths={[40, 64, 80, 120]} sizes="(max-width: 370px) 33px, (max-width: 700px) 40px, 60px" width={64} height={64} loading="eager" decoding="async"/>
           <span>Tino<span class="brand-dot">.</span><small>Dịch vụ vệ sinh</small></span>
         </a>
         <nav class="desktop-nav" aria-label="Điều hướng chính">

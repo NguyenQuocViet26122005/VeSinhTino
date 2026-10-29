@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import type { ResponsiveImages } from '../types/responsive-image';
 
 export interface ServiceDetail {
   slug: string;
@@ -14,7 +15,7 @@ export interface ServiceDetail {
   priceHighlight: string;
 }
 
-const SERVICES_DATA: ServiceDetail[] = [
+export const SERVICES_DATA: ServiceDetail[] = [
   {
     slug: 'dich-vu-ve-sinh-cong-nghiep',
     name: 'Tổng vệ sinh nhà sau xây dựng',
@@ -129,7 +130,7 @@ const SERVICES_DATA: ServiceDetail[] = [
   }
 ];
 
-export const ServiceExplorer: React.FC = () => {
+export const ServiceExplorer: React.FC<{ images?: ResponsiveImages }> = ({ images = {} }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const current = SERVICES_DATA[selectedIndex] || SERVICES_DATA[0];
 
@@ -189,7 +190,9 @@ export const ServiceExplorer: React.FC = () => {
         <div className="explorer-media">
           <img
             key={current.slug}
-            src={current.photo}
+            src={images[current.photo]?.src ?? current.photo}
+            srcSet={images[current.photo]?.srcSet}
+            sizes="(max-width: 768px) calc(100vw - 40px), (max-width: 1432px) 45vw, 600px"
             alt={current.name}
             width={800}
             height={640}

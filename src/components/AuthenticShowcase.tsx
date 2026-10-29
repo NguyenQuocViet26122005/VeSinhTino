@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import GlareHover from './react-bits/GlareHover';
+import type { ResponsiveImages } from '../types/responsive-image';
 
 export interface ProjectItem {
   id: string;
@@ -16,7 +17,7 @@ export interface ProjectItem {
   result: string;
 }
 
-const PROJECTS: ProjectItem[] = [
+export const PROJECTS: ProjectItem[] = [
   {
     id: 'f3e9578413dffb6cd7a69149858785c1',
     category: 'home',
@@ -261,7 +262,7 @@ type TabKey = typeof TABS[number]['key'];
 
 const INITIAL_COUNT = 6;
 
-export const AuthenticShowcase: React.FC = () => {
+export const AuthenticShowcase: React.FC<{ images?: ResponsiveImages }> = ({ images = {} }) => {
   const [activeTab, setActiveTab] = useState<TabKey>('all');
   const [activePhoto, setActivePhoto] = useState<ProjectItem | null>(null);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
@@ -421,7 +422,9 @@ export const AuthenticShowcase: React.FC = () => {
                 className="showcase-glare-wrap"
               >
                 <img
-                  src={item.image}
+                  src={images[item.image]?.src ?? item.image}
+                  srcSet={images[item.image]?.srcSet}
+                  sizes="(max-width: 768px) min(82vw, 315px), (max-width: 1000px) calc((100vw - 60px) / 2), (max-width: 1432px) calc((100vw - 160px) / 3), 424px"
                   alt={item.title}
                   width={600}
                   height={450}

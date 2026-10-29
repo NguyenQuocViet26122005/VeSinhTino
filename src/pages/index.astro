@@ -4,13 +4,17 @@ import { Image } from 'astro:assets';
 import heroPhoto from '../../public/images/3b21a7ec444d0b39.webp';
 import PriceTable from '../components/PriceTable.astro';
 import QuestionFigure from '../components/QuestionFigure';
-import AuthenticShowcase from '../components/AuthenticShowcase';
+import AuthenticShowcase, { PROJECTS } from '../components/AuthenticShowcase';
 import TrustCards from '../components/TrustCards';
-import ServiceExplorer from '../components/ServiceExplorer';
+import ServiceExplorer, { SERVICES_DATA } from '../components/ServiceExplorer';
 import CostEstimator from '../components/CostEstimator';
 import ContactForm from '../components/ContactForm';
 import { commonPrices, apartmentPrices, contact, steps, faqs } from '../data/site';
 import '../styles/wow.css';
+import { responsiveImages } from '../lib/responsive-images';
+
+const projectImages = await responsiveImages(PROJECTS.map(project => project.image));
+const serviceImages = await responsiveImages(SERVICES_DATA.map(service => service.photo));
 ---
 
 <Layout home title="Dịch vụ vệ sinh nhà ở & công nghiệp tại TP.HCM">
@@ -47,14 +51,14 @@ import '../styles/wow.css';
           <Image
             class="window-photo"
             src={heroPhoto}
-            widths={[480, 768, 1200, 1582]}
-            sizes="(max-width: 700px) calc(100vw - 64px), (max-width: 1000px) 56vw, 620px"
+            widths={[320, 480, 640, 768, 960, 1200, 1582]}
+            sizes="(max-width: 370px) 220px, (max-width: 600px) 252px, (max-width: 1000px) 300px, (max-width: 1100px) 41vw, (max-width: 1599px) 38vw, 560px"
             format="webp"
             quality={82}
             alt="Căn hộ từ thư viện ảnh thực tế của Tino"
             width="768"
             height="1024"
-            fetchpriority="high"
+            priority
             decoding="async"
           />
           <div class="window-haze" aria-hidden="true">
@@ -130,7 +134,7 @@ import '../styles/wow.css';
       <h2>Bạn cần làm sạch <span>không gian nào?</span></h2>
       <p>Chọn dịch vụ để xem mô tả ngắn, phạm vi công việc và đơn giá tham khảo.</p>
     </div>
-    <ServiceExplorer client:visible />
+    <ServiceExplorer client:visible images={serviceImages} />
   </section>
 
   <!-- Scene 4 (Section B): Công trình thực tế — Điểm "WOW" thứ 2 -->
@@ -143,7 +147,7 @@ import '../styles/wow.css';
         </div>
         <p>100% hình ảnh thực tế từ các công trình thi công & bàn giao của đội ngũ Vệ Sinh Tino tại TP.HCM kèm câu chuyện hiện trạng và kết quả.</p>
       </div>
-      <AuthenticShowcase client:visible />
+      <AuthenticShowcase client:visible images={projectImages} />
     </div>
   </section>
 

@@ -758,6 +758,8 @@
 .home-page .footer-bottom { border-top: 1px solid #fff2; padding-top: 20px; }
 .home-page .footer-grid { grid-template-columns: 1.2fr 1fr .8fr 1.2fr; }
 
+.home-page .faq-section .text-link { color: #0867a0; }
+
 /* ThreeUI Aster Glass Arrow adaptation */
 .tino-glass-link {
   position: relative;

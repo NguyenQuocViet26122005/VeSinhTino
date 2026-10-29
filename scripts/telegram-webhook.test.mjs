@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { configureTelegramWebhook } from './configure-telegram-webhook.mjs';
+import { configureTelegramWebhook as configure } from './configure-telegram-webhook.mjs';
+const configureTelegramWebhook = (env, send) => configure(env, send, async () => {});
 
 const env = {
   VERCEL: '1', VERCEL_ENV: 'production', TELEGRAM_BOT_TOKEN: '123456' + ':' + 'x'.repeat(35),
@@ -103,4 +104,49 @@ test('requires an explicit positive setWebhook acknowledgement', async () => {
     if (method === 'getWebhookInfo') return Response.json({ ok: true, result: { url, allowed_updates: ['message'] } });
     return Response.json({ ok: true, result: false });
   }), /not acknowledged/);
+});
+
+test('retries transient transport failures with a fixed upper bound and no credential diagnostics', async () => {
+  let attempts = 0;
+  const waits = [];
+  await assert.rejects(configure(env, async () => {
+    attempts++;
+    throw new TypeError(env.TELEGRAM_BOT_TOKEN, { cause: { code: 'ECONNRESET' } });
+  }, async milliseconds => { waits.push(milliseconds); }), error => {
+    assert.match(error.message, /TypeError, ECONNRESET/);
+    assert.equal(error.message.includes(env.TELEGRAM_BOT_TOKEN), false);
+    return true;
+  });
+  assert.equal(attempts, 3);
+  assert.deepEqual(waits, [500, 1000]);
+});
+
+test('a transient read failure recovers without duplicate registration', async () => {
+  let reads = 0;
+  let writes = 0;
+  let registered = false;
+  const result = await configureTelegramWebhook(env, async (target, options) => {
+    assert.equal(options.headers.Connection, 'close');
+    const method = target.split('/').at(-1);
+    if (method === 'getMe') return Response.json({ ok: true, result: { is_bot: true, username: 'tino_fixture_bot' } });
+    if (method === 'getWebhookInfo') {
+      if (++reads === 1) throw new Error('transient');
+      return Response.json({ ok: true, result: { url: registered ? url : '', allowed_updates: ['message'] } });
+    }
+    writes++;
+    registered = true;
+    return Response.json({ ok: true, result: true });
+  });
+  assert.equal(result.registered, true);
+  assert.equal(writes, 1);
+  assert.equal(reads, 3);
+});
+
+test('permanent provider rejections are not retried', async () => {
+  let attempts = 0;
+  await assert.rejects(configureTelegramWebhook(env, async () => {
+    attempts++;
+    return Response.json({ ok: false, description: 'Unauthorized' }, { status: 401 });
+  }), /HTTP 401/);
+  assert.equal(attempts, 1);
 });

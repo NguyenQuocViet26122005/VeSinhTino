@@ -1,10 +1,16 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { createMagnet, resolveMagnetSettings, FLOATING_MAGNET_OPTIONS } from '../lib/magnet';
 
 gsap.registerPlugin(ScrollTrigger);
 
 let menuMorph: ReturnType<typeof import('morphicons/dom')['createMorph']> | undefined;
 let mainMm: gsap.MatchMedia | null = null;
+let contactMagnets: ReturnType<typeof createMagnet>[] = [];
+const clearContactMagnets = () => {
+  contactMagnets.forEach(controller => controller.destroy());
+  contactMagnets = [];
+};
 const menuShape = 'M4 7h16M4 17h16';
 const closeShape = 'M6 6l12 12M6 18L18 6';
 
@@ -12,6 +18,16 @@ let globalListenersAttached = false;
 function ensureGlobalListeners() {
   if (globalListenersAttached) return;
   globalListenersAttached = true;
+
+  // Preserve an early submit until the visible React form has committed.
+  document.addEventListener('submit', event => {
+    const form = event.target;
+    if (form instanceof HTMLFormElement && form.matches('.contact-form') && !form.dataset.contactReady) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      form.dataset.pendingSubmit = 'true';
+    }
+  }, true);
 
   document.addEventListener('click', (e) => {
     const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
@@ -62,6 +78,11 @@ function ensureGlobalListeners() {
 }
 
 function initMain() {
+  clearContactMagnets();
+  document.querySelectorAll<HTMLElement>('[data-contact-magnet]').forEach(wrapper => {
+    const inner = wrapper.firstElementChild;
+    if (inner instanceof HTMLElement) contactMagnets.push(createMagnet(wrapper, inner, { current: resolveMagnetSettings(FLOATING_MAGNET_OPTIONS) }));
+  });
   menuMorph?.destroy();
   menuMorph = undefined;
   if (mainMm) {
@@ -414,6 +435,7 @@ if (!hasPageLoaded && document.readyState === 'complete') {
   initMain();
 }
 document.addEventListener('astro:before-swap', () => {
+  clearContactMagnets();
   if (mainMm) {
     mainMm.revert();
     mainMm = null;

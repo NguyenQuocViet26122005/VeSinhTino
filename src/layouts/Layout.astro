@@ -1,6 +1,5 @@
 ---
 import '../styles/global.css';
-import '../styles/interior.css';
 import '@fontsource/be-vietnam-pro/400.css';
 import '@fontsource/be-vietnam-pro/500.css';
 import '@fontsource/be-vietnam-pro/600.css';
@@ -143,7 +142,7 @@ function isNavActive(url: string, path: string): boolean {
       </div>
     </footer>
 
-    <FloatingContact client:idle phone={contact.phone} display={contact.display} zalo={contact.zalo} />
+    <FloatingContact phone={contact.phone} display={contact.display} zalo={contact.zalo} />
 
     <dialog id="photo-dialog" class="photo-dialog" aria-labelledby="dialog-caption">
       <button class="dialog-close" aria-label="Đóng hộp thoại xem ảnh">×</button>

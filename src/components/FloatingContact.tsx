@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Magnet from './react-bits/Magnet/Magnet';
+import { FLOATING_MAGNET_OPTIONS } from '../lib/magnet';
 
 interface FloatingContactProps {
   phone: string;
@@ -12,7 +13,7 @@ interface FloatingContactProps {
 export const FloatingContact: React.FC<FloatingContactProps> = ({ phone, display, zalo }) => {
   return (
     <div className="floating-contact">
-      <Magnet padding={45} magnetStrength={2} tilt={6} scale={1.05}>
+      <Magnet {...FLOATING_MAGNET_OPTIONS} data-contact-magnet>
         <a
           href={zalo}
           target="_blank"
@@ -23,7 +24,7 @@ export const FloatingContact: React.FC<FloatingContactProps> = ({ phone, display
           Zalo
         </a>
       </Magnet>
-      <Magnet padding={45} magnetStrength={2} tilt={6} scale={1.05}>
+      <Magnet {...FLOATING_MAGNET_OPTIONS} data-contact-magnet>
         <a
           href={`tel:${phone}`}
           aria-label={`Gọi Hotline Vệ Sinh Tino: ${display}`}

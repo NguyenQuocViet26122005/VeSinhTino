@@ -3,7 +3,9 @@ const fs = require('node:fs');
 const http = require('node:http');
 const path = require('node:path');
 const zlib = require('node:zlib');
-const root = path.resolve('dist');
+const root = path.resolve(process.argv[2] || 'dist');
+const port = Number(process.argv[3] || 4394);
+if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Invalid local audit port');
 const compressed = new Map();
 const types = { '.html': 'text/html; charset=utf-8', '.js': 'application/javascript', '.css': 'text/css', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.woff2': 'font/woff2' };
 http.createServer((request, response) => {
@@ -25,4 +27,4 @@ http.createServer((request, response) => {
     response.setHeader('Vary', 'Accept-Encoding');
     response.end(cached.bytes);
   } else fs.createReadStream(file).pipe(response);
-}).listen(4394, '127.0.0.1', () => console.log('Audit build: http://127.0.0.1:4394/'));
+}).listen(port, '127.0.0.1', () => console.log(`Audit build: http://127.0.0.1:${port}/`));

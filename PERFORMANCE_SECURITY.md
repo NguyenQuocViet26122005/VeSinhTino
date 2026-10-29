@@ -41,6 +41,21 @@ riêng trong `.cache/mobile-tools`, không phải dependency ứng dụng. Dùng
 và trace thao tác chạm nằm trong `qa/`. Không so điểm Lighthouse local trực tiếp
 với PageSpeed chạy trên hạ tầng Google.
 
+Đợt giảm tải JavaScript đầu trang giữ Zalo/hotline dưới dạng HTML và dùng chung
+controller lò xo trong `src/lib/magnet.ts`; React vẫn được hydrate khi các phần
+tương tác đi vào vùng nhìn. Các controller được dọn trước khi Astro thay trang.
+CSS nội trang chuyển về các route nội trang, không tải vào trang chủ. Ảnh hero
+có AVIF quality 60 (65 ở độ phân giải gốc) và WebP quality 82 dự phòng, giữ cùng ảnh/crop/kích thước;
+không thay đổi nhịp mở đầu GSAP để chạy theo điểm số. Kiểm tra bằng
+`scripts/loading-browser.cjs`: không tải React ở màn hình đầu, chỉ tải một định
+dạng hero, WebP fallback, liên kết khi tắt JS, reduced motion và chuyển route.
+Máy chủ audit nhận thêm đường dẫn build và cổng tùy chọn để đo xen kẽ hai bản.
+Service Explorer, bảng tính giá và form bắt đầu hydrate trước vùng nhìn 600 px
+để chuẩn bị tương tác khi khách cuộn đến. Form giữ lại dữ liệu/autofill nhập
+trước hydration (kể cả honeypot), đồng thời gộp lần nhấn gửi sớm thành một yêu
+cầu sau khi sẵn sàng. `scripts/form-loading-browser.cjs` cố tình chặn React,
+kiểm tra nhập/gửi sớm, gửi lại và lỗi provider bằng API giả lập; không gọi bot.
+
 ## Giới hạn và cấu hình khi đưa lên Vercel
 
 - `vercel.json` khai báo các header chống nhúng iframe, MIME sniffing, hạn chế

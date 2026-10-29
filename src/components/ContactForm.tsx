@@ -21,22 +21,41 @@ const SERVICE_ID_TO_NAME: Record<string, string> = {
   floor: 'Tổng vệ sinh nhà sau xây dựng'
 };
 
+// Keep edits/autofill made to server-rendered fields while the client code loads.
+const draftValue = (id: string, fallback = '') => {
+  if (typeof document === 'undefined') return fallback;
+  const field = document.getElementById(id);
+  return field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement ? field.value : fallback;
+};
+
 export const ContactForm: React.FC = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    service: 'Tổng vệ sinh nhà sau xây dựng',
-    notes: '',
-    area: ''
-  });
+  const [formData, setFormData] = useState(() => ({
+    name: draftValue('user-name'),
+    phone: draftValue('user-phone'),
+    service: draftValue('user-service', 'Tổng vệ sinh nhà sau xây dựng'),
+    notes: draftValue('user-notes'),
+    area: draftValue('user-area')
+  }));
 
   const requestInFlight = useRef(false);
-  const [honeypot, setHoneypot] = useState('');
+  const [honeypot, setHoneypot] = useState(() => draftValue('company_website_url'));
+  const formRef = useRef<HTMLFormElement>(null);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [copied, setCopied] = useState(false);
   const [submittedTime, setSubmittedTime] = useState('');
+
+  useEffect(() => {
+    const form = formRef.current;
+    if (!form) return;
+    form.dataset.contactReady = 'true';
+    if (form.dataset.pendingSubmit) {
+      delete form.dataset.pendingSubmit;
+      form.requestSubmit();
+    }
+    return () => { delete form.dataset.contactReady; };
+  }, [submitted]);
 
   // Listen for prefill events from CostEstimator or AuthenticShowcase
   useEffect(() => {
@@ -305,7 +324,7 @@ export const ContactForm: React.FC = () => {
               </div>
             </div>
           ) : (
-            <form className="contact-form" onSubmit={handleSubmit}>
+            <form ref={formRef} className="contact-form" onSubmit={handleSubmit}>
               {/* Anti-spam honeypot trap for automated bots */}
               <div style={{ display: 'none' }} aria-hidden="true">
                 <label htmlFor="company_website_url">Bỏ trống trường này</label>

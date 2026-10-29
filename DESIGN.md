@@ -106,6 +106,8 @@ Quote action: adapt ThreeUI Community Understory Arrow Pill to Tino ice blue/nav
 
 Service selection uses buttons with aria-pressed and adjacent detail-page links. Gallery uses a native dialog. Price values and units come from src/data/site.ts and are verified against original survey data. Retain Hairline Query in FAQ.
 
+Floating contact links remain server-rendered HTML. Their pointer attraction uses the same shared spring controller as the React Magnet wrapper, without hydrating React just for those links. Keep their DOM geometry, labels, destinations, press feedback and reduced-motion behavior intact across Astro navigation. The hero may use AVIF with the original WebP rendition as a native picture fallback; retain the same photograph, crop, watermark, sizes and opening choreography. Interior CSS is imported only by interior routes; verify both direct loads and navigation to and from the homepage when moving styles.
+
 ## Do's and Don'ts
 
 - Do read this document before visual changes and run npm run design:lint after changing it.

@@ -162,6 +162,11 @@ export const ContactForm: React.FC = () => {
         hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric'
       }));
       setSubmitted(true);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('tino:lead-success', {
+          detail: { service: formData.service }
+        }));
+      }
     } catch {
       setErrorMessage('Kết nối bị gián đoạn hoặc phản hồi quá lâu, chưa xác nhận được việc gửi. Thông tin của bạn vẫn còn trong form; vui lòng liên hệ Hotline / Zalo để kiểm tra.');
     } finally {
@@ -178,7 +183,7 @@ export const ContactForm: React.FC = () => {
           <span className="contact-kicker">TIẾP NHẬN YÊU CẦU 24/7</span>
           <h3 className="contact-main-heading">Cùng Tino làm sạch không gian của bạn.</h3>
           <p className="contact-desc">
-            Khảo sát thực tế tận nơi tại TP.HCM trong 2 giờ. Báo giá trọn gói minh bạch, không phát sinh chi phí sau khi thống nhất.
+            Trao đổi thông tin và khảo sát thực tế tại TP.HCM. Báo giá rõ ràng theo khối lượng công việc thống nhất trước khi làm.
           </p>
 
           <div className="contact-channels">
@@ -189,7 +194,7 @@ export const ContactForm: React.FC = () => {
                 </svg>
               </div>
               <div className="channel-info">
-                <small>Tư vấn & Khảo sát miễn phí</small>
+                <small>Tư vấn & Báo giá nhanh</small>
                 <strong>{contact.display}</strong>
               </div>
               <span className="channel-badge">Gọi ngay</span>
@@ -219,19 +224,19 @@ export const ContactForm: React.FC = () => {
               <span className="commit-check" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
               </span>
-              <span>Khảo sát & tư vấn miễn phí tận nơi</span>
+              <span>Tư vấn phương án & khảo sát theo hiện trạng</span>
             </div>
             <div className="commitment-item">
               <span className="commit-check" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
               </span>
-              <span>Hóa chất sinh học an toàn sức khỏe</span>
+              <span>Hóa chất chuyên dụng phù hợp từng bề mặt</span>
             </div>
             <div className="commitment-item">
               <span className="commit-check" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
               </span>
-              <span>Khách hài lòng nghiệm thu mới thanh toán</span>
+              <span>Nghiệm thu thực tế từng hạng mục trước khi thanh toán</span>
             </div>
           </div>
         </div>
@@ -244,7 +249,7 @@ export const ContactForm: React.FC = () => {
               </div>
               <h4>Tiếp nhận yêu cầu thành công!</h4>
               <p>
-                Cảm ơn <strong>{formData.name.trim() || 'Quý khách'}</strong>! Tino đã tiếp nhận thông tin yêu cầu dịch vụ. Đội ngũ kỹ thuật sẽ liên hệ qua SĐT/Zalo <strong>{formData.phone.trim()}</strong> trong vòng 5–10 phút để trao đổi và báo giá chi tiết.
+                Cảm ơn <strong>{formData.name.trim() || 'Quý khách'}</strong>! Tino đã tiếp nhận thông tin yêu cầu dịch vụ. Đội ngũ kỹ thuật sẽ liên hệ qua SĐT/Zalo <strong>{formData.phone.trim()}</strong> trong thời gian sớm nhất để trao đổi và báo giá chi tiết.
               </p>
 
               {/* Summary of submitted details */}
@@ -339,7 +344,7 @@ export const ContactForm: React.FC = () => {
                 />
               </div>
               <h4 className="form-title">Để lại thông tin nhận tư vấn</h4>
-              <p className="form-sub">Tino sẽ gọi lại hoặc phản hồi qua Zalo trong 5–10 phút.</p>
+              <p className="form-sub">Tino sẽ sớm liên hệ lại qua điện thoại hoặc Zalo để trao đổi chi tiết.</p>
 
               {errorMessage && (
                 <div
@@ -459,7 +464,7 @@ export const ContactForm: React.FC = () => {
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
                   <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                 </svg>
-                Cam kết bảo mật thông tin liên hệ · Khảo sát miễn phí tận nơi · Không làm phiền
+                Bảo mật thông tin liên hệ · Tư vấn rõ ràng theo hiện trạng · Không làm phiền
               </p>
             </form>
           )}

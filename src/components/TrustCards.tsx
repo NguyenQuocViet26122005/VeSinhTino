@@ -14,14 +14,14 @@ const TRUST_ITEMS: TrustItem[] = [
   {
     icon: '⚡',
     num: '01',
-    title: 'Máy Móc Hiện Đại 3 Motor',
-    desc: 'Hệ thống máy hút bụi công suất lớn, máy chà sàn tạ công nghiệp và công nghệ phun hút tam giác diệt khuẩn 99.9%.'
+    title: 'Thiết Bị Vệ Sinh Chuyên Dụng',
+    desc: 'Trang bị máy hút bụi công nghiệp công suất lớn, máy chà sàn mâm xoay và máy phun hút chuyên dụng.'
   },
   {
     icon: '🌿',
     num: '02',
-    title: 'Hóa Chất Sinh Học An Toàn',
-    desc: 'Dung dịch làm sạch nhập khẩu có xuất xứ rõ ràng, an toàn tuyệt đối cho bề mặt da, nỉ, gỗ và sức khỏe gia đình.'
+    title: 'Làm Sạch Theo Từng Bề Mặt',
+    desc: 'Trao đổi chất liệu và hiện trạng để lựa chọn dung dịch, dụng cụ và cách làm sạch phù hợp.'
   },
   {
     icon: '🛡️',
@@ -32,8 +32,8 @@ const TRUST_ITEMS: TrustItem[] = [
   {
     icon: '✨',
     num: '04',
-    title: 'Hài Lòng Mới Thanh Toán',
-    desc: 'Khảo sát tận nơi, báo giá minh bạch ngay từ đầu. Khách hàng trực tiếp nghiệm thu từng hạng mục trước khi bàn giao.'
+    title: 'Nghiệm Thu Trước Thanh Toán',
+    desc: 'Trao đổi hiện trạng, báo giá rõ ràng trước khi làm. Khách hàng trực tiếp nghiệm thu từng hạng mục trước khi bàn giao.'
   }
 ];
 

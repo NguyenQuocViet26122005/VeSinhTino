@@ -23,11 +23,11 @@ export const SERVICES_DATA: ServiceDetail[] = [
     tag: 'Cho mọi công trình',
     photo: '/images/explorer/dich-vu-ve-sinh-cong-nghiep.webp',
     description: 'Làm sạch tổng thể sau thi công, hoàn thiện phần thô trước khi đưa công trình vào vận hành.',
-    intro: 'Từ bụi bê tông, sơn dính đến bột trét tường, Tino kết hợp máy hút bụi 3 motor cùng máy chà sàn công nghiệp để làm sạch toàn diện.',
+    intro: 'Trao đổi các khu vực còn bụi, vết sơn hoặc xi măng sau thi công để lựa chọn thiết bị và phương án làm sạch phù hợp.',
     tasks: [
-      'Thu gom triệt để rác thô và bụi mịn sau xây dựng',
+      'Thu gom rác thô và hút sạch bụi mịn sau xây dựng',
       'Sủi sạch vết sơn, xi măng, keo dán trên sàn và kính',
-      'Đánh bóng sàn gạch, sàn đá bằng máy mâm xoay',
+      'Làm sạch sàn gạch, sàn đá theo phạm vi đã thống nhất',
       'Nghiệm thu chi tiết từng phòng theo danh mục kiểm tra'
     ],
     priceHighlight: 'Từ 12.000 – 20.000 đ/m²'
@@ -36,15 +36,15 @@ export const SERVICES_DATA: ServiceDetail[] = [
     slug: 've-sinh-chung-cu',
     name: 'Tổng vệ sinh chung cư trọn gói',
     short: 'Chung cư trọn gói',
-    tag: 'Tiết kiệm & Chuẩn chỉ',
+    tag: 'Gọn gàng từng phòng',
     photo: '/images/explorer/ve-sinh-chung-cu.webp',
-    description: 'Dịch vụ trọn gói cho căn hộ chung cư 1PN, 2PN, 3PN với đầy đủ thiết bị chuyên dụng và hóa chất an toàn.',
+    description: 'Dịch vụ vệ sinh căn hộ chung cư theo số phòng, diện tích và hiện trạng thực tế.',
     intro: 'Tổng vệ sinh chung cư trọn gói 50m² từ 1tr6 (hình ảnh thực tế thi công tại Bình Chánh, TP.HCM). Tino làm sạch chi tiết từng phòng ngủ, phòng khách, bếp và nhà tắm trước khi dọn vào ở.',
     tasks: [
       'Hút bụi trần thạch cao, lau khe cửa kính và ban công',
       'Tẩy sạch dầu mỡ khu bếp, bồn rửa và tủ kệ âm tường',
-      'Khử khuẩn, chà sạch tường gạch và thiết bị phòng tắm',
-      'Lau sàn gạch/sàn gỗ bằng dung dịch bảo dưỡng an toàn'
+      'Làm sạch tường gạch và thiết bị phòng tắm',
+      'Lau sàn bằng dung dịch phù hợp với từng chất liệu'
     ],
     priceHighlight: 'Gói 50m² từ 1.600.000 đ'
   },
@@ -59,8 +59,8 @@ export const SERVICES_DATA: ServiceDetail[] = [
     tasks: [
       'Vệ sinh phòng khách, phòng ngủ và lối đi cầu thang',
       'Làm sạch cửa sổ kính, kệ tủ âm và đánh sàn gạch/đá',
-      'Khử khuẩn, tẩy ố mốc toàn diện khu vực bếp và nhà tắm',
-      'Kiểm tra từng ngóc ngách, nghiệm thu hài lòng mới thanh toán'
+      'Trao đổi hiện trạng vết bẩn tại khu vực bếp và nhà tắm',
+      'Kiểm tra các hạng mục và nghiệm thu trước khi bàn giao'
     ],
     priceHighlight: 'Từ 10.000 – 20.000 đ/m²'
   },
@@ -71,7 +71,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
     tag: 'Không gian sản xuất',
     photo: '/images/explorer/ve-sinh-nha-xuong.webp',
     description: 'Vệ sinh kho bãi, xưởng sản xuất theo diện tích và điều kiện vận hành thực tế.',
-    intro: 'Không gian sản xuất cần phương án phù hợp. Tino khảo sát trực tiếp để xác định trang thiết bị, thời gian thi công không gián đoạn sản xuất.',
+    intro: 'Không gian sản xuất cần phương án phù hợp. Thiết bị, hạng mục và lịch thi công được trao đổi theo hiện trạng và lịch vận hành của xưởng.',
     tasks: [
       'Quét bụi, thổi bụi xà gồ, vách panel và đường ống',
       'Tẩy rửa dầu mỡ công nghiệp trên sàn bê tông, sàn epoxy',
@@ -86,11 +86,11 @@ export const SERVICES_DATA: ServiceDetail[] = [
     short: 'Kính tòa nhà',
     tag: 'Trong hơn, sáng hơn',
     photo: '/images/explorer/ve-sinh-kinh-toa-nha.webp',
-    description: 'Làm sạch kính mặt ngoài và mặt trong cao ốc bằng phương án thi công an toàn chuẩn kỹ thuật.',
-    intro: 'Bề mặt kính sạch giúp không gian đón trọn ánh sáng tự nhiên. Đội ngũ có chứng chỉ đu dây an toàn, kết hợp giàn giáo hoặc xe nâng.',
+    description: 'Làm sạch kính mặt ngoài và mặt trong tòa nhà theo điều kiện tiếp cận thực tế.',
+    intro: 'Tino tiếp nhận thông tin về vị trí kính, chiều cao và hiện trạng để trao đổi phương án cùng phạm vi vệ sinh trước khi thực hiện.',
     tasks: [
-      'Khảo sát kết cấu mái và điểm neo an toàn chịu tải',
-      'Đu dây hoặc vận hành xe nâng tiếp cận mặt ngoài kính',
+      'Khảo sát vị trí kính và điều kiện tiếp cận',
+      'Thống nhất phương án thi công kính mặt ngoài',
       'Tẩy ố vảy cá, cặn nước mưa và vết keo silicone',
       'Gạt sạch bóng kính mặt trong và lau khung nhôm'
     ],
@@ -102,13 +102,13 @@ export const SERVICES_DATA: ServiceDetail[] = [
     short: 'Ghế sofa & Nệm',
     tag: 'Êm ái mỗi ngày',
     photo: '/images/explorer/dich-vu-giat-ghe-sofa.webp',
-    description: 'Chăm sóc sofa vải nỉ, da và nệm ngủ tại nhà bằng công nghệ phun hút sinh học an toàn.',
-    intro: 'Chiếc sofa là nơi gia đình quây quần mỗi ngày. Tino dùng máy phun hút áp lực kết hợp dung dịch khử khuẩn, khử mùi ẩm mốc sâu.',
+    description: 'Vệ sinh sofa và nệm tại nhà theo chất liệu, kích thước và mức độ bám bẩn.',
+    intro: 'Gửi ảnh sofa hoặc nệm cùng thông tin chất liệu để trao đổi cách làm sạch và điều kiện sử dụng sau vệ sinh.',
     tasks: [
       'Hút bụi bề mặt, các khe sâu và kẽ tựa lưng sofa',
-      'Phun dung dịch sinh học hòa tan vết bẩn và mồ hôi',
-      'Đầu hút chân không hút kiệt nước bẩn và vi khuẩn',
-      'Khử khuẩn nấm mốc và sấy khô nhanh trong 60–90 phút'
+      'Chọn dung dịch phù hợp và thử ở vị trí nhỏ trước khi làm',
+      'Phun hút bụi bẩn và nước theo phương án đã thống nhất',
+      'Trao đổi cách làm khô và thời điểm sử dụng theo chất liệu'
     ],
     priceHighlight: 'Từ 250.000 – 500.000 đ/bộ'
   },
@@ -119,12 +119,12 @@ export const SERVICES_DATA: ServiceDetail[] = [
     tag: 'Sạch từ bề mặt',
     photo: '/images/explorer/dich-vu-giat-tham.webp',
     description: 'Vệ sinh thảm trải sàn văn phòng, thảm len trang trí bằng máy giặt mâm xoay chuyên dụng.',
-    intro: 'Bụi bẩn và vết cà phê lâu ngày trong thảm được đánh bật hoàn toàn, giúp không khí văn phòng trong lành và bảo vệ tuổi thọ sợi thảm.',
+    intro: 'Trao đổi chất liệu, diện tích và tình trạng vết bẩn để lựa chọn cách giặt cùng lịch làm khô phù hợp cho văn phòng.',
     tasks: [
       'Hút sạch bụi cát thô trước khi xử lý hóa chất',
       'Máy mâm xoay tạo bọt mịn đánh bật vết ố lâu ngày',
-      'Máy hút công nghiệp 3 motor hút sạch nước dơ',
-      'Quạt thổi công nghiệp làm khô nhanh, không để mùi ẩm'
+      'Phun hút và thu gom nước bẩn sau khi làm sạch',
+      'Trao đổi điều kiện làm khô trước khi đưa thảm vào sử dụng'
     ],
     priceHighlight: 'Từ 15.000 – 20.000 đ/m²'
   }

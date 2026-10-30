@@ -23,7 +23,7 @@ const heroAvifFull = await getImage({ src: heroPhoto, width: heroPhoto.width, he
 const heroAvifSrcset = `${heroAvif.srcSet.attribute}, ${heroAvifFull.src} ${heroPhoto.width}w`;
 ---
 
-<Layout home title="Dịch vụ vệ sinh nhà ở & công nghiệp tại TP.HCM">
+<Layout home title="Dịch vụ vệ sinh nhà ở & công nghiệp tại TP.HCM" description="Dịch vụ vệ sinh nhà ở, căn hộ chung cư và vệ sinh công nghiệp tại TP.HCM. Báo giá tham khảo từ 1.600.000đ/căn, vệ sinh sau xây dựng từ 12.000đ/m². Tiếp nhận yêu cầu & tư vấn hotline 0925 649 666.">
   <!-- Scene 1: Spatial Opening with Squeegee Wipe & Daylight -->
   <section class="wow-hero" aria-labelledby="hero-title">
     <div class="daylight-field" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -131,7 +131,7 @@ const heroAvifSrcset = `${heroAvif.srcSet.attribute}, ${heroAvifFull.src} ${hero
       <span class="intro-asterisk" aria-hidden="true">✳</span>
       <p>
         Một buổi sáng thảnh thơi. Một căn nhà dễ chịu. Một nơi làm việc gọn gàng.
-        Tino kết hợp máy móc hiện đại cùng hóa chất sinh học an toàn, chăm chút từng góc nhỏ để bạn an tâm tận hưởng không gian của mình.
+        Tino kết hợp máy móc hiện đại cùng hóa chất chuyên dụng phù hợp, chăm chút từng góc nhỏ để bạn an tâm tận hưởng không gian của mình.
       </p>
     </div>
     <TrustCards client:visible />
@@ -154,7 +154,7 @@ const heroAvifSrcset = `${heroAvif.srcSet.attribute}, ${heroAvifFull.src} ${hero
           <span>CHĂM CHÚT TỪNG CHI TIẾT</span>
           <h2>Làm thật.<br/><em>Sạch thật.</em></h2>
         </div>
-        <p>100% hình ảnh thực tế từ các công trình thi công & bàn giao của đội ngũ Vệ Sinh Tino tại TP.HCM kèm câu chuyện hiện trạng và kết quả.</p>
+        <p>Hình ảnh từ thư viện công trình của Vệ Sinh Tino. Chọn ảnh để xem và trao đổi về hạng mục bạn cần.</p>
       </div>
       <AuthenticShowcase client:visible images={projectImages} />
     </div>
@@ -177,7 +177,7 @@ const heroAvifSrcset = `${heroAvif.srcSet.attribute}, ${heroAvifFull.src} ${hero
         <p class="mobile-table-note">Vuốt ngang để xem đủ bảng giá chung cư →</p>
         <PriceTable rows={apartmentPrices} caption="Bảng giá tổng vệ sinh chung cư trọn gói"/>
         <p class="price-note">
-          Gói tổng vệ sinh chung cư trọn gói căn 50m² từ 1.600.000 đ. Đơn giá trọn gói đã bao gồm nhân công, máy móc chuyên dụng và hóa chất sinh học an toàn.
+          Gói tổng vệ sinh chung cư trọn gói căn 50m² từ 1.600.000 đ. Đơn giá tham khảo đã bao gồm nhân công, máy móc chuyên dụng và hóa chất làm sạch phù hợp.
         </p>
       </div>
 
@@ -186,7 +186,7 @@ const heroAvifSrcset = `${heroAvif.srcSet.attribute}, ${heroAvifFull.src} ${hero
         <p class="mobile-table-note">Vuốt ngang để xem đủ bảng giá tổng hợp →</p>
         <PriceTable rows={commonPrices} caption="Bảng giá dịch vụ vệ sinh tổng hợp"/>
         <p class="price-note">
-          Đơn giá theo bảng công bố chính thức của Tino. Chi phí cụ thể được thống nhất sau khi trao đổi và khảo sát, cam kết không phát sinh.
+          Đơn giá theo bảng công bố của Tino. Chi phí cụ thể được thống nhất sau khi trao đổi và khảo sát hiện trạng.
         </p>
       </div>
     </div>
@@ -196,7 +196,7 @@ const heroAvifSrcset = `${heroAvif.srcSet.attribute}, ${heroAvifFull.src} ${hero
   <section class="wow-process container">
     <div class="wow-section-top">
       <h2>Nhẹ nhàng. <span>Từ đầu đến cuối.</span></h2>
-      <p>4 bước làm việc chuẩn mực — Khách hàng hài lòng nghiệm thu mới thanh toán.</p>
+      <p>4 bước làm việc chuẩn mực — Khách hàng kiểm tra nghiệm thu trước khi thanh toán.</p>
     </div>
     <ol>
       {steps.map(([number, title, description]) => (
@@ -209,6 +209,44 @@ const heroAvifSrcset = `${heroAvif.srcSet.attribute}, ${heroAvifFull.src} ${hero
         </li>
       ))}
     </ol>
+  </section>
+
+  <!-- Scene 6.5: Khu vực phục vụ tại TP.HCM & Điểm liên hệ thực tế -->
+  <section class="wow-locations container" aria-labelledby="locations-title">
+    <div class="wow-section-top">
+      <p class="page-kicker">ĐỊA BÀN PHỤC VỤ &amp; CƠ ĐỘNG</p>
+      <h2 id="locations-title">Vệ sinh tại TP.HCM. <span>Trao đổi trước khi đặt lịch.</span></h2>
+      <p>Thông tin liên hệ tại Quận 12, Phú Nhuận và Quận 7. Gửi khu vực, diện tích và ảnh hiện trạng để trao đổi phạm vi công việc cùng lịch thực hiện.</p>
+    </div>
+    <div class="locations-grid">
+      <div class="location-card">
+        <span class="location-zone">BẮC SÀI GÒN</span>
+        <h3>Quận 12 &amp; Khu vực lân cận</h3>
+        <p class="location-addr">557 Tô Ký, Phường Trung Mỹ Tây, Quận 12</p>
+        <p class="location-desc">Gửi vị trí công trình tại Quận 12 hoặc khu vực lân cận để trao đổi lịch và phương án vệ sinh.</p>
+        <a class="location-map-link" href={'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('557 Tô Ký, Trung Mỹ Tây, Quận 12, TP.HCM')} target="_blank" rel="noopener noreferrer">
+          Chỉ đường trên Maps ↗
+        </a>
+      </div>
+      <div class="location-card">
+        <span class="location-zone">TRUNG TÂM</span>
+        <h3>Phú Nhuận &amp; Nội thành</h3>
+        <p class="location-addr">151 Nguyễn Đình Chính, Phường 11, Phú Nhuận</p>
+        <p class="location-desc">Trao đổi địa chỉ, diện tích và hạng mục cần làm trước khi thống nhất báo giá, lịch thực hiện.</p>
+        <a class="location-map-link" href={'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('151 Nguyễn Đình Chính, Phường 11, Phú Nhuận, TP.HCM')} target="_blank" rel="noopener noreferrer">
+          Chỉ đường trên Maps ↗
+        </a>
+      </div>
+      <div class="location-card">
+        <span class="location-zone">NAM SÀI GÒN</span>
+        <h3>Quận 7 &amp; Khu đô thị</h3>
+        <p class="location-addr">37B Nguyễn Văn Linh, Tân Thuận Tây, Quận 7</p>
+        <p class="location-desc">Mô tả nhà ở, căn hộ hoặc công trình tại Quận 7 và khu vực lân cận để Tino tiếp nhận nhu cầu cụ thể.</p>
+        <a class="location-map-link" href={'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('37B Nguyễn Văn Linh, Tân Thuận Tây, Quận 7, TP.HCM')} target="_blank" rel="noopener noreferrer">
+          Chỉ đường trên Maps ↗
+        </a>
+      </div>
+    </div>
   </section>
 
   <!-- Scene 7 (Section E): Gỡ bỏ băn khoăn trước khi liên hệ (FAQ) -->

@@ -14,20 +14,35 @@ import FloatingContact from '../components/FloatingContact';
 import Analytics from '../components/Analytics.astro';
 import { Image } from 'astro:assets';
 import brandLogo from '../../public/images/09ac88fe21b3b5da.webp';
+import { buildCanonicalUrl, getWebsiteSchema, getOrganizationSchema, DEFAULT_OG_IMAGE, SITE_NAME } from '../lib/seo-schema';
 
 interface Props {
   title: string;
   description?: string;
   home?: boolean;
+  ogImage?: string;
+  schema?: Record<string, any> | Record<string, any>[];
+  noindex?: boolean;
 }
 
 const {
   title,
   home = false,
-  description = 'Dịch vụ vệ sinh Tino tại TP.HCM: vệ sinh nhà ở, công nghiệp, nhà xưởng, kính, giặt thảm và sofa. Xem bảng giá và liên hệ 0925 649 666.'
+  description = 'Dịch vụ vệ sinh Tino tại TP.HCM: vệ sinh nhà ở, công nghiệp, nhà xưởng, kính, giặt thảm và sofa. Xem bảng giá và liên hệ 0925 649 666.',
+  ogImage,
+  schema,
+  noindex = false
 } = Astro.props;
 
 const pathname = Astro.url.pathname;
+const canonicalUrl = buildCanonicalUrl(pathname);
+const resolvedOgImage = ogImage || DEFAULT_OG_IMAGE;
+const baseSchemas = home ? [getWebsiteSchema(), getOrganizationSchema()] : [getOrganizationSchema()];
+const combinedSchemas = schema
+  ? [...baseSchemas, ...(Array.isArray(schema) ? schema : [schema])]
+  : baseSchemas;
+const isArticle = combinedSchemas.some((item) => item['@type'] === 'Article');
+
 const nav = [
   ['/', 'Trang chủ'],
   ['/category/dichvuvesinh/', 'Dịch vụ'],
@@ -57,11 +72,36 @@ function isNavActive(url: string, path: string): boolean {
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
     <meta name="description" content={description}/>
     <meta name="theme-color" content="#082c4a"/>
-    <meta property="og:title" content={title + ' | Vệ Sinh Tino'}/>
+    {noindex ? (
+      <meta name="robots" content="noindex, nofollow"/>
+    ) : (
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
+    )}
+    <link rel="canonical" href={canonicalUrl}/>
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title + ' | ' + SITE_NAME}/>
     <meta property="og:description" content={description}/>
-    <meta property="og:type" content="website"/>
+    <meta property="og:url" content={canonicalUrl}/>
+    <meta property="og:site_name" content={SITE_NAME}/>
+    <meta property="og:locale" content="vi_VN"/>
+    <meta property="og:type" content={isArticle ? 'article' : 'website'}/>
+    <meta property="og:image" content={resolvedOgImage}/>
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content={title + ' | ' + SITE_NAME}/>
+    <meta name="twitter:description" content={description}/>
+    <meta name="twitter:image" content={resolvedOgImage}/>
+
     <link rel="icon" type="image/webp" href={image('e88c21372a262586')}/>
-    <title>{title} | Vệ Sinh Tino</title>
+    <title>{title} | {SITE_NAME}</title>
+
+    <!-- Structured Data (JSON-LD) -->
+    {combinedSchemas.map((s) => (
+      <script type="application/ld+json" set:html={JSON.stringify(s).replace(/</g, '\\u003c')} />
+    ))}
+
     <!-- Astro ClientRouter for instant SPA navigation without page reloads -->
     <ClientRouter />
     <Analytics />
@@ -151,7 +191,6 @@ function isNavActive(url: string, path: string): boolean {
       <img id="dialog-image" src="" alt=""/>
       <p id="dialog-caption"></p>
     </dialog>
-
 
     <script src="../scripts/main.ts"></script>
   </body>

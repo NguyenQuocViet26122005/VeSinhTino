@@ -51,7 +51,7 @@ const SERVICES: EstimatorService[] = [
         min: total,
         max: total,
         unitRate: 'Trọn gói theo diện tích',
-        note: `Tổng vệ sinh căn hộ chung cư trọn gói ${qty}m² (cam kết không phát sinh phụ phí sau khi thống nhất).`
+        note: `Tổng vệ sinh căn hộ chung cư trọn gói ${qty}m² (chi phí thống nhất theo hiện trạng trước khi thực hiện).`
       };
     }
   },
@@ -98,7 +98,7 @@ const SERVICES: EstimatorService[] = [
           min: qty * 6000,
           max: qty * 10000,
           unitRate: '6.000 – 10.000 đ/m²',
-          note: 'Mức đơn giá ưu đãi cho nhà xưởng quy mô lớn trên 1.000m².'
+          note: 'Mức đơn giá tham khảo cho nhà xưởng quy mô lớn trên 1.000m².'
         };
       }
     }
@@ -145,7 +145,7 @@ const SERVICES: EstimatorService[] = [
       min: qty * 15000,
       max: qty * 20000,
       unitRate: '15.000 – 20.000 đ/m²',
-      note: 'Áp dụng cho giặt thảm văn phòng bằng máy mâm xoay tạo bọt và hút nước dơ 3 motor.'
+      note: 'Áp dụng cho giặt thảm văn phòng theo diện tích và hiện trạng cần làm sạch.'
     })
   }
 ];
@@ -232,7 +232,7 @@ export const CostEstimator: React.FC = () => {
         <div className="estimator-pill">CÔNG CỤ MINH BẠCH</div>
         <h3 className="estimator-title">Ước tính chi phí dự kiến</h3>
         <p className="estimator-subtitle">
-          Dựa trên bảng giá công bố chính thức của Vệ Sinh Tino. Không phát sinh chi phí ẩn.
+          Dựa trên bảng giá công bố của Vệ Sinh Tino. Chi phí cụ thể được trao đổi theo hiện trạng thực tế.
         </p>
       </div>
 
@@ -402,7 +402,7 @@ export const CostEstimator: React.FC = () => {
                 rel="noopener noreferrer"
                 className="zalo-quick-link"
               >
-                Gửi ảnh qua Zalo để có giá chuẩn ngay <span aria-hidden="true">→</span>
+                Gửi ảnh qua Zalo để trao đổi báo giá thuận tiện <span aria-hidden="true">→</span>
               </a>
             </div>
           </div>

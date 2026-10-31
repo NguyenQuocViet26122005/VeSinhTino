@@ -11,7 +11,7 @@ export const GET: APIRoute = () => {
   const body = [
     '# Vệ Sinh Tino',
     '',
-    `> Dịch vụ vệ sinh nhà ở, căn hộ chung cư, vệ sinh công nghiệp sau xây dựng, nhà xưởng, kính tòa nhà, giặt thảm và giặt ghế sofa tại Thành phố Hồ Chí Minh. Hotline/Zalo ${contact.display}, làm việc ${contact.hours}.`,
+    `> Tổng vệ sinh công nghiệp và nhà ở tại Thành phố Hồ Chí Minh: văn phòng, trường học, khách sạn, nhà xưởng, kính tòa nhà, nhà và công trình sau xây dựng, căn hộ chung cư, giặt thảm và giặt ghế sofa. Hotline/Zalo ${contact.display}, làm việc ${contact.hours}.`,
     '',
     'Tino khảo sát hoặc xem ảnh/video hiện trạng, thống nhất hạng mục và chi phí trước khi làm, khách nghiệm thu từng hạng mục trước khi thanh toán. Giá dưới đây là giá tham khảo; giá thực tế phụ thuộc diện tích và mức độ bám bẩn.',
     '',

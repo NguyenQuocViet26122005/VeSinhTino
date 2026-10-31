@@ -79,6 +79,13 @@ function initWow() {
         0.25
       );
     }
+    if (document.querySelector('.hero-intents a')) {
+      opening.from(
+        '.hero-intents a',
+        { y: 10, opacity: 0, stagger: 0.06, duration: 0.42, clearProps: 'transform,opacity' },
+        0.38
+      );
+    }
     if (document.querySelector('.window-perspective')) {
       opening.from('.window-perspective', { y: 40, opacity: 0, duration: 0.9, clearProps: 'opacity' }, 0.1);
     }

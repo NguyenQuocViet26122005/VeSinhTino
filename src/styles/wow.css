@@ -44,23 +44,6 @@
 
 .wow-hero-copy a { pointer-events: auto; }
 
-.wow-location {
-  font-size: 13px;
-  letter-spacing: .04em;
-  color: #c5e5f5;
-  margin-bottom: clamp(12px, 1.8vh, 20px);
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.wow-location > span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--lime);
-}
-
 .wow-hero h1 {
   font-weight: 500;
   margin: 0;
@@ -80,9 +63,10 @@
 
 .hero-line {
   display: block;
-  font-size: clamp(34px, 4.2vw, 64px);
-  line-height: 1.18;
-  letter-spacing: -.055em;
+  max-width: 15ch;
+  font-size: clamp(32px, 3.5vw, 54px);
+  line-height: 1.14;
+  letter-spacing: -.04em;
   margin-top: 0;
 }
 
@@ -100,6 +84,30 @@
   gap: 24px;
   flex-wrap: wrap;
 }
+
+.hero-intents {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.hero-intents a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 8px 13px;
+  border: 1px solid #a9e7f566;
+  border-radius: 999px;
+  color: #d8eff8;
+  font-size: 12px;
+  line-height: 1.2;
+  text-underline-offset: 3px;
+  transition: transform 160ms var(--ease-out), color 160ms var(--ease-out), border-color 160ms var(--ease-out), background-color 160ms var(--ease-out);
+}
+
+.hero-intents a:active { transform: scale(.97); }
 
 /* ThreeUI Understory Arrow Pill Adaptation */
 .wow-button {
@@ -828,6 +836,7 @@
   .close-wordmark:hover > span { transform: rotate(192deg) scale(1.1); color: var(--lime); }
   .tino-glass-link:hover { background: #ffffff1c; transform: translateY(-2px); }
   .tino-glass-link:hover svg { transform: translateX(3px); }
+  .hero-intents a:hover { color: #082c4a; border-color: var(--lime); background: var(--lime); transform: translateY(-2px); }
 }
 
 @media(min-width: 1600px) {
@@ -864,9 +873,6 @@
   .wow-hero-copy {
     top: clamp(16px, 3vh, 32px);
   }
-  .wow-location {
-    margin-bottom: 12px;
-  }
   .hero-word {
     font-size: clamp(80px, 11vw, 145px);
     margin-bottom: 4px;
@@ -880,6 +886,8 @@
     font-size: 14px;
     line-height: 1.5;
   }
+  .hero-intents { margin-top: 14px; }
+  .hero-intents a { min-height: 34px; padding-block: 7px; }
   .wow-button {
     min-height: 48px;
     padding: 5px 8px 5px 20px;
@@ -923,11 +931,11 @@
     width: 100%;
     pointer-events: auto;
   }
-  .wow-location { font-size: 10px; margin-bottom: 16px; }
   .hero-word { font-size: clamp(84px, 18vw, 120px); line-height: 1; margin-bottom: 10px; }
-  .hero-line { font-size: clamp(32px, 6.5vw, 44px); line-height: 1.2; }
+  .hero-line { max-width: 18ch; font-size: clamp(30px, 5.8vw, 42px); line-height: 1.18; }
   .wow-hero-description { font-size: 14px; margin: 18px 0; }
   .hero-actions { gap: 18px; }
+  .hero-intents { margin-top: 16px; }
   .wow-button { min-height: 54px; padding: 13px 22px; gap: 35px; }
   .hero-secondary-link { font-size: 12px; }
   .glass-world {
@@ -996,10 +1004,11 @@
     top: auto;
     width: 100%;
   }
-  .wow-location { font-size: 12.5px; gap: 8px; margin-bottom: 16px; }
   .hero-word { font-size: clamp(72px, 20vw, 100px); line-height: 1; margin-bottom: 8px; }
-  .hero-line { font-size: clamp(26px, 7vw, 36px); line-height: 1.2; }
-  .wow-hero-description { font-size: 13.5px; margin: 16px 0; }
+  .hero-line { max-width: 17ch; font-size: clamp(25px, 6.7vw, 34px); line-height: 1.2; }
+  .wow-hero-description { font-size: 13.5px; margin: 16px 0; max-width: 38ch; }
+  .hero-intents { gap: 7px; margin-top: 15px; }
+  .hero-intents a { min-height: 34px; padding: 7px 11px; font-size: 11.5px; }
   .glass-world {
     position: relative;
     top: auto;
@@ -1106,11 +1115,11 @@
 }
 
 @media(max-width: 370px) {
-  .wow-location { font-size: 11.5px; }
   .wow-hero { padding: 20px 14px 28px; gap: 20px; min-height: auto; }
   .glass-world { height: 350px; width: min(100%, 280px); }
-  .hero-line { font-size: 30px; }
+  .hero-line { font-size: 26px; }
   .hero-word { font-size: 70px; }
+  .hero-intents a { font-size: 11px; padding-inline: 10px; }
   .wow-intro h2 { font-size: 24px; }
   .service-index-row > button > span:nth-child(2) { font-size: 18px; }
   .service-index-row > button { gap: 10px; }
@@ -1122,7 +1131,7 @@
   .window-perspective { transform: rotate(-3deg); }
   .window-haze { backdrop-filter: none; }
   .wow-button:active { transform: none; }
-  .hero-word, .hero-line, .wow-hero-description { transform: none !important; opacity: 1 !important; }
+  .hero-word, .hero-line, .wow-hero-description, .hero-intents a { transform: none !important; opacity: 1 !important; }
   .daylight-field, .glass-instruction { transition: none; }
   .window-shine { background: linear-gradient(115deg, transparent, #ffffff15, transparent); }
 }

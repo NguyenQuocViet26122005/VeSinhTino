@@ -14,7 +14,7 @@ export async function responsiveImages(paths: string[]): Promise<ResponsiveImage
     const load = imageModules[`../../public${path}`];
     if (!load) throw new Error(`Missing local image: ${path}`);
     const { default: src } = await load();
-    const widths = [...new Set([320, 480, 640, 960, Math.min(src.width, 1280)].filter(width => width <= src.width))];
+    const widths = [...new Set([320, 480, 560, 640, 720, 960, Math.min(src.width, 1280)].filter(width => width <= src.width))];
     const image = await getImage({ src, width: Math.min(src.width, 640), widths, format: 'webp', quality: 80 });
     return [path, { src: image.src, srcSet: image.srcSet.attribute }];
   })));

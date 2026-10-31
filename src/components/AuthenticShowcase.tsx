@@ -346,7 +346,7 @@ export const AuthenticShowcase: React.FC<{ images?: ResponsiveImages }> = ({ ima
               onClick={() => openModal(item)}
               role="button"
               tabIndex={0}
-              aria-label={`Xem chi tiết ảnh: ${item.title}`}
+              aria-label={`${item.tag} - Xem chi tiết ảnh: ${item.title}`}
               onKeyDown={e => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
@@ -373,11 +373,11 @@ export const AuthenticShowcase: React.FC<{ images?: ResponsiveImages }> = ({ ima
                   className="showcase-img"
                 />
               </GlareHover>
-              <span className="showcase-badge">{item.tag}</span>
+              <span className="showcase-badge" aria-hidden="true">{item.tag}</span>
               <button
                 type="button"
                 className="showcase-zoom-btn"
-                aria-label="Phóng to ảnh"
+                aria-label={`Phóng to ảnh: ${item.title}`}
                 onClick={e => {
                   e.stopPropagation();
                   openModal(item);

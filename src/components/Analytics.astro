@@ -139,10 +139,33 @@ const enabled = import.meta.env.PROD && /^G-[A-Z0-9]+$/.test(measurementId || ''
         page_location: page, page_referrer: referrer
       });
       if (!document.querySelector('script[src^="https://www.googletagmanager.com/gtag/js"]')) {
-        const script = document.createElement('script');
-        script.async = true;
-        script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`;
-        document.head.append(script);
+        const injectScript = () => {
+          if (document.querySelector('script[src^="https://www.googletagmanager.com/gtag/js"]')) return;
+          const script = document.createElement('script');
+          script.async = true;
+          script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`;
+          document.head.append(script);
+        };
+
+        if (typeof window !== 'undefined' && typeof (window as any).requestIdleCallback === 'function') {
+          (window as any).requestIdleCallback(injectScript, { timeout: 1500 });
+        } else if (typeof setTimeout === 'function') {
+          setTimeout(injectScript, 500);
+        } else {
+          injectScript();
+        }
+
+        const onInteraction = () => {
+          ['pointerdown', 'touchstart', 'scroll', 'keydown'].forEach(evt => {
+            window.removeEventListener(evt, onInteraction, { capture: true });
+          });
+          injectScript();
+        };
+        if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+          ['pointerdown', 'touchstart', 'scroll', 'keydown'].forEach(evt => {
+            window.addEventListener(evt, onInteraction, { capture: true, passive: true, once: true });
+          });
+        }
       }
       initialized = true;
     }

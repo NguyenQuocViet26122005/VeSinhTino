@@ -217,6 +217,18 @@ export const AuthenticShowcase: React.FC<{ images?: ResponsiveImages }> = ({ ima
     return PROJECTS.filter(p => p.category === activeTab);
   }, [activeTab]);
 
+  // Phones show every photo in the swipe row. The extra cards are created only after
+  // hydration (when the section nears the viewport), so the first page load stays light.
+  const [isSwipeLayout, setIsSwipeLayout] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia('(max-width: 768px)');
+    const sync = () => setIsSwipeLayout(query.matches);
+    sync();
+    query.addEventListener('change', sync);
+    return () => query.removeEventListener('change', sync);
+  }, []);
+  const displayed = isExpanded || isSwipeLayout ? filtered : filtered.slice(0, INITIAL_COUNT);
+
 
   const lastActiveElement = useRef<HTMLElement | null>(null);
   const modalBoxRef = useRef<HTMLDivElement | null>(null);
@@ -334,10 +346,10 @@ export const AuthenticShowcase: React.FC<{ images?: ResponsiveImages }> = ({ ima
       </div>
 
       {/* Grid of Projects with Storytelling Layout. Desktop shows INITIAL_COUNT until expanded;
-          mobile is a horizontal swipe row, so every photo stays in the row (CSS) and the button is hidden. */}
+          on phones it is a horizontal swipe row with every photo and no load-more button (CSS). */}
       <div className="showcase-grid">
-        {filtered.map((item, index) => (
-          <article key={item.id} className={index >= INITIAL_COUNT && !isExpanded ? 'showcase-card is-extra' : 'showcase-card'}>
+        {displayed.map(item => (
+          <article key={item.id} className="showcase-card">
             <div
               className="showcase-media"
               onClick={() => openModal(item)}

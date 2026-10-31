@@ -1534,10 +1534,6 @@
 }
 
 /* --- 7. Showcase Load More & Collapse Controls --- */
-/* Desktop grid: photos past the first six wait for "Xem thêm". */
-.showcase-card.is-extra {
-  display: none;
-}
 .showcase-expand-wrap {
   display: flex;
   justify-content: center;
@@ -1602,9 +1598,6 @@
 
 /* Mobile is a swipe row: every photo is reachable by swiping, so no load-more button. */
 @media (max-width: 768px) {
-  .showcase-card.is-extra {
-    display: flex;
-  }
   .showcase-expand-wrap {
     display: none;
   }

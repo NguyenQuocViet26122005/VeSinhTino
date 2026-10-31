@@ -1089,9 +1089,10 @@
   .price-heading h2 br { display: block; }
   .price-heading > p:first-child { font-size: 12.5px; letter-spacing: .08em; margin-bottom: 22px; }
   .price-heading > p { font-size: 14.5px; }
-  .mobile-table-note { display: block; font-size: 12.5px; color: var(--muted); margin-bottom: 12px; }
-  .home-page th, .home-page td { padding: 20px 17px; }
-  .home-page td.price { font-size: 17px; }
+  /* Price tables fit the phone screen so prices are never cut off; no swipe needed. */
+  .home-page table { min-width: 0; }
+  .home-page th, .home-page td { padding: 16px 12px; }
+  .home-page td.price { font-size: 16px; white-space: normal; }
   .wow-process { padding-block: 65px; gap: 35px; }
   .wow-process > h2 { font-size: clamp(24px, 5.5vw, 30px); }
   .wow-process li { gap: 23px; padding-block: 23px; }
@@ -1762,4 +1763,15 @@
 @media (prefers-reduced-motion: reduce) {
   .location-card { transition: none; }
   .location-card:hover { transform: none; }
+}
+
+/* Touch: text links get a 44px tap area without changing their look. */
+@media (pointer: coarse) {
+  .wow-inline-link,
+  .location-map-link,
+  .close-sublinks a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
 }

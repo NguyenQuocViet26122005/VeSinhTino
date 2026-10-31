@@ -129,6 +129,24 @@ export const ContactForm: React.FC = () => {
     return false;
   };
 
+  // First-touch ad attribution saved by Analytics; optional and allow-listed.
+  const readCampaign = (): Record<string, string> => {
+    try {
+      const raw = JSON.parse(sessionStorage.getItem('tino:campaign') || '{}') as Record<string, unknown>;
+      const pick = (key: string, max: number) => typeof raw[key] === 'string' ? (raw[key] as string).slice(0, max) : '';
+      const clickKey = ['gclid', 'gbraid', 'wbraid'].find(key => pick(key, 256));
+      const out: Record<string, string> = {
+        clickId: clickKey ? pick(clickKey, 256) : '',
+        clickIdType: clickKey || '',
+        utmSource: pick('utm_source', 100),
+        utmCampaign: pick('utm_campaign', 100),
+        utmTerm: pick('utm_term', 100),
+        landing: pick('landing', 200)
+      };
+      return Object.fromEntries(Object.entries(out).filter(([, value]) => value));
+    } catch { return {}; }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (requestInFlight.current) return;
@@ -146,7 +164,7 @@ export const ContactForm: React.FC = () => {
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, phone: cleanPhone, honeypot }),
+        body: JSON.stringify({ ...formData, phone: cleanPhone, honeypot, ...readCampaign() }),
         signal: controller.signal
       });
       const result = await response.json().catch(() => null) as { ok?: boolean } | null;
@@ -448,7 +466,7 @@ export const ContactForm: React.FC = () => {
                   id="user-notes"
                   rows={2}
                   enterKeyHint="done"
-                  placeholder="VD: Chung cư 2 phòng ngủ 65m², mới sửa xong cần dọn vào ở..."
+                  placeholder="VD: Chung cư 2 phòng ngủ 65m², mới sửa xong cần dọn vào ở…"
                   value={formData.notes}
                   onChange={e => setFormData({ ...formData, notes: e.target.value })}
                   className="form-textarea"
@@ -456,7 +474,7 @@ export const ContactForm: React.FC = () => {
               </div>
 
               <button type="submit" disabled={submitting} className="button form-submit-btn">
-                {submitting ? 'Đang gửi yêu cầu...' : 'Gửi yêu cầu khảo sát & báo giá'}
+                {submitting ? 'Đang gửi yêu cầu…' : 'Gửi yêu cầu khảo sát & báo giá'}
                 <span aria-hidden="true">↗</span>
               </button>
               <p className="form-disclaimer">

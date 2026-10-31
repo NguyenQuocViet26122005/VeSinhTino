@@ -222,7 +222,7 @@ function initMain() {
 
       const h1 = document.querySelector('.inner-page .service-hero h1, .inner-page .page-intro h1, .inner-page .not-found-code');
       if (h1) {
-        heroTl.from(h1, { y: 28, opacity: 0, duration: 0.75, clearProps: 'transform,opacity' }, '-=0.35');
+        heroTl.from(h1, { y: 28, opacity: 0.01, duration: 0.75, clearProps: 'transform,opacity' }, '-=0.35');
       }
 
       const heroText = document.querySelectorAll('.inner-page .service-hero p, .inner-page .page-intro > p, .inner-page .service-hero .tag');
@@ -232,12 +232,13 @@ function initMain() {
 
       const heroMedia = document.querySelector<HTMLElement>('.inner-page .service-hero > img, .inner-page .about-teaser > img');
       if (heroMedia) {
-        heroTl.from(heroMedia, { scale: 0.95, y: 22, opacity: 0, duration: 0.85, ease: 'power2.out', clearProps: 'transform,opacity' }, '-=0.5');
+        // Start at 0.01, not 0: looks identical, but the photo counts as painted for LCP.
+        heroTl.from(heroMedia, { scale: 0.95, y: 22, opacity: 0.01, duration: 0.85, ease: 'power2.out', clearProps: 'transform,opacity' }, '-=0.5');
       }
 
       const articleImg = document.querySelector<HTMLElement>('.inner-page .article-layout > img');
       if (articleImg) {
-        gsap.from(articleImg, { opacity: 0, duration: 0.6, ease: 'power2.out', clearProps: 'opacity' });
+        gsap.from(articleImg, { opacity: 0.01, duration: 0.6, ease: 'power2.out', clearProps: 'opacity' });
       }
 
       // 2. Section Headings Scroll Reveals

@@ -354,3 +354,10 @@
     padding: 18px 16px;
   }
 }
+
+/* Article reading progress: CSS scroll timeline only, no script. Hidden where unsupported. */
+.read-progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:60;pointer-events:none;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,#0872af,#a9e7f5);display:none}
+@supports (animation-timeline: scroll()){.read-progress{display:block;animation:read-progress linear both;animation-timeline:scroll(root block)}}
+@keyframes read-progress{to{transform:scaleX(1)}}
+/* Touch: phone and email links get a 44px tap area without changing their look. */
+@media (pointer: coarse){.contact-band .big-phone,.inner-page .contact-card>a{min-height:44px;display:inline-flex;align-items:center}}

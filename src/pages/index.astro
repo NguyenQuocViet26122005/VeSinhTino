@@ -12,6 +12,9 @@ import ContactForm from '../components/ContactForm';
 import { commonPrices, apartmentPrices, contact, steps, faqs } from '../data/site';
 import '../styles/wow.css';
 import { responsiveImages } from '../lib/responsive-images';
+import { getLocalBusinessSchemas, getFaqSchema, SITE_URL } from '../lib/seo-schema';
+
+const homeSchema = [...getLocalBusinessSchemas(), getFaqSchema(faqs as [string, string][], `${SITE_URL}/`)];
 
 const projectImages = await responsiveImages(PROJECTS.map(project => project.image));
 const serviceImages = await responsiveImages(SERVICES_DATA.map(service => service.photo));
@@ -23,7 +26,7 @@ const heroAvifFull = await getImage({ src: heroPhoto, width: heroPhoto.width, he
 const heroAvifSrcset = `${heroAvif.srcSet.attribute}, ${heroAvifFull.src} ${heroPhoto.width}w`;
 ---
 
-<Layout home title="Dịch vụ vệ sinh nhà ở & công nghiệp tại TP.HCM" description="Dịch vụ vệ sinh nhà ở, căn hộ chung cư và vệ sinh công nghiệp tại TP.HCM. Báo giá tham khảo từ 1.600.000đ/căn, vệ sinh sau xây dựng từ 12.000đ/m². Tiếp nhận yêu cầu & tư vấn hotline 0925 649 666.">
+<Layout home schema={homeSchema} title="Dịch vụ vệ sinh nhà ở & công nghiệp tại TP.HCM" description="Dịch vụ vệ sinh nhà ở, căn hộ chung cư và vệ sinh công nghiệp tại TP.HCM. Báo giá tham khảo từ 1.600.000đ/căn, vệ sinh sau xây dựng từ 12.000đ/m². Tiếp nhận yêu cầu & tư vấn hotline 0925 649 666.">
   <!-- Scene 1: Spatial Opening with Squeegee Wipe & Daylight -->
   <section class="wow-hero" aria-labelledby="hero-title">
     <div class="daylight-field" aria-hidden="true"><i></i><i></i><i></i></div>

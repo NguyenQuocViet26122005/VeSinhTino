@@ -566,6 +566,13 @@
   outline: none;
 }
 
+/* Keyboard users still see where they are; the wrapper border stays the visual frame. */
+.qty-number-input:focus-visible {
+  outline: 2px solid #0872af;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
 .qty-unit-label {
   font-size: 13px;
   font-weight: 600;
@@ -1527,6 +1534,10 @@
 }
 
 /* --- 7. Showcase Load More & Collapse Controls --- */
+/* Desktop grid: photos past the first six wait for "Xem thêm". */
+.showcase-card.is-extra {
+  display: none;
+}
 .showcase-expand-wrap {
   display: flex;
   justify-content: center;
@@ -1586,5 +1597,15 @@
     width: 100%;
     justify-content: center;
     padding: 13px 20px;
+  }
+}
+
+/* Mobile is a swipe row: every photo is reachable by swiping, so no load-more button. */
+@media (max-width: 768px) {
+  .showcase-card.is-extra {
+    display: flex;
+  }
+  .showcase-expand-wrap {
+    display: none;
   }
 }

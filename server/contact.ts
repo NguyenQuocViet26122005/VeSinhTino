@@ -76,7 +76,8 @@ export async function handleContact(request: Request, env: ContactEnv, send: typ
     if (bodyTimedOut) return json(408, { ok: false, error: 'Gửi dữ liệu quá lâu. Vui lòng thử lại.' });
     return json(400, { ok: false, error: 'Dữ liệu không hợp lệ. Vui lòng thử lại.' });
   } finally { clearTimeout(bodyTimeout); }
-  const limits = { name: 100, phone: 30, service: 150, area: 100, notes: 1500, honeypot: 200 };
+  const limits = { name: 100, phone: 30, service: 150, area: 100, notes: 1500, honeypot: 200,
+    clickId: 256, clickIdType: 10, utmSource: 100, utmCampaign: 100, utmTerm: 100, landing: 200 };
   for (const [key, limit] of Object.entries(limits)) {
     if (data[key] !== undefined && (typeof data[key] !== 'string' || (data[key] as string).length > limit)) {
       return json(400, { ok: false, error: 'Thông tin không hợp lệ hoặc quá dài. Vui lòng kiểm tra lại.' });
@@ -88,6 +89,14 @@ export async function handleContact(request: Request, env: ContactEnv, send: typ
   if (!/^(?:0|\+84)[0-9]{9}$/.test(phone)) {
     return json(400, { ok: false, error: 'Vui lòng kiểm tra số điện thoại (10 chữ số hoặc dạng +84).' });
   }
+  // Optional ad attribution. Malformed values are dropped, never rejected, so a lead is not lost.
+  const clickIdType = ['gclid', 'gbraid', 'wbraid'].includes(text('clickIdType')) ? text('clickIdType') : '';
+  const clickId = clickIdType && /^[A-Za-z0-9_-]{8,256}$/.test(text('clickId')) ? text('clickId') : '';
+  const landing = /^\/[A-Za-z0-9/_-]{0,199}$/.test(text('landing')) ? text('landing') : '';
+  const campaignParts = [text('utmSource'), text('utmCampaign'), text('utmTerm')].map(v => v.replace(/[\r\n]+/g, ' ')).filter(Boolean);
+  const sourceLine = clickId
+    ? `Nguồn: Google Ads (${clickIdType}: ${clickId})`
+    : campaignParts.length ? `Nguồn: ${campaignParts.join(' / ')}` : 'Nguồn: Website (không qua quảng cáo có mã)';
   const token = env.TELEGRAM_BOT_TOKEN?.trim();
   // The same two private accounts receive leads and may request traffic reports.
   const chatIds = [env.TELEGRAM_CHAT_ID?.trim(), env.TELEGRAM_REPORT_CHAT_ID_2?.trim()];
@@ -103,7 +112,9 @@ export async function handleContact(request: Request, env: ContactEnv, send: typ
     `Dịch vụ: ${text('service') || 'Chưa chọn'}`,
     `Diện tích / Khối lượng: ${text('area') || 'Chưa cung cấp'}`,
     `Ghi chú / Địa chỉ: ${text('notes') || 'Không có'}`,
-    `Thời gian: ${new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}`
+    `Thời gian: ${new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}`,
+    sourceLine,
+    ...(landing ? [`Trang vào đầu tiên: ${landing}`] : [])
   ].join('\n');
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 8000);

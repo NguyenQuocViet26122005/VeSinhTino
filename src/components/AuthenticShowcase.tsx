@@ -217,10 +217,6 @@ export const AuthenticShowcase: React.FC<{ images?: ResponsiveImages }> = ({ ima
     return PROJECTS.filter(p => p.category === activeTab);
   }, [activeTab]);
 
-  const displayed = useMemo(() => {
-    if (isExpanded) return filtered;
-    return filtered.slice(0, INITIAL_COUNT);
-  }, [filtered, isExpanded]);
 
   const lastActiveElement = useRef<HTMLElement | null>(null);
   const modalBoxRef = useRef<HTMLDivElement | null>(null);
@@ -334,13 +330,14 @@ export const AuthenticShowcase: React.FC<{ images?: ResponsiveImages }> = ({ ima
       {/* Mobile Swipe Hint */}
       <div className="showcase-swipe-hint">
         <span>Vuốt ngang xem ảnh thực tế</span>
-        <span className="swipe-badge">{displayed.length} ảnh →</span>
+        <span className="swipe-badge">{filtered.length} ảnh →</span>
       </div>
 
-      {/* Grid of Projects with Storytelling Layout (compact with load more) */}
+      {/* Grid of Projects with Storytelling Layout. Desktop shows INITIAL_COUNT until expanded;
+          mobile is a horizontal swipe row, so every photo stays in the row (CSS) and the button is hidden. */}
       <div className="showcase-grid">
-        {displayed.map(item => (
-          <article key={item.id} className="showcase-card">
+        {filtered.map((item, index) => (
+          <article key={item.id} className={index >= INITIAL_COUNT && !isExpanded ? 'showcase-card is-extra' : 'showcase-card'}>
             <div
               className="showcase-media"
               onClick={() => openModal(item)}

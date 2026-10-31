@@ -35,6 +35,17 @@ const enabled = import.meta.env.PROD && /^G-[A-Z0-9]+$/.test(measurementId || ''
     } catch { /* ignore malformed query */ }
   }
 
+  // Keep first-touch ad attribution for this tab so the lead form can report which
+  // ad click produced the enquiry. Only allow-listed campaign keys are stored.
+  try {
+    if (landingCampaignParams.toString() && !sessionStorage.getItem('tino:campaign')) {
+      sessionStorage.setItem('tino:campaign', JSON.stringify({
+        ...Object.fromEntries(landingCampaignParams),
+        landing: location.pathname.slice(0, 200)
+      }));
+    }
+  } catch { /* storage unavailable: attribution is optional */ }
+
   // Campaign parameters belong to the current Tino page, never to its referrer.
   // Preserves allowed campaign params without leaking arbitrary query params or fragments.
   function getSafePageLocation(): string {

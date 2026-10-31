@@ -1,5 +1,13 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    { "source": "/tin-tuc", "destination": "/cam-nang/", "permanent": true },
+    { "source": "/tin-tuc/", "destination": "/cam-nang/", "permanent": true },
+    { "source": "/category/dich-vu-phu", "destination": "/cam-nang/", "permanent": true },
+    { "source": "/category/dich-vu-phu/", "destination": "/cam-nang/", "permanent": true },
+    { "source": "/author/vesinhtinogmail-com", "destination": "/cam-nang/", "permanent": true },
+    { "source": "/author/vesinhtinogmail-com/", "destination": "/cam-nang/", "permanent": true }
+  ],
   "headers": [
     {
       "source": "/(.*)",

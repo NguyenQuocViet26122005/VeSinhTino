@@ -24,6 +24,7 @@ import {
   getBreadcrumbSchema,
   SITE_URL
 } from '../lib/seo-schema';
+import { responsiveImagesOrOriginal } from '../lib/responsive-images';
 
 export function getStaticPaths() {
   return [
@@ -48,6 +49,20 @@ const service = services.find((s) => s.slug === slug);
 const article = articles.find((a) => a.slug === slug);
 
 const isJournal = ['tin-tuc', 'cam-nang', 'category/dich-vu-phu', 'author/vesinhtinogmail-com'].includes(slug);
+// Same article list as /cam-nang/. Vercel 301-redirects these (vercel.json); elsewhere they stay out of the index.
+const isJournalAlias = isJournal && slug !== 'cam-nang';
+
+// Resized WebP renditions for every photo this page shows; the photo dialog keeps the original.
+const pagePhotoIds = [
+  ...(service ? [service.photo, ...service.photos] : []),
+  ...(article ? [article.photo] : []),
+  ...(isJournal ? articles.map((a) => a.photo) : []),
+  ...(slug === 'gioi-thieu' ? ['f073dd95d8ed1766', '7feaeec9c23f86043f45177ee81d9896', 'b486da45979bde972f03edd7f9a890e5'] : []),
+  ...(slug === 'tuyen-dung' ? ['3799e45e26386034'] : [])
+];
+const photos = await responsiveImagesOrOriginal(pagePhotoIds.map((id) => image(id)));
+const photo = (id: string) => photos[image(id)] ?? { src: image(id), srcSet: '' };
+const wideSizes = '(max-width: 700px) calc(100vw - 40px), (max-width: 1000px) 45vw, 600px';
 
 let title = 'Vệ Sinh Tino';
 let description = 'Dịch vụ vệ sinh Tino tại TP.HCM: vệ sinh nhà ở, công nghiệp, nhà xưởng, kính, giặt thảm và sofa. Xem bảng giá và liên hệ 0925 649 666.';
@@ -56,7 +71,14 @@ let ogImage = `${SITE_URL}/images/3b21a7ec444d0b39.webp`;
 
 if (service) {
   title = `${service.name} tại TP.HCM - Báo giá & Khảo sát`;
-  description = `${service.description} Tiếp nhận yêu cầu tại Quận 12, Phú Nhuận, Quận 7 và các khu vực tại TP.HCM. Báo giá rõ ràng theo hiện trạng, nghiệm thu trước khi thanh toán. Hotline 0925 649 666.`;
+  // Kept near 155 characters so Google shows the price and phone number instead of cutting them off.
+  // commonPrices mixes several services; for that list only its first row (sau xây dựng) describes this page.
+  const priced = (service.prices === commonPrices ? commonPrices.slice(0, 1) : service.prices || [])
+    .map((row) => ({ value: Number(row.price.replace(/^Từ\s+/i, '').split(/[–-]/)[0].replace(/\./g, '')), row }))
+    .filter((item) => Number.isFinite(item.value) && item.value > 0)
+    .sort((x, y) => x.value - y.value)[0];
+  const priceText = priced ? ` giá từ ${priced.value.toLocaleString('vi-VN')}đ/${priced.row.unit.toLowerCase()}` : '';
+  description = `${service.name} tại TP.HCM${priceText}. Khảo sát & báo giá theo hiện trạng, nghiệm thu rồi mới thanh toán. Hotline/Zalo ${contact.display}.`;
   ogImage = `${SITE_URL}/images/${service.photo}.webp`;
   const breadcrumbs = [
     { name: 'Trang chủ', url: '/' },
@@ -68,8 +90,8 @@ if (service) {
     getServiceSchema(service.name, service.description, buildCanonicalUrl(Astro.url.pathname), service.prices)
   ];
 } else if (article) {
-  title = `${article.title} | Cẩm nang Vệ Sinh Tino`;
-  description = `${article.lead} Hướng dẫn chi tiết, dễ áp dụng từ đội ngũ Vệ Sinh Tino tại TP.HCM.`;
+  title = article.title;
+  description = article.lead;
   ogImage = `${SITE_URL}/images/${article.photo}.webp`;
   const breadcrumbs = [
     { name: 'Trang chủ', url: '/' },
@@ -124,7 +146,7 @@ if (service) {
   pageSchema = [getBreadcrumbSchema(breadcrumbs)];
 }
 ---
-<Layout title={title} description={description} schema={pageSchema} ogImage={ogImage}>
+<Layout title={title} description={description} schema={pageSchema} ogImage={ogImage} alias={isJournalAlias}>
   {service ? (
     <>
       <section class="container service-hero">
@@ -147,7 +169,9 @@ if (service) {
           </div>
         </div>
         <img
-          src={image(service.photo)}
+          src={photo(service.photo).src}
+          srcset={photo(service.photo).srcSet || undefined}
+          sizes={wideSizes}
           alt={service.name}
           width="768"
           height="850"
@@ -234,7 +258,9 @@ if (service) {
                 aria-label={'Xem ảnh ' + service.name.toLowerCase()}
               >
                 <img
-                  src={image(id)}
+                  src={photo(id).src}
+                  srcset={photo(id).srcSet || undefined}
+                  sizes="(max-width: 700px) 45vw, 260px"
                   alt={service.name}
                   loading="lazy"
                   decoding="async"
@@ -295,6 +321,7 @@ if (service) {
         <p>{article.lead}</p>
       </section>
 
+      <div class="read-progress" aria-hidden="true"></div>
       <article class="container article-layout">
         <div>
           <nav class="article-toc" aria-label="Nội dung bài viết">
@@ -352,11 +379,13 @@ if (service) {
         </div>
 
         <img
-          src={image(article.photo)}
+          src={photo(article.photo).src}
+          srcset={photo(article.photo).srcSet || undefined}
+          sizes={wideSizes}
           alt={article.title}
           width="768"
           height="1024"
-          loading="lazy"
+          fetchpriority="high"
           decoding="async"
         />
       </article>
@@ -466,7 +495,9 @@ if (service) {
             {articles.map((a) => (
               <a href={'/' + a.slug + '/'} class="journal-card">
                 <img
-                  src={image(a.photo)}
+                  src={photo(a.photo).src}
+                  srcset={photo(a.photo).srcSet || undefined}
+                  sizes="(max-width: 700px) calc(100vw - 40px), (max-width: 1000px) 45vw, 420px"
                   alt={a.title}
                   loading="lazy"
                   decoding="async"
@@ -485,7 +516,7 @@ if (service) {
       {slug === 'gioi-thieu' && (
         <>
           <section class="container about-teaser">
-            <img src={image('f073dd95d8ed1766')} alt="Vệ Sinh Tino" width="768" height="1024" decoding="async" />
+            <img src={photo('f073dd95d8ed1766').src} srcset={photo('f073dd95d8ed1766').srcSet || undefined} sizes={wideSizes} alt="Vệ Sinh Tino" width="768" height="1024" decoding="async" />
             <div>
               <h2>
                 Một góc sạch.<br />Một niềm an tâm.
@@ -524,7 +555,9 @@ if (service) {
               <div class="about-fleet-grid">
                 <figure class="fleet-figure">
                   <img
-                    src={image('7feaeec9c23f86043f45177ee81d9896')}
+                    src={photo('7feaeec9c23f86043f45177ee81d9896').src}
+                    srcset={photo('7feaeec9c23f86043f45177ee81d9896').srcSet || undefined}
+                    sizes={wideSizes}
                     alt="Xe máy cơ động trang bị máy hút bụi công nghiệp và thang nhôm Tino"
                     width="768"
                     height="1024"
@@ -537,7 +570,9 @@ if (service) {
                 </figure>
                 <figure class="fleet-figure">
                   <img
-                    src={image('b486da45979bde972f03edd7f9a890e5')}
+                    src={photo('b486da45979bde972f03edd7f9a890e5').src}
+                    srcset={photo('b486da45979bde972f03edd7f9a890e5').srcSet || undefined}
+                    sizes={wideSizes}
                     alt="Đội ngũ kỹ thuật viên Tino làm việc đồng bộ tại công trình"
                     width="768"
                     height="1024"
@@ -633,7 +668,9 @@ if (service) {
         <div class="container">
           <section class="recruit-panel">
             <img
-              src={image('3799e45e26386034')}
+              src={photo('3799e45e26386034').src}
+                    srcset={photo('3799e45e26386034').srcSet || undefined}
+                    sizes={wideSizes}
               alt="Công việc vệ sinh sàn tại Tino"
               width="768"
               height="1024"

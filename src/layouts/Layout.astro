@@ -23,6 +23,8 @@ interface Props {
   ogImage?: string;
   schema?: Record<string, any> | Record<string, any>[];
   noindex?: boolean;
+  /** Old duplicate URL kept for links but redirected on Vercel: not indexed, links still followed. */
+  alias?: boolean;
 }
 
 const {
@@ -31,7 +33,8 @@ const {
   description = 'Dịch vụ vệ sinh Tino tại TP.HCM: vệ sinh nhà ở, công nghiệp, nhà xưởng, kính, giặt thảm và sofa. Xem bảng giá và liên hệ 0925 649 666.',
   ogImage,
   schema,
-  noindex = false
+  noindex = false,
+  alias = false
 } = Astro.props;
 
 const pathname = Astro.url.pathname;
@@ -74,6 +77,8 @@ function isNavActive(url: string, path: string): boolean {
     <meta name="theme-color" content="#082c4a"/>
     {noindex ? (
       <meta name="robots" content="noindex, nofollow"/>
+    ) : alias ? (
+      <meta name="robots" content="noindex, follow"/>
     ) : (
       <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
     )}

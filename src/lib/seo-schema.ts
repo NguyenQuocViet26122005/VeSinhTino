@@ -1,4 +1,4 @@
-import { contact, type PriceRow } from '../data/site';
+import { contact, services, type PriceRow } from '../data/site';
 
 export const SITE_URL = 'https://vesinhtino.com';
 export const SITE_NAME = 'Vệ Sinh Tino';
@@ -193,5 +193,49 @@ export function getArticleSchema(
       '@type': 'WebPage',
       '@id': url
     }
+  };
+}
+
+// One LocalBusiness per verified branch address. Uses only facts already published on the site
+// (no ratings, coordinates or opening days are invented).
+export function getLocalBusinessSchemas() {
+  return contact.addresses.map((addr, index) => {
+    const parts = addr.split(',').map((part) => part.trim()).filter(Boolean);
+    const withoutCity = parts.filter((part) => !/^TP\.?\s*HCM$/i.test(part));
+    const locality = withoutCity[withoutCity.length - 1];
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'HousekeepingService',
+      '@id': `${SITE_URL}/#location-${index + 1}`,
+      name: `${SITE_NAME} – ${locality}`,
+      url: `${SITE_URL}/`,
+      image: DEFAULT_OG_IMAGE,
+      logo: LOGO_URL,
+      telephone: contact.phone,
+      email: contact.email,
+      parentOrganization: { '@id': `${SITE_URL}/#organization` },
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: withoutCity.slice(0, -1).join(', '),
+        addressLocality: locality,
+        addressRegion: 'Thành phố Hồ Chí Minh',
+        addressCountry: 'VN'
+      },
+      areaServed: { '@type': 'City', name: 'Thành phố Hồ Chí Minh' },
+      knowsAbout: services.map((service) => service.name)
+    };
+  });
+}
+
+export function getFaqSchema(items: [string, string][], url: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${url}#faq`,
+    mainEntity: items.map(([question, answer]) => ({
+      '@type': 'Question',
+      name: question,
+      acceptedAnswer: { '@type': 'Answer', text: answer }
+    }))
   };
 }

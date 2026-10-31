@@ -19,3 +19,11 @@ export async function responsiveImages(paths: string[]): Promise<ResponsiveImage
     return [path, { src: image.src, srcSet: image.srcSet.attribute }];
   })));
 }
+
+// Interior pages: same build-time renditions, but a photo outside the glob (hero/logo
+// handled elsewhere) falls back to its original file instead of failing the build.
+export async function responsiveImagesOrOriginal(paths: string[]): Promise<ResponsiveImages> {
+  const known = [...new Set(paths)].filter(path => imageModules[`../../public${path}`]);
+  const built = await responsiveImages(known);
+  return Object.fromEntries([...new Set(paths)].map(path => [path, built[path] ?? { src: path, srcSet: '' }]));
+}

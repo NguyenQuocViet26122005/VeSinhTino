@@ -96,23 +96,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://vesinhtino.com/category/dich-vu-phu/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://vesinhtino.com/tin-tuc/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://vesinhtino.com/tuyen-dung/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://vesinhtino.com/author/vesinhtinogmail-com/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
   </url>
 </urlset>

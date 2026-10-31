@@ -73,6 +73,7 @@ function isNavActive(url: string, path: string): boolean {
   <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <slot name="head"/>
     <meta name="description" content={description}/>
     <meta name="theme-color" content="#082c4a"/>
     {noindex ? (

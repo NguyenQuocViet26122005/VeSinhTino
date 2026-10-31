@@ -67,10 +67,11 @@ function initWow() {
   mm.add('(prefers-reduced-motion: no-preference)', () => {
     const opening = gsap.timeline({ defaults: { ease: 'power3.out' } });
     if (document.querySelector('.hero-word')) {
-      opening.from('.hero-word', { y: 35, opacity: 0, duration: 0.8, clearProps: 'opacity' });
+      // Start at 0.01, not 0: looks identical, but the headline and photo count as painted for LCP.
+      opening.from('.hero-word', { y: 35, opacity: 0.01, duration: 0.8, clearProps: 'opacity' });
     }
     if (document.querySelector('.hero-line')) {
-      opening.from('.hero-line', { y: 22, opacity: 0, duration: 0.65, clearProps: 'opacity' }, 0.1);
+      opening.from('.hero-line', { y: 22, opacity: 0.01, duration: 0.65, clearProps: 'opacity' }, 0.1);
     }
     if (document.querySelector('.wow-hero-description, .hero-actions')) {
       opening.from(
@@ -87,7 +88,7 @@ function initWow() {
       );
     }
     if (document.querySelector('.window-perspective')) {
-      opening.from('.window-perspective', { y: 40, opacity: 0, duration: 0.9, clearProps: 'opacity' }, 0.1);
+      opening.from('.window-perspective', { y: 40, opacity: 0.01, duration: 0.9, clearProps: 'opacity' }, 0.1);
     }
 
     const motion = { progress: 35 };

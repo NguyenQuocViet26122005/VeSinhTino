@@ -39,6 +39,10 @@ test('webhook fails closed with absent, short or incorrect secret', async () => 
     assert.equal((await handleTrafficReport(request(update(), 'wrong'), { ...env, ...patch }, never, never)).status, 401);
   }
   assert.equal((await handleTrafficReport(new Request('https://tino.test/api/traffic-report'), env, never, never)).status, 405);
+  const sameLength = 'x'.repeat(env.TELEGRAM_WEBHOOK_SECRET.length);
+  assert.equal((await handleTrafficReport(request(update(), sameLength), env, never, never)).status, 401);
+  const noHeader = new Request('https://tino.test/api/traffic-report', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+  assert.equal((await handleTrafficReport(noHeader, env, never, never)).status, 401);
 });
 
 test('ignores other users, group chats, edited messages, plain text, files and unknown commands', async () => {

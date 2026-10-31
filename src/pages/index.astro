@@ -27,6 +27,8 @@ const heroAvifSrcset = `${heroAvif.srcSet.attribute}, ${heroAvifFull.src} ${hero
 ---
 
 <Layout home schema={homeSchema} title="Vệ sinh công nghiệp & nhà ở tại TP.HCM" description="Tổng vệ sinh công nghiệp tại TP.HCM: văn phòng, trường học, khách sạn, nhà xưởng, kính tòa nhà, nhà sau xây dựng. Khảo sát báo giá: 0925 649 666.">
+  <!-- The inline stylesheet is large: announce the hero photo before the browser has to reach its <img>. -->
+  <link slot="head" rel="preload" as="image" type="image/avif" imagesrcset={heroAvifSrcset} imagesizes={heroSizes} fetchpriority="high"/>
   <!-- Scene 1: Spatial Opening with Squeegee Wipe & Daylight -->
   <section class="wow-hero" aria-labelledby="hero-title">
     <div class="daylight-field" aria-hidden="true"><i></i><i></i><i></i></div>

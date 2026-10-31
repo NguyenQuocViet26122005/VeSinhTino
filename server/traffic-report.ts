@@ -1,4 +1,5 @@
 // Server-only. Reports are requested by allowed users through a Telegram webhook.
+import { timingSafeEqual } from 'node:crypto';
 import { analyticsHints, AnalyticsReadError } from './analytics-errors.mjs';
 import { botCommands } from './telegram-commands.mjs';
 export { AnalyticsReadError } from './analytics-errors.mjs';
@@ -77,6 +78,12 @@ const json = (status: number, body: Record<string, unknown>) => Response.json(bo
   status, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' }
 });
 
+function sameSecret(received: string, expected: string): boolean {
+  const a = Buffer.from(received);
+  const b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
 async function readUpdate(request: Request): Promise<unknown> {
   const reader = request.body?.getReader();
   if (!reader) throw new Error('empty body');
@@ -110,7 +117,7 @@ export async function handleTrafficReport(request: Request, env: TrafficEnv, rea
   send: typeof fetch = fetch, now = new Date(), readRealtime?: ReadRealtime): Promise<Response> {
   if (request.method !== 'POST') return json(405, { ok: false });
   const secret = env.TELEGRAM_WEBHOOK_SECRET?.trim();
-  if (!secret || !/^[A-Za-z0-9_-]{32,256}$/.test(secret) || request.headers.get('x-telegram-bot-api-secret-token') !== secret) {
+  if (!secret || !/^[A-Za-z0-9_-]{32,256}$/.test(secret) || !sameSecret(request.headers.get('x-telegram-bot-api-secret-token') ?? '', secret)) {
     return json(401, { ok: false });
   }
   if (request.headers.get('content-type')?.split(';')[0].trim().toLowerCase() !== 'application/json') return json(415, { ok: false });

@@ -20,6 +20,7 @@ const enabled = import.meta.env.PROD && /^G-[A-Z0-9]+$/.test(measurementId || ''
   const ADS_ID = 'AW-16551966773';
   const ADS_LABEL_CALL = 'aNzJCNaJqqwZELXwy9Q9';
   const ADS_LABEL_ZALO = 'E9l-CMiSrqwZELXwy9Q9';
+  const ADS_LABEL_LEAD = 'se-MCIOpgrAdELXwy9Q9';
 
   function sendAdsConversion(label: string) {
     analyticsWindow.gtag!('event', 'conversion', {
@@ -141,6 +142,7 @@ const enabled = import.meta.env.PROD && /^G-[A-Z0-9]+$/.test(measurementId || ''
 
     window.addEventListener('tino:lead-success', (e: Event) => {
       if (!analyticsWindow.gtag || !activeMeasurementId) return;
+      sendAdsConversion(ADS_LABEL_LEAD);
       const customEvent = e as CustomEvent<{ service?: string }>;
       const serviceCategory = typeof customEvent.detail?.service === 'string' && knownServices.has(customEvent.detail.service)
         ? customEvent.detail.service

@@ -271,6 +271,7 @@ test('real ContactForm emits one real Analytics lead only after API confirmation
   await Promise.all([first, duplicate]);
   assert.equal(a.events('generate_lead').length, 1);
   assert.equal(new URL(a.events('generate_lead')[0][2].page_location).pathname, '/lien-he/');
+  assert.equal(a.events('conversion').map(args => args[2].send_to).join(), 'AW-16551966773/se-MCIOpgrAdELXwy9Q9');
   assert.equal(JSON.stringify(a.events('generate_lead')).includes('PRIVATE_NOTE'), false);
   assert.equal(f.timers.size, 0);
 });
@@ -292,6 +293,7 @@ for (const [name, result] of failures) {
     const f = formHarness(a.window, async () => result());
     await f.submit();
     assert.equal(a.events('generate_lead').length, 0);
+    assert.equal(a.events('conversion').length, 0);
     assert.equal(f.fieldValue('user-phone'), '0900000000');
     assert.equal(f.fieldValue('user-notes'), 'PRIVATE_NOTE');
     assert.equal(f.timers.size, 0);

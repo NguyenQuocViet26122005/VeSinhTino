@@ -16,6 +16,18 @@ const enabled = import.meta.env.PROD && /^G-[A-Z0-9]+$/.test(measurementId || ''
   let activeMeasurementId = '';
   let currentReferrer = '';
 
+  // Public Google Ads identifiers, visible in every page that uses them.
+  const ADS_ID = 'AW-16551966773';
+  const ADS_LABEL_CALL = 'aNzJCNaJqqwZELXwy9Q9';
+  const ADS_LABEL_ZALO = 'E9l-CMiSrqwZELXwy9Q9';
+
+  function sendAdsConversion(label: string) {
+    analyticsWindow.gtag!('event', 'conversion', {
+      send_to: `${ADS_ID}/${label}`,
+      transport_type: 'beacon'
+    });
+  }
+
   // Store landing campaign parameters in-memory across the client session
   // to ensure ads attribution is maintained on subsequent page transitions.
   const landingCampaignParams = new URLSearchParams();
@@ -94,6 +106,7 @@ const enabled = import.meta.env.PROD && /^G-[A-Z0-9]+$/.test(measurementId || ''
       const currentPageLocation = getSafePageLocation();
 
       if (href.startsWith('tel:')) {
+        sendAdsConversion(ADS_LABEL_CALL);
         analyticsWindow.gtag('event', 'click_hotline', {
           send_to: activeMeasurementId,
           event_category: 'conversion',
@@ -102,6 +115,7 @@ const enabled = import.meta.env.PROD && /^G-[A-Z0-9]+$/.test(measurementId || ''
           page_referrer: currentReferrer
         });
       } else if (target.protocol === 'https:' && target.hostname === 'zalo.me') {
+        sendAdsConversion(ADS_LABEL_ZALO);
         analyticsWindow.gtag('event', 'click_zalo', {
           send_to: activeMeasurementId,
           event_category: 'conversion',
@@ -162,6 +176,8 @@ const enabled = import.meta.env.PROD && /^G-[A-Z0-9]+$/.test(measurementId || ''
         send_page_view: false, allow_google_signals: false,
         page_location: page, page_referrer: referrer
       });
+      // Configured on landing so the Ads click ID is kept for a later call or Zalo tap.
+      analyticsWindow.gtag('config', ADS_ID);
       if (!document.querySelector('script[src^="https://www.googletagmanager.com/gtag/js"]')) {
         const injectScript = () => {
           if (document.querySelector('script[src^="https://www.googletagmanager.com/gtag/js"]')) return;

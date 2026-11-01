@@ -94,7 +94,7 @@ test('real Astro script records one virtual view and the correct previous page t
     previousPath = path;
   }
   assert.equal(a.events('page_view').length, 4);
-  assert.equal(a.commands().filter(c => c[0] === 'config').length, 1);
+  assert.equal(a.commands().filter(c => c[0] === 'config').map(c => c[1]).join(), 'G-MOCKONLY,AW-16551966773');
   assert.equal(a.injectedScripts.length, 1);
   assert.equal(a.document.listeners.get('click').length, 1);
   assert.equal(a.window.listeners.get('tino:lead-success').length, 1);
@@ -116,6 +116,19 @@ test('real conversion listeners use current location/referrer and only count act
     assert.equal(new URL(event.page_location).pathname, '/lien-he/');
     assert.equal(event.page_referrer, 'https://vesinhtino.com/');
   }
+});
+
+test('real click listener sends one Ads conversion per actual call or Zalo tap, with the matching label', () => {
+  const a = analyticsHarness();
+  a.pageLoad();
+  const sent = () => a.events('conversion').map(args => args[2].send_to).join();
+  a.click('/lien-he/');
+  a.click('https://zalo.me.example.test/');
+  assert.equal(sent(), '');
+  a.click('tel:0925649666');
+  assert.equal(sent(), 'AW-16551966773/aNzJCNaJqqwZELXwy9Q9');
+  a.click('https://zalo.me/0925649666');
+  assert.equal(sent(), 'AW-16551966773/aNzJCNaJqqwZELXwy9Q9,AW-16551966773/E9l-CMiSrqwZELXwy9Q9');
 });
 
 test('real lead listener only sends known service labels, not arbitrary customer fields', () => {

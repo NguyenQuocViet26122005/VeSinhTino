@@ -25,22 +25,76 @@ export const PROJECTS: ProjectItem[] = [
     "image": "/images/f3e9578413dffb6cd7a69149858785c1.webp"
   },
   {
-    "id": "abce569d7fb37039",
-    "category": "glass",
-    "categoryLabel": "Kính cao ốc",
-    "title": "Vệ sinh kính mặt ngoài bằng xe nâng",
-    "caption": "Hình ảnh thao tác vệ sinh kính mặt ngoài tòa nhà bằng xe nâng.",
-    "tag": "Xe nâng người",
-    "image": "/images/abce569d7fb37039.webp"
+    "id": "b486da45979bde972f03edd7f9a890e5",
+    "category": "apartment",
+    "categoryLabel": "Căn hộ chung cư",
+    "title": "Vệ sinh nội thất căn hộ",
+    "caption": "Hình ảnh vệ sinh các khu vực kính, sàn và nội thất căn hộ.",
+    "tag": "Vệ sinh căn hộ",
+    "image": "/images/b486da45979bde972f03edd7f9a890e5.webp"
   },
   {
-    "id": "0822a0e36fddb2a9dd9a1b6424f8ff49",
-    "category": "factory",
-    "categoryLabel": "Kho xưởng",
-    "title": "Vệ sinh sàn khu vực nhà xưởng",
-    "caption": "Hình ảnh bề mặt sàn và không gian làm việc trong nhà xưởng.",
-    "tag": "Sàn nhà xưởng",
-    "image": "/images/0822a0e36fddb2a9dd9a1b6424f8ff49.webp"
+    "id": "e28b5ab0b1d848ea",
+    "category": "home",
+    "categoryLabel": "Nhà ở & Nhà phố",
+    "title": "Vệ sinh nhà phố sau thi công",
+    "caption": "Hình ảnh hạng mục vệ sinh trong không gian nhà phố.",
+    "tag": "Vệ sinh nhà phố",
+    "image": "/images/e28b5ab0b1d848ea.webp"
+  },
+  {
+    "id": "tino-chung-cu-binh-chanh",
+    "category": "apartment",
+    "categoryLabel": "Căn hộ chung cư",
+    "title": "Tổng vệ sinh căn hộ chung cư",
+    "caption": "Hình ảnh không gian phòng khách và các khu vực trong căn hộ.",
+    "tag": "Căn hộ chung cư",
+    "image": "/images/tino-chung-cu-binh-chanh.webp"
+  },
+  {
+    "id": "0dffb2a53aec534128d29cd9bf60aea5",
+    "category": "home",
+    "categoryLabel": "Nhà ở & Nhà phố",
+    "title": "Vệ sinh khu vực bếp",
+    "caption": "Hình ảnh hạng mục vệ sinh bếp và các bề mặt xung quanh.",
+    "tag": "Khu vực bếp",
+    "image": "/images/0dffb2a53aec534128d29cd9bf60aea5.webp"
+  },
+  {
+    "id": "tino-chung-cu-binh-chanh-phong-ngu",
+    "category": "apartment",
+    "categoryLabel": "Căn hộ chung cư",
+    "title": "Vệ sinh phòng ngủ và sàn gỗ",
+    "caption": "Hình ảnh không gian phòng ngủ và hạng mục sàn gỗ.",
+    "tag": "Sàn gỗ phòng ngủ",
+    "image": "/images/tino-chung-cu-binh-chanh-phong-ngu.webp"
+  },
+  {
+    "id": "92a7f6090b410117",
+    "category": "home",
+    "categoryLabel": "Nhà ở & Nhà cũ",
+    "title": "Vệ sinh nhà ở",
+    "caption": "Hình ảnh các hạng mục vệ sinh trong không gian nhà ở.",
+    "tag": "Nhà ở",
+    "image": "/images/92a7f6090b410117.webp"
+  },
+  {
+    "id": "122cac8e1bd2f9d6",
+    "category": "furnishing",
+    "categoryLabel": "Sofa & Thảm",
+    "title": "Giặt ghế sofa tại nhà",
+    "caption": "Hình ảnh thiết bị phun hút trong hạng mục giặt ghế sofa.",
+    "tag": "Giặt sofa tại nhà",
+    "image": "/images/122cac8e1bd2f9d6.webp"
+  },
+  {
+    "id": "tino-tham-may-giat",
+    "category": "furnishing",
+    "categoryLabel": "Sofa & Thảm",
+    "title": "Giặt thảm văn phòng",
+    "caption": "Hình ảnh hạng mục vệ sinh thảm tại văn phòng.",
+    "tag": "Thảm văn phòng",
+    "image": "/images/tino-tham-may-giat.webp"
   },
   {
     "id": "606d1140fe49df7060f5a8997d8261c2",
@@ -61,49 +115,22 @@ export const PROJECTS: ProjectItem[] = [
     "image": "/images/tino-danh-san-tho.webp"
   },
   {
-    "id": "122cac8e1bd2f9d6",
-    "category": "furnishing",
-    "categoryLabel": "Sofa & Thảm",
-    "title": "Giặt ghế sofa tại nhà",
-    "caption": "Hình ảnh thiết bị phun hút trong hạng mục giặt ghế sofa.",
-    "tag": "Giặt sofa tại nhà",
-    "image": "/images/122cac8e1bd2f9d6.webp"
+    "id": "c2f625c607452a14",
+    "category": "floor",
+    "categoryLabel": "Đánh bóng sàn",
+    "title": "Hình ảnh bề mặt sàn",
+    "caption": "Bề mặt sàn trong thư viện ảnh công trình của Tino.",
+    "tag": "Bề mặt sàn",
+    "image": "/images/c2f625c607452a14.webp"
   },
   {
-    "id": "b486da45979bde972f03edd7f9a890e5",
-    "category": "apartment",
-    "categoryLabel": "Căn hộ chung cư",
-    "title": "Vệ sinh nội thất căn hộ",
-    "caption": "Hình ảnh vệ sinh các khu vực kính, sàn và nội thất căn hộ.",
-    "tag": "Vệ sinh căn hộ",
-    "image": "/images/b486da45979bde972f03edd7f9a890e5.webp"
-  },
-  {
-    "id": "c949d223bc44f1ae",
-    "category": "glass",
-    "categoryLabel": "Kính cao ốc",
-    "title": "Vệ sinh kính mặt ngoài tòa nhà",
-    "caption": "Hình ảnh tiếp cận và vệ sinh các khu vực kính mặt ngoài.",
-    "tag": "Kính mặt dựng",
-    "image": "/images/c949d223bc44f1ae.webp"
-  },
-  {
-    "id": "tino-chung-cu-binh-chanh",
-    "category": "apartment",
-    "categoryLabel": "Căn hộ chung cư",
-    "title": "Tổng vệ sinh căn hộ chung cư",
-    "caption": "Hình ảnh không gian phòng khách và các khu vực trong căn hộ.",
-    "tag": "Căn hộ chung cư",
-    "image": "/images/tino-chung-cu-binh-chanh.webp"
-  },
-  {
-    "id": "tino-chung-cu-binh-chanh-phong-ngu",
-    "category": "apartment",
-    "categoryLabel": "Căn hộ chung cư",
-    "title": "Vệ sinh phòng ngủ và sàn gỗ",
-    "caption": "Hình ảnh không gian phòng ngủ và hạng mục sàn gỗ.",
-    "tag": "Sàn gỗ phòng ngủ",
-    "image": "/images/tino-chung-cu-binh-chanh-phong-ngu.webp"
+    "id": "0822a0e36fddb2a9dd9a1b6424f8ff49",
+    "category": "factory",
+    "categoryLabel": "Kho xưởng",
+    "title": "Vệ sinh sàn khu vực nhà xưởng",
+    "caption": "Hình ảnh bề mặt sàn và không gian làm việc trong nhà xưởng.",
+    "tag": "Sàn nhà xưởng",
+    "image": "/images/0822a0e36fddb2a9dd9a1b6424f8ff49.webp"
   },
   {
     "id": "e6ecb611e10bc770",
@@ -115,15 +142,6 @@ export const PROJECTS: ProjectItem[] = [
     "image": "/images/e6ecb611e10bc770.webp"
   },
   {
-    "id": "e28b5ab0b1d848ea",
-    "category": "home",
-    "categoryLabel": "Nhà ở & Nhà phố",
-    "title": "Vệ sinh nhà phố sau thi công",
-    "caption": "Hình ảnh hạng mục vệ sinh trong không gian nhà phố.",
-    "tag": "Vệ sinh nhà phố",
-    "image": "/images/e28b5ab0b1d848ea.webp"
-  },
-  {
     "id": "f911a44071a765251aab844dfd730298",
     "category": "factory",
     "categoryLabel": "Kho xưởng",
@@ -131,24 +149,6 @@ export const PROJECTS: ProjectItem[] = [
     "caption": "Hình ảnh thao tác vệ sinh quanh kệ và lối đi trong kho.",
     "tag": "Kệ và lối đi kho",
     "image": "/images/f911a44071a765251aab844dfd730298.webp"
-  },
-  {
-    "id": "c2f625c607452a14",
-    "category": "floor",
-    "categoryLabel": "Đánh bóng sàn",
-    "title": "Hình ảnh bề mặt sàn",
-    "caption": "Bề mặt sàn trong thư viện ảnh công trình của Tino.",
-    "tag": "Bề mặt sàn",
-    "image": "/images/c2f625c607452a14.webp"
-  },
-  {
-    "id": "0dffb2a53aec534128d29cd9bf60aea5",
-    "category": "home",
-    "categoryLabel": "Nhà ở & Nhà phố",
-    "title": "Vệ sinh khu vực bếp",
-    "caption": "Hình ảnh hạng mục vệ sinh bếp và các bề mặt xung quanh.",
-    "tag": "Khu vực bếp",
-    "image": "/images/0dffb2a53aec534128d29cd9bf60aea5.webp"
   },
   {
     "id": "1dbcc214c91f18f3",
@@ -169,33 +169,33 @@ export const PROJECTS: ProjectItem[] = [
     "image": "/images/934c3c727f9a36a0.webp"
   },
   {
-    "id": "92a7f6090b410117",
-    "category": "home",
-    "categoryLabel": "Nhà ở & Nhà cũ",
-    "title": "Vệ sinh nhà ở",
-    "caption": "Hình ảnh các hạng mục vệ sinh trong không gian nhà ở.",
-    "tag": "Nhà ở",
-    "image": "/images/92a7f6090b410117.webp"
+    "id": "abce569d7fb37039",
+    "category": "glass",
+    "categoryLabel": "Kính cao ốc",
+    "title": "Vệ sinh kính mặt ngoài bằng xe nâng",
+    "caption": "Hình ảnh thao tác vệ sinh kính mặt ngoài tòa nhà bằng xe nâng.",
+    "tag": "Xe nâng người",
+    "image": "/images/abce569d7fb37039.webp"
   },
   {
-    "id": "tino-tham-may-giat",
-    "category": "furnishing",
-    "categoryLabel": "Sofa & Thảm",
-    "title": "Giặt thảm văn phòng",
-    "caption": "Hình ảnh hạng mục vệ sinh thảm tại văn phòng.",
-    "tag": "Thảm văn phòng",
-    "image": "/images/tino-tham-may-giat.webp"
+    "id": "c949d223bc44f1ae",
+    "category": "glass",
+    "categoryLabel": "Kính cao ốc",
+    "title": "Vệ sinh kính mặt ngoài tòa nhà",
+    "caption": "Hình ảnh tiếp cận và vệ sinh các khu vực kính mặt ngoài.",
+    "tag": "Kính mặt dựng",
+    "image": "/images/c949d223bc44f1ae.webp"
   }
 ];
 
 const TABS = [
   { key: 'all', label: `Tất cả ảnh (${PROJECTS.length})` },
-  { key: 'apartment', label: 'Căn hộ chung cư' },
   { key: 'home', label: 'Nhà ở & Nhà phố' },
-  { key: 'glass', label: 'Kính cao ốc' },
-  { key: 'factory', label: 'Kho xưởng' },
+  { key: 'apartment', label: 'Căn hộ chung cư' },
+  { key: 'furnishing', label: 'Sofa & Thảm' },
   { key: 'floor', label: 'Đánh bóng sàn' },
-  { key: 'furnishing', label: 'Sofa & Thảm' }
+  { key: 'factory', label: 'Kho xưởng' },
+  { key: 'glass', label: 'Kính cao ốc' }
 ] as const;
 
 type TabKey = typeof TABS[number]['key'];

@@ -112,6 +112,19 @@ const enabled = import.meta.env.PROD && /^G-[A-Z0-9]+$/.test(measurementId || ''
       }
     });
 
+    // Funnel steps carry only an allow-listed name, never what the visitor typed.
+    window.addEventListener('tino:funnel', (e: Event) => {
+      const step = (e as CustomEvent<{ step?: string }>).detail?.step;
+      if (!analyticsWindow.gtag || !activeMeasurementId) return;
+      if (step !== 'estimator_use' && step !== 'estimator_to_form' && step !== 'form_start') return;
+      analyticsWindow.gtag('event', step, {
+        send_to: activeMeasurementId,
+        event_category: 'funnel',
+        page_location: getSafePageLocation(),
+        page_referrer: currentReferrer
+      });
+    });
+
     window.addEventListener('tino:lead-success', (e: Event) => {
       if (!analyticsWindow.gtag || !activeMeasurementId) return;
       const customEvent = e as CustomEvent<{ service?: string }>;

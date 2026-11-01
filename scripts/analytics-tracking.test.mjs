@@ -135,6 +135,20 @@ test('real lead listener only sends known service labels, not arbitrary customer
   assert.equal(leads[0][2].page_referrer, 'https://vesinhtino.com/');
 });
 
+test('real funnel listener only sends allow-listed steps and no visitor input', () => {
+  const a = analyticsHarness();
+  a.pageLoad();
+  for (const step of ['estimator_use', 'estimator_to_form', 'form_start']) {
+    a.window.dispatchEvent({ type: 'tino:funnel', detail: { step, phone: '0900000000' } });
+    assert.equal(a.events(step).length, 1);
+    assert.equal(a.events(step)[0][2].event_category, 'funnel');
+  }
+  a.window.dispatchEvent({ type: 'tino:funnel', detail: { step: 'PRIVATE_NOTE' } });
+  a.window.dispatchEvent({ type: 'tino:funnel' });
+  assert.equal(a.events('PRIVATE_NOTE').length, 0);
+  assert.equal(JSON.stringify(a.commands()).includes('0900000000'), false);
+});
+
 for (const href of ['http://localhost:4321/', 'http://127.0.0.1:4321/', 'https://preview.example.test/']) {
   test('cold local/preview page does not configure tracking: ' + href, () => {
     const a = analyticsHarness({ href });

@@ -33,22 +33,6 @@ export const SERVICES_DATA: ServiceDetail[] = [
     priceHighlight: 'Từ 12.000 – 20.000 đ/m²'
   },
   {
-    slug: 've-sinh-chung-cu',
-    name: 'Tổng vệ sinh chung cư trọn gói',
-    short: 'Chung cư trọn gói',
-    tag: 'Gọn gàng từng phòng',
-    photo: '/images/explorer/ve-sinh-chung-cu.webp',
-    description: 'Dịch vụ vệ sinh căn hộ chung cư theo số phòng, diện tích và hiện trạng thực tế.',
-    intro: 'Tổng vệ sinh chung cư trọn gói 50m² từ 1tr6 (hình ảnh thực tế thi công tại Bình Chánh, TP.HCM). Tino làm sạch chi tiết từng phòng ngủ, phòng khách, bếp và nhà tắm trước khi dọn vào ở.',
-    tasks: [
-      'Hút bụi trần thạch cao, lau khe cửa kính và ban công',
-      'Tẩy sạch dầu mỡ khu bếp, bồn rửa và tủ kệ âm tường',
-      'Làm sạch tường gạch và thiết bị phòng tắm',
-      'Lau sàn bằng dung dịch phù hợp với từng chất liệu'
-    ],
-    priceHighlight: 'Gói 50m² từ 1.600.000 đ'
-  },
-  {
     slug: 've-sinh-nha-o',
     name: 'Vệ sinh nhà ở & Nhà cũ',
     short: 'Nhà ở & Nhà cũ',
@@ -65,36 +49,20 @@ export const SERVICES_DATA: ServiceDetail[] = [
     priceHighlight: 'Từ 10.000 – 20.000 đ/m²'
   },
   {
-    slug: 've-sinh-nha-xuong',
-    name: 'Vệ sinh kho & Nhà xưởng',
-    short: 'Kho & Nhà xưởng',
-    tag: 'Không gian sản xuất',
-    photo: '/images/explorer/ve-sinh-nha-xuong.webp',
-    description: 'Vệ sinh kho bãi, xưởng sản xuất theo diện tích và điều kiện vận hành thực tế.',
-    intro: 'Không gian sản xuất cần phương án phù hợp. Thiết bị, hạng mục và lịch thi công được trao đổi theo hiện trạng và lịch vận hành của xưởng.',
+    slug: 've-sinh-chung-cu',
+    name: 'Tổng vệ sinh chung cư trọn gói',
+    short: 'Chung cư trọn gói',
+    tag: 'Gọn gàng từng phòng',
+    photo: '/images/explorer/ve-sinh-chung-cu.webp',
+    description: 'Dịch vụ vệ sinh căn hộ chung cư theo số phòng, diện tích và hiện trạng thực tế.',
+    intro: 'Tổng vệ sinh chung cư trọn gói 50m² từ 1tr6 (hình ảnh thực tế thi công tại Bình Chánh, TP.HCM). Tino làm sạch chi tiết từng phòng ngủ, phòng khách, bếp và nhà tắm trước khi dọn vào ở.',
     tasks: [
-      'Quét bụi, thổi bụi xà gồ, vách panel và đường ống',
-      'Tẩy rửa dầu mỡ công nghiệp trên sàn bê tông, sàn epoxy',
-      'Vệ sinh khu văn phòng điều hành và lối đi nội bộ',
-      'Bố trí thi công linh hoạt theo ca làm việc của xưởng'
+      'Hút bụi trần thạch cao, lau khe cửa kính và ban công',
+      'Tẩy sạch dầu mỡ khu bếp, bồn rửa và tủ kệ âm tường',
+      'Làm sạch tường gạch và thiết bị phòng tắm',
+      'Lau sàn bằng dung dịch phù hợp với từng chất liệu'
     ],
-    priceHighlight: 'Từ 6.000 – 15.000 đ/m²'
-  },
-  {
-    slug: 've-sinh-kinh-toa-nha',
-    name: 'Vệ sinh kính tòa nhà cao tầng',
-    short: 'Kính tòa nhà',
-    tag: 'Trong hơn, sáng hơn',
-    photo: '/images/explorer/ve-sinh-kinh-toa-nha.webp',
-    description: 'Làm sạch kính mặt ngoài và mặt trong tòa nhà theo điều kiện tiếp cận thực tế.',
-    intro: 'Tino tiếp nhận thông tin về vị trí kính, chiều cao và hiện trạng để trao đổi phương án cùng phạm vi vệ sinh trước khi thực hiện.',
-    tasks: [
-      'Khảo sát vị trí kính và điều kiện tiếp cận',
-      'Thống nhất phương án thi công kính mặt ngoài',
-      'Tẩy ố vảy cá, cặn nước mưa và vết keo silicone',
-      'Gạt sạch bóng kính mặt trong và lau khung nhôm'
-    ],
-    priceHighlight: 'Từ 12.000 – 30.000 đ/m²'
+    priceHighlight: 'Gói 50m² từ 1.600.000 đ'
   },
   {
     slug: 'dich-vu-giat-ghe-sofa',
@@ -127,6 +95,38 @@ export const SERVICES_DATA: ServiceDetail[] = [
       'Trao đổi điều kiện làm khô trước khi đưa thảm vào sử dụng'
     ],
     priceHighlight: 'Từ 15.000 – 20.000 đ/m²'
+  },
+  {
+    slug: 've-sinh-nha-xuong',
+    name: 'Vệ sinh kho & Nhà xưởng',
+    short: 'Kho & Nhà xưởng',
+    tag: 'Không gian sản xuất',
+    photo: '/images/explorer/ve-sinh-nha-xuong.webp',
+    description: 'Vệ sinh kho bãi, xưởng sản xuất theo diện tích và điều kiện vận hành thực tế.',
+    intro: 'Không gian sản xuất cần phương án phù hợp. Thiết bị, hạng mục và lịch thi công được trao đổi theo hiện trạng và lịch vận hành của xưởng.',
+    tasks: [
+      'Quét bụi, thổi bụi xà gồ, vách panel và đường ống',
+      'Tẩy rửa dầu mỡ công nghiệp trên sàn bê tông, sàn epoxy',
+      'Vệ sinh khu văn phòng điều hành và lối đi nội bộ',
+      'Bố trí thi công linh hoạt theo ca làm việc của xưởng'
+    ],
+    priceHighlight: 'Từ 6.000 – 15.000 đ/m²'
+  },
+  {
+    slug: 've-sinh-kinh-toa-nha',
+    name: 'Vệ sinh kính tòa nhà cao tầng',
+    short: 'Kính tòa nhà',
+    tag: 'Trong hơn, sáng hơn',
+    photo: '/images/explorer/ve-sinh-kinh-toa-nha.webp',
+    description: 'Làm sạch kính mặt ngoài và mặt trong tòa nhà theo điều kiện tiếp cận thực tế.',
+    intro: 'Tino tiếp nhận thông tin về vị trí kính, chiều cao và hiện trạng để trao đổi phương án cùng phạm vi vệ sinh trước khi thực hiện.',
+    tasks: [
+      'Khảo sát vị trí kính và điều kiện tiếp cận',
+      'Thống nhất phương án thi công kính mặt ngoài',
+      'Tẩy ố vảy cá, cặn nước mưa và vết keo silicone',
+      'Gạt sạch bóng kính mặt trong và lau khung nhôm'
+    ],
+    priceHighlight: 'Từ 12.000 – 30.000 đ/m²'
   }
 ];
 

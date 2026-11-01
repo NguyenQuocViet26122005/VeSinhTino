@@ -679,6 +679,77 @@
 .home-page caption { background: #e6f1f8; }
 .mobile-table-note { display: none; }
 
+/* Phone-first contact paths: hidden where the hero and price tables already sit side by side. */
+.price-cta { display: none; }
+.hero-call {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  border: 1px solid #ffffff66;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  transition: transform 160ms var(--ease-out), color 160ms, border-color 160ms;
+}
+.hero-call svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+.hero-call:active { transform: scale(.97); }
+/* Three actions in a row would touch the tilted glass pane on smaller laptops. */
+@media(min-width: 801px) and (max-width: 1399px) {
+  .hero-actions { max-width: 450px; row-gap: 4px; }
+}
+@media (hover: hover) and (pointer: fine) {
+  .hero-call:hover { color: var(--lime); border-color: var(--lime); }
+}
+@media(max-width: 800px) {
+  .price-cta-call:active, .price-more > summary:active { transform: scale(.97); }
+  .price-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 28px; }
+  .price-cta-call {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 600;
+    color: var(--ink);
+    border-bottom: 1px solid var(--ink);
+    font-variant-numeric: tabular-nums;
+    transition: transform 160ms var(--ease-out);
+  }
+  .price-more { margin-top: 28px; }
+  .price-more > summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    min-height: 52px;
+    padding: 10px 18px;
+    font-weight: 600;
+    color: var(--ink);
+    background: #e6f1f8;
+    border-radius: 5px;
+    cursor: pointer;
+    list-style: none;
+    transition: transform 160ms var(--ease-out);
+  }
+  .price-more > summary::-webkit-details-marker { display: none; }
+  .price-more > summary span { font-size: 20px; line-height: 1; transition: transform 160ms var(--ease-out); }
+  .price-more[open] > summary span { transform: rotate(45deg); }
+  .price-more > div { margin-top: 24px !important; }
+}
+/* Browsers without ::details-content keep the summary, so the table stays reachable. */
+@supports selector(::details-content) {
+  @media(min-width: 801px) {
+    .price-more > summary { display: none; }
+    .price-more::details-content { content-visibility: visible; block-size: auto; }
+  }
+}
+@media(prefers-reduced-motion: reduce) {
+  .hero-call:active, .price-cta-call:active, .price-more > summary:active { transform: none; }
+}
+
 /* --- 6. PROCESS & FAQ --- */
 .wow-process { padding-block: 110px; display: grid; grid-template-columns: .9fr 1.1fr; gap: 80px; }
 .wow-process > h2 { font-size: clamp(32px, 3.8vw, 54px); line-height: 1.22; text-wrap: balance; }

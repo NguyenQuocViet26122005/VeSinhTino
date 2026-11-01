@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 export interface EstimatorService {
   id: string;
@@ -30,6 +30,21 @@ const SERVICES: EstimatorService[] = [
     })
   },
   {
+    id: 've-sinh-nha-o',
+    name: 'Vệ sinh nhà ở & Nhà cũ',
+    unit: 'm²',
+    defaultQty: 80,
+    minQty: 30,
+    maxQty: 300,
+    presets: [50, 80, 100, 150, 200],
+    calculate: (qty) => ({
+      min: qty * 10000,
+      max: qty * 20000,
+      unitRate: '10.000 – 20.000 đ/m²',
+      note: 'Áp dụng cho nhà phố, nhà ở định kỳ hoặc dọn vào nhà cũ.'
+    })
+  },
+  {
     id: 've-sinh-chung-cu',
     name: 'Tổng vệ sinh chung cư trọn gói',
     unit: 'm²',
@@ -56,18 +71,33 @@ const SERVICES: EstimatorService[] = [
     }
   },
   {
-    id: 've-sinh-nha-o',
-    name: 'Vệ sinh nhà ở & Nhà cũ',
-    unit: 'm²',
-    defaultQty: 80,
-    minQty: 30,
-    maxQty: 300,
-    presets: [50, 80, 100, 150, 200],
+    id: 'dich-vu-giat-ghe-sofa',
+    name: 'Giặt ghế sofa & Nệm tại nhà',
+    unit: 'Bộ / Cái',
+    defaultQty: 1,
+    minQty: 1,
+    maxQty: 10,
+    presets: [1, 2, 3, 4, 5],
     calculate: (qty) => ({
-      min: qty * 10000,
+      min: qty * 250000,
+      max: qty * 500000,
+      unitRate: '250.000 – 500.000 đ/bộ',
+      note: 'Đơn giá tùy thuộc vào kích thước sofa (băng 2 chỗ, 3 chỗ hay góc L) và chất liệu vải nỉ hay da.'
+    })
+  },
+  {
+    id: 'dich-vu-giat-tham',
+    name: 'Giặt thảm văn phòng',
+    unit: 'm²',
+    defaultQty: 100,
+    minQty: 30,
+    maxQty: 1000,
+    presets: [50, 80, 120, 200, 500],
+    calculate: (qty) => ({
+      min: qty * 15000,
       max: qty * 20000,
-      unitRate: '10.000 – 20.000 đ/m²',
-      note: 'Áp dụng cho nhà phố, nhà ở định kỳ hoặc dọn vào nhà cũ.'
+      unitRate: '15.000 – 20.000 đ/m²',
+      note: 'Áp dụng cho giặt thảm văn phòng theo diện tích và hiện trạng cần làm sạch.'
     })
   },
   {
@@ -117,36 +147,6 @@ const SERVICES: EstimatorService[] = [
       unitRate: '15.000 – 25.000 đ/m² (Dây đu)',
       note: 'Mức giá tham khảo theo phương án đu dây chuyên nghiệp. Có phương án giàn giáo hoặc xe nâng.'
     })
-  },
-  {
-    id: 'dich-vu-giat-ghe-sofa',
-    name: 'Giặt ghế sofa & Nệm tại nhà',
-    unit: 'Bộ / Cái',
-    defaultQty: 1,
-    minQty: 1,
-    maxQty: 10,
-    presets: [1, 2, 3, 4, 5],
-    calculate: (qty) => ({
-      min: qty * 250000,
-      max: qty * 500000,
-      unitRate: '250.000 – 500.000 đ/bộ',
-      note: 'Đơn giá tùy thuộc vào kích thước sofa (băng 2 chỗ, 3 chỗ hay góc L) và chất liệu vải nỉ hay da.'
-    })
-  },
-  {
-    id: 'dich-vu-giat-tham',
-    name: 'Giặt thảm văn phòng',
-    unit: 'm²',
-    defaultQty: 100,
-    minQty: 30,
-    maxQty: 1000,
-    presets: [50, 80, 120, 200, 500],
-    calculate: (qty) => ({
-      min: qty * 15000,
-      max: qty * 20000,
-      unitRate: '15.000 – 20.000 đ/m²',
-      note: 'Áp dụng cho giặt thảm văn phòng theo diện tích và hiện trạng cần làm sạch.'
-    })
   }
 ];
 
@@ -159,6 +159,13 @@ export const CostEstimator: React.FC = () => {
   const service = SERVICES.find(s => s.id === selectedServiceId) || SERVICES[0];
   const [quantity, setQuantity] = useState(service.defaultQty);
   const [inputStr, setInputStr] = useState(String(service.defaultQty));
+  const useTracked = useRef(false);
+
+  const trackUse = (e: React.SyntheticEvent) => {
+    if (useTracked.current || !(e.target as Element).closest('button, input, select')) return;
+    useTracked.current = true;
+    window.dispatchEvent(new CustomEvent('tino:funnel', { detail: { step: 'estimator_use' } }));
+  };
 
   const updateQuantity = (newQty: number) => {
     setQuantity(newQty);
@@ -203,6 +210,7 @@ export const CostEstimator: React.FC = () => {
   const { min, max, unitRate, note } = service.calculate(calculatedQty);
 
   const handleTransferToContact = () => {
+    window.dispatchEvent(new CustomEvent('tino:funnel', { detail: { step: 'estimator_to_form' } }));
     const contactSection = document.getElementById('lien-he-tu-van');
     if (contactSection) {
       contactSection.scrollIntoView({ behavior: 'smooth' });
@@ -227,7 +235,7 @@ export const CostEstimator: React.FC = () => {
   };
 
   return (
-    <div id="uoc-tinh-chi-phi" className="cost-estimator">
+    <div id="uoc-tinh-chi-phi" className="cost-estimator" onClickCapture={trackUse} onChangeCapture={trackUse}>
       <div className="estimator-header">
         <div className="estimator-pill">CÔNG CỤ MINH BẠCH</div>
         <h3 className="estimator-title">Ước tính chi phí dự kiến</h3>

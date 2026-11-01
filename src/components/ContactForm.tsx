@@ -45,6 +45,12 @@ export const ContactForm: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [copied, setCopied] = useState(false);
   const [submittedTime, setSubmittedTime] = useState('');
+  const formStartTracked = useRef(false);
+  const trackFormStart = () => {
+    if (formStartTracked.current) return;
+    formStartTracked.current = true;
+    window.dispatchEvent(new CustomEvent('tino:funnel', { detail: { step: 'form_start' } }));
+  };
 
   useEffect(() => {
     const form = formRef.current;
@@ -347,7 +353,7 @@ export const ContactForm: React.FC = () => {
               </div>
             </div>
           ) : (
-            <form ref={formRef} className="contact-form" onSubmit={handleSubmit}>
+            <form ref={formRef} className="contact-form" onSubmit={handleSubmit} onFocusCapture={trackFormStart}>
               {/* Anti-spam honeypot trap for automated bots */}
               <div style={{ display: 'none' }} aria-hidden="true">
                 <label htmlFor="company_website_url">Bỏ trống trường này</label>

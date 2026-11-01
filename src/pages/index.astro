@@ -50,6 +50,10 @@ const heroAvifSrcset = `${heroAvif.srcSet.attribute}, ${heroAvifFull.src} ${hero
             <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </span>
         </a>
+        <a class="hero-call" href={'tel:' + contact.phone}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5 9.4 3l1.5 4.2-2 1.5a12 12 0 0 0 6.4 6.4l1.5-2 4.2 1.5-.5 2.8a2 2 0 0 1-2.1 1.6A15.6 15.6 0 0 1 5 5.6a2 2 0 0 1 1.6-2.1Z"/></svg>
+          <span>Gọi {contact.display}</span>
+        </a>
         <a href="#cong-trinh" class="hero-secondary-link">Xem công trình thực tế <span aria-hidden="true">↓</span></a>
       </div>
       <nav class="hero-intents" aria-label="Chọn nhanh dịch vụ">
@@ -191,6 +195,19 @@ const heroAvifSrcset = `${heroAvif.srcSet.attribute}, ${heroAvifFull.src} ${hero
       </div>
 
       <!-- Full Reference Table -->
+      <div class="price-cta">
+        <a class="wow-button" href="#lien-he-tu-van">
+          <span>Nhận báo giá</span>
+          <span class="cta-disc" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </a>
+        <a class="price-cta-call" href={'tel:' + contact.phone}>Gọi {contact.display}</a>
+      </div>
+
+      <!-- Collapsed on phones to shorten the path to the form; always open from 801px up (see wow.css). -->
+      <details class="price-more">
+      <summary>Xem bảng giá dịch vụ tổng hợp <span aria-hidden="true">+</span></summary>
       <div style="margin-top: 45px;">
         <p class="mobile-table-note">Vuốt ngang để xem đủ bảng giá tổng hợp →</p>
         <PriceTable rows={commonPrices} caption="Bảng giá dịch vụ vệ sinh tổng hợp"/>
@@ -198,6 +215,7 @@ const heroAvifSrcset = `${heroAvif.srcSet.attribute}, ${heroAvifFull.src} ${hero
           Đơn giá theo bảng công bố của Tino. Chi phí cụ thể được thống nhất sau khi trao đổi và khảo sát hiện trạng.
         </p>
       </div>
+      </details>
     </div>
   </section>
 

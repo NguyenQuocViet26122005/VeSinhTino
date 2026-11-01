@@ -706,6 +706,10 @@
   .hero-call:hover { color: var(--lime); border-color: var(--lime); }
 }
 @media(max-width: 800px) {
+  /* A fixed column: wrapping by available width would change the hero height when web fonts swap in (CLS). */
+  .hero-actions { flex-direction: column; align-items: flex-start; }
+  /* Fixed heights: at a percentage of the auto-height hero, these large rays turn any small height change into a big shift. */
+  .daylight-field i { top: -568px; height: 1893px; }
   .price-cta-call:active, .price-more > summary:active { transform: scale(.97); }
   .price-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 28px; }
   .price-cta-call {
@@ -1077,7 +1081,8 @@
   }
   .hero-word { font-size: clamp(72px, 20vw, 100px); line-height: 1; margin-bottom: 8px; }
   .hero-line { max-width: 17ch; font-size: clamp(25px, 6.7vw, 34px); line-height: 1.2; }
-  .wow-hero-description { font-size: 13.5px; margin: 16px 0; max-width: 38ch; }
+  /* em, not ch: ch follows the loaded font, so the line count could change when web fonts swap in. */
+  .wow-hero-description { font-size: 13.5px; margin: 16px 0; max-width: 25.7em; }
   .hero-intents { gap: 7px; margin-top: 15px; }
   .hero-intents a { min-height: 34px; padding: 7px 11px; font-size: 11.5px; }
   .glass-world {

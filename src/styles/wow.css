@@ -710,7 +710,7 @@
   .hero-actions { flex-direction: column; align-items: flex-start; }
   /* Fixed heights: at a percentage of the auto-height hero, these large rays turn any small height change into a big shift. */
   .daylight-field i { top: -568px; height: 1893px; }
-  .price-cta-call:active, .price-more > summary:active { transform: scale(.97); }
+  .price-cta-call:active { transform: scale(.97); }
   .price-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 28px; }
   .price-cta-call {
     display: inline-flex;
@@ -722,36 +722,15 @@
     font-variant-numeric: tabular-nums;
     transition: transform 160ms var(--ease-out);
   }
-  .price-more { margin-top: 28px; }
-  .price-more > summary {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    min-height: 52px;
-    padding: 10px 18px;
-    font-weight: 600;
-    color: var(--ink);
-    background: #e6f1f8;
-    border-radius: 5px;
-    cursor: pointer;
-    list-style: none;
-    transition: transform 160ms var(--ease-out);
-  }
-  .price-more > summary::-webkit-details-marker { display: none; }
-  .price-more > summary span { font-size: 20px; line-height: 1; transition: transform 160ms var(--ease-out); }
-  .price-more[open] > summary span { transform: rotate(45deg); }
-  .price-more > div { margin-top: 24px !important; }
-}
-/* Browsers without ::details-content keep the summary, so the table stays reachable. */
-@supports selector(::details-content) {
-  @media(min-width: 801px) {
-    .price-more > summary { display: none; }
-    .price-more::details-content { content-visibility: visible; block-size: auto; }
-  }
+  /* Phones read the general prices first, then apartments, then the quote actions. */
+  .price-content { display: flex; flex-direction: column; }
+  .price-content > * { min-width: 0; }
+  .price-general { order: 1; }
+  .price-apartment { order: 2; }
+  .price-cta { order: 3; }
 }
 @media(prefers-reduced-motion: reduce) {
-  .hero-call:active, .price-cta-call:active, .price-more > summary:active { transform: none; }
+  .hero-call:active, .price-cta-call:active { transform: none; }
 }
 
 /* --- 6. PROCESS & FAQ --- */

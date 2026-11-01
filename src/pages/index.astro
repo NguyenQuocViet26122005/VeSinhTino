@@ -186,7 +186,7 @@ const heroAvifSrcset = `${heroAvif.srcSet.attribute}, ${heroAvifFull.src} ${hero
       <CostEstimator client:visible={{ rootMargin: '600px' }} />
 
       <!-- Dedicated Apartment Package Table -->
-      <div style="margin-top: 40px;">
+      <div class="price-apartment" style="margin-top: 40px;">
         <p class="mobile-table-note">Vuốt ngang để xem đủ bảng giá chung cư →</p>
         <PriceTable rows={apartmentPrices} caption="Bảng giá tổng vệ sinh chung cư trọn gói"/>
         <p class="price-note">
@@ -205,17 +205,14 @@ const heroAvifSrcset = `${heroAvif.srcSet.attribute}, ${heroAvifFull.src} ${hero
         <a class="price-cta-call" href={'tel:' + contact.phone}>Gọi {contact.display}</a>
       </div>
 
-      <!-- Collapsed on phones to shorten the path to the form; always open from 801px up (see wow.css). -->
-      <details class="price-more">
-      <summary>Xem bảng giá dịch vụ tổng hợp <span aria-hidden="true">+</span></summary>
-      <div style="margin-top: 45px;">
+      <!-- Shown before the apartment table on phones (see wow.css). -->
+      <div class="price-general" style="margin-top: 45px;">
         <p class="mobile-table-note">Vuốt ngang để xem đủ bảng giá tổng hợp →</p>
         <PriceTable rows={commonPrices} caption="Bảng giá dịch vụ vệ sinh tổng hợp"/>
         <p class="price-note">
           Đơn giá theo bảng công bố của Tino. Chi phí cụ thể được thống nhất sau khi trao đổi và khảo sát hiện trạng.
         </p>
       </div>
-      </details>
     </div>
   </section>
 
